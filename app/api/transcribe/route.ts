@@ -3,14 +3,16 @@ import { type NextRequest, NextResponse } from "next/server"
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
-    const audioFile = formData.get("audio") as Blob
+    const audioFile = formData.get("audio") as File | null
 
     if (!audioFile) {
       return NextResponse.json({ error: "No audio file provided" }, { status: 400 })
     }
 
-    // Convert blob to file for OpenAI API
-    const file = new File([audioFile], "audio.webm", { type: "audio/webm" })
+    // Preserve the original filename and mime type from the client
+    const fileName = audioFile.name || "audio.webm"
+    const mimeType = audioFile.type || "audio/webm"
+    const file = new File([audioFile], fileName, { type: mimeType })
 
     const openaiFormData = new FormData()
     openaiFormData.append("file", file)

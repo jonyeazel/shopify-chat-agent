@@ -19,7 +19,7 @@ export const siteConfig = {
   stats: [
     { value: "14", label: "years" },
     { value: "50+", label: "stores" },
-    { value: "48hr", label: "speed" },
+    { value: "48hr", label: "delivery" },
   ],
 
   meta: {

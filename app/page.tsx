@@ -80,10 +80,10 @@ const SITE_ID = 1
 const TEMP_ADMIN_BYPASS = true
 
 const QUICK_ACTIONS = [
-  { label: "Get a free audit", message: "Can you audit my store?" },
-  { label: "See your work", message: "Show me some stores you've built" },
-  { label: "View pricing", message: "What do you charge?" },
-  { label: "Text me", message: null, sms: true },
+  { label: "Audit my store", message: "Can you audit my Shopify store?" },
+  { label: "I need a new store", message: "I need a new Shopify store built from scratch" },
+  { label: "What do you charge?", message: "What does it cost to work with you?" },
+  { label: "Text Jon", message: null, sms: true },
 ]
 
 export default function Home() {
@@ -105,7 +105,7 @@ export default function Home() {
   const [adminLongPressTimer, setAdminLongPressTimer] = useState<NodeJS.Timeout | null>(null)
 
   // Panel resize
-  const [panelWidth, setPanelWidth] = useState(25)
+  const [panelWidth, setPanelWidth] = useState(35)
   const [isResizing, setIsResizing] = useState(false)
   const mainRef = useRef<HTMLElement>(null)
 
@@ -201,6 +201,10 @@ export default function Home() {
     handleChatSubmit(`Audit my store: ${url}`)
   }, [handleChatSubmit])
 
+  const handleLabelUpload = useCallback((dataUrl: string, fileName: string) => {
+    handleChatSubmit(`Here's my label\n\n[Uploaded image: ${fileName}]\n${dataUrl}`)
+  }, [handleChatSubmit])
+
   useEffect(() => {
     if (error) setChatError(error.message || "Chat connection failed")
   }, [error])
@@ -257,7 +261,7 @@ export default function Home() {
       <div
         className="hidden md:flex items-center justify-center w-3 relative z-20 group"
         onMouseDown={handleResizeStart}
-        onDoubleClick={() => setPanelWidth(25)}
+        onDoubleClick={() => setPanelWidth(35)}
       >
         <div className={`absolute w-1 h-12 rounded-full transition-colors duration-150 ${isResizing ? "bg-foreground/50" : "bg-foreground/20 group-hover:bg-foreground/40"}`} />
         <div className="absolute w-full h-full cursor-col-resize" />
@@ -463,7 +467,7 @@ export default function Home() {
                   transition={{ duration: 0.15 }}
                   className="w-full md:max-w-2xl md:mx-auto"
                 >
-                  <MessageList messages={messages} status={status} avatarUrl={siteConfig.brand.avatarUrl} onQuickReply={handleChatSubmit} onAuditSubmit={handleAuditSubmit} />
+                  <MessageList messages={messages} status={status} avatarUrl={siteConfig.brand.avatarUrl} onQuickReply={handleChatSubmit} onAuditSubmit={handleAuditSubmit} onLabelUpload={handleLabelUpload} />
                   {chatError && (
                     <div className="px-4 py-2">
                       <div className="p-3 rounded-xl bg-[#fef2f2] border border-[#fecaca] text-sm">
@@ -508,7 +512,7 @@ export default function Home() {
             </div>
           </div>
           {/* Mobile: Fade above input */}
-          <div className="flex-shrink-0 md:hidden h-6 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent, var(--card))" }} />
+          <div className="flex-shrink-0 md:hidden h-10 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent, var(--card))" }} />
           {/* Mobile: Chat input */}
           <div className="flex-shrink-0 md:hidden pb-3 px-3">
             <ChatInput
@@ -516,6 +520,7 @@ export default function Home() {
               setInput={setInput}
               onSubmit={handleChatSubmit}
               disabled={status !== "ready"}
+              showMicNudge={messages.length >= 2 && messages.length <= 6 && status === "ready"}
             />
           </div>
         </div>
@@ -524,11 +529,11 @@ export default function Home() {
         {/* Mobile: Vertical icon rail */}
         <div className="md:hidden flex flex-col items-center justify-end gap-1.5 flex-shrink-0 pr-[14px] pl-[5px] pb-[max(env(safe-area-inset-bottom),12px)]">
           {[
-            { icon: IconAudit, label: "Audit", action: () => handleChatSubmit("Can you audit my store?") },
-            { icon: IconWork, label: "Work", action: () => handleChatSubmit("Show me some stores you've built") },
-            { icon: IconPrice, label: "Price", action: () => handleChatSubmit("What do you charge?") },
+            { icon: IconAudit, label: "Fix", action: () => handleChatSubmit("What would you fix on my store?") },
+            { icon: IconWork, label: "Proof", action: () => handleChatSubmit("Show me what you've built") },
+            { icon: IconPrice, label: "Cost", action: () => handleChatSubmit("What's this gonna run me?") },
             { icon: IconText, label: "Text", action: () => { window.location.href = smsHref } },
-            { icon: IconGallery, label: "Gallery", action: () => handleChatSubmit("Show me your product shots") },
+            { icon: IconGallery, label: "Shots", action: () => handleChatSubmit("I need better product shots") },
           ].map(({ icon: Icon, label, action }) => (
             <button
               key={label}

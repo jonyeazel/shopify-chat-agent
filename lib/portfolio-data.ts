@@ -45,7 +45,6 @@ export const PORTFOLIO_DATA = {
     { name: "BREZ", url: "https://v0-brez-product-page.vercel.app" },
     { name: "Seed", url: "https://v0-vcommercepdp.vercel.app" },
     { name: "MUD\\WTR", url: "https://v0-mudwater.vercel.app" },
-    { name: "AG1", url: "https://v0-ag1-pdp.vercel.app" },
   ],
   pricing: {
     smartStore: { 

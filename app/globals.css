@@ -251,8 +251,8 @@
 }
 
 @keyframes cursor-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 0.15; }
 }
 
 /* Online indicator — slow breathing glow */

@@ -1,26 +1,22 @@
 "use client"
 
-import React, { useState, useEffect, useRef, memo } from "react"
+import React, { useState, useEffect, useRef, useCallback, memo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronRight, MessageCircle, Loader2, ArrowRight } from "lucide-react"
+import { ChevronRight, Loader2, ArrowRight, Upload, X } from "lucide-react"
 import type { PricingItem } from "@/lib/portfolio-data"
 import type { PORTFOLIO_DATA } from "@/lib/portfolio-data"
 import { VibeFrame } from "@/components/ui/vibe-frame"
 import { SmsTrigger } from "@/components/sms-trigger"
 import { useIsMobile } from "@/hooks/use-mobile"
 
-// SMS Button — renders inline SMS deep links as tappable buttons in chat.
-// On mobile: opens SMS directly. On desktop: opens QR dialog.
+// SMS Button — renders inline SMS deep links as tappable text in chat.
+// Styled like an iMessage link: blue, underlined, same weight as surrounding text.
 function SmsButton({ href, children }: { href: string; children: React.ReactNode }) {
-  // Extract context from the href body parameter for SmsTrigger
-  // The href is the raw sms: URI from the AI — we pass it through for mobile,
-  // but SmsTrigger handles the mobile/desktop split.
   return (
     <SmsTrigger context="general">
       <button
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-foreground text-background font-medium text-[13px] hover:opacity-90 active:scale-95 transition-all duration-150 mx-0.5 cursor-pointer"
+        className="inline text-[#007AFF] underline underline-offset-2 decoration-[#007AFF]/30 hover:decoration-[#007AFF]/60 active:opacity-70 transition-all duration-150 cursor-pointer"
       >
-        <MessageCircle className="w-3 h-3" />
         {children}
       </button>
     </SmsTrigger>
@@ -174,10 +170,10 @@ export function FaqDisplay({
 }
 
 const PORTFOLIO_SITES = [
-  { name: "Goli", url: "https://v0-vcommercepdp-three.vercel.app", category: "Supplements" },
-  { name: "Brez", url: "https://v0-brez-product-page.vercel.app", category: "Beverages" },
-  { name: "Seed", url: "https://v0-vcommercepdp.vercel.app", category: "Probiotics" },
-  { name: "Mud Water", url: "https://v0-mudwater.vercel.app", category: "Wellness" },
+  { name: "Goli", url: "https://v0-vcommercepdp-three.vercel.app" },
+  { name: "BREZ", url: "https://v0-brez-product-page.vercel.app" },
+  { name: "Seed", url: "https://v0-vcommercepdp.vercel.app" },
+  { name: "MUD", url: "https://v0-mudwater.vercel.app" },
 ]
 
 export const LiveSitesDisplay = memo(function LiveSitesDisplay() {
@@ -200,18 +196,17 @@ export const LiveSitesDisplay = memo(function LiveSitesDisplay() {
   }, [])
 
   const device = isMobile ? "mobile" : "desktop"
-  // Fill the chat column width — this is the hero content
   const displayWidth = frameWidth
 
   return (
     <div ref={containerRef} className="my-5">
-      {/* Tab selector */}
-      <div className="flex gap-1 mb-3 overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 md:justify-center">
+      {/* Tab selector — centered, no scroll */}
+      <div className="flex gap-1 mb-3 justify-center">
         {PORTFOLIO_SITES.map((site, i) => (
           <button
             key={site.name}
             onClick={() => setSelectedIndex(i)}
-            className="relative flex-shrink-0 px-3.5 py-1.5 rounded-full text-[12px] transition-colors duration-150"
+            className="relative px-3.5 py-1.5 rounded-full text-[12px] transition-colors duration-150"
             style={{ color: selectedIndex === i ? "var(--background)" : "var(--muted-foreground)" }}
           >
             {selectedIndex === i && (
@@ -318,6 +313,126 @@ export function SiteAuditInput({
         </button>
       </div>
       {error && <p className="text-[11px] text-destructive mt-1.5 pl-4">{error}</p>}
+    </div>
+  )
+}
+
+// Label Upload — lets users upload a product label for rendering requests
+export function LabelUpload({
+  onSubmitLabel,
+}: {
+  onSubmitLabel: (dataUrl: string, fileName: string) => void
+}) {
+  const [preview, setPreview] = useState<{ dataUrl: string; name: string } | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const processFile = useCallback((file: File) => {
+    if (!file.type.startsWith("image/") && !file.name.endsWith(".pdf")) return
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const dataUrl = e.target?.result as string
+      setPreview({ dataUrl, name: file.name })
+    }
+    reader.readAsDataURL(file)
+  }, [])
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) processFile(file)
+    if (fileInputRef.current) fileInputRef.current.value = ""
+  }
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }, [])
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+  }, [])
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+    const file = e.dataTransfer.files?.[0]
+    if (file) processFile(file)
+  }, [processFile])
+
+  const handleSubmit = () => {
+    if (!preview || submitted) return
+    setSubmitted(true)
+    onSubmitLabel(preview.dataUrl, preview.name)
+  }
+
+  if (submitted) {
+    return (
+      <div className="my-4 flex items-center gap-2.5 px-4 py-3 rounded-xl bg-[#ebebeb]">
+        <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+        <span className="text-[13px] text-muted-foreground">Label received — hang tight.</span>
+      </div>
+    )
+  }
+
+  return (
+    <div className="my-4">
+      <div
+        className={`rounded-xl transition-colors duration-150 ${
+          isDragging
+            ? "bg-[#e0e0e0] ring-1 ring-foreground/15"
+            : "bg-[#ebebeb]"
+        }`}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        {preview ? (
+          <div className="flex items-center gap-3 pl-3 pr-1.5 py-1.5">
+            <img
+              src={preview.dataUrl}
+              alt="Label preview"
+              className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
+            />
+            <span className="flex-1 min-w-0 text-[13px] text-foreground truncate">
+              {preview.name}
+            </span>
+            <button
+              type="button"
+              onClick={() => setPreview(null)}
+              className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-foreground/[0.06] transition-colors duration-150 flex-shrink-0"
+            >
+              <X className="w-3.5 h-3.5 text-foreground/40" />
+            </button>
+            <button
+              onClick={handleSubmit}
+              className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-foreground text-background transition-all duration-150 active:scale-[0.92] hover:opacity-90"
+            >
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="w-full flex items-center gap-3 pl-4 pr-1.5 py-3 cursor-pointer group"
+          >
+            <Upload className="w-[18px] h-[18px] text-foreground/30 group-hover:text-foreground/50 transition-colors duration-150 flex-shrink-0" strokeWidth={1.5} />
+            <span className="flex-1 text-left text-[15px] text-muted-foreground/50">
+              {isDragging ? "Drop here" : "Upload your label"}
+            </span>
+          </button>
+        )}
+      </div>
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*,.pdf"
+        onChange={handleFileChange}
+        className="hidden"
+      />
     </div>
   )
 }

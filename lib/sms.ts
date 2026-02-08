@@ -17,29 +17,29 @@ export interface SmsOptions {
 }
 
 const BODY_TEMPLATES: Record<SmsContext, (opts: SmsOptions) => string> = {
-  general: () => siteConfig.contact.smsBody,
+  general: () => `Hey Jon, your AI diagnosed my store and I'm ready to talk next steps.`,
   "post-audit": ({ storeDomain }) =>
     storeDomain
-      ? `Hey Jon, you just audited ${storeDomain}. Let's talk about fixing those issues.`
-      : `Hey Jon, just got my audit results. Let's talk next steps.`,
+      ? `Hey Jon, your AI audited ${storeDomain}. I've added you to my store — ready to get started.`
+      : `Hey Jon, just got my audit results from your AI. Ready to move forward.`,
   "post-pricing": ({ serviceName }) =>
     serviceName
-      ? `Hey Jon, interested in ${serviceName}. What's the next step?`
-      : `Hey Jon, looked at your pricing. Want to talk details.`,
+      ? `Hey Jon, your AI recommended ${serviceName}. I've added you to my store — let's do it.`
+      : `Hey Jon, your AI walked me through pricing. Ready to talk details.`,
   "post-report": ({ storeDomain }) =>
     storeDomain
-      ? `Hey Jon, reviewed my CRO report for ${storeDomain}. Ready to talk implementation.`
-      : `Hey Jon, just reviewed my report. Let's discuss.`,
+      ? `Hey Jon, reviewed my CRO report for ${storeDomain}. I've added you to my store — ready for implementation.`
+      : `Hey Jon, just reviewed my report. Ready to discuss next steps.`,
   "error-fallback": () =>
-    `Hey Jon, the chat on your site wasn't working so I'm texting instead.`,
+    `Hey Jon, the chat on your site wasn't loading so I'm texting instead.`,
   "thank-you": () =>
     `Hey Jon, just purchased my audit. Quick question:`,
   "low-budget": () =>
     `Hey Jon, want to work together but need to figure out budget. Can we talk?`,
   "ready-to-start": ({ serviceName }) =>
     serviceName
-      ? `Hey Jon, ready to move forward with ${serviceName}.`
-      : `Hey Jon, ready to get started. What do you need from me?`,
+      ? `Hey Jon, your AI diagnosed my store and I'm ready to move forward with ${serviceName}. I've added you to my Shopify store.`
+      : `Hey Jon, your AI diagnosed my store and I'm ready to get started. I've added you to my Shopify store.`,
 }
 
 export function getSmsBody(options: SmsOptions = {}): string {
