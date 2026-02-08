@@ -66,46 +66,39 @@ export function ImageGallery({
   serviceName?: string
   price?: number
 }) {
-  // Normalize to always have url/label structure
   const normalizedImages = images.map((img) => 
     typeof img === "string" ? { url: img, label: "" } : img
   )
   
   return (
-    <div className="my-3">
+    <div className="my-4">
       <div className="relative -mx-4">
-        <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2 px-4">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-1 px-4">
           {normalizedImages.map((img, i) => (
             <div key={i} className="flex-shrink-0 snap-center">
-              <div className="relative rounded-xl overflow-hidden bg-muted/30">
+              <div className="relative rounded-lg overflow-hidden bg-muted/20">
                 <img
                   src={img.url || "/placeholder.svg"}
                   alt={img.label || `${serviceName || "Portfolio"} ${i + 1}`}
-                  className="h-44 w-auto object-cover"
+                  className="h-52 w-auto object-cover"
                   onError={(e) => {
-                    e.currentTarget.src = "/placeholder.svg?height=176&width=176"
+                    e.currentTarget.src = "/placeholder.svg?height=208&width=208"
                   }}
                 />
                 {img.label && (
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2 pt-6">
-                    <p className="text-[10px] font-medium text-white">{img.label}</p>
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent px-2.5 pb-2 pt-8">
+                    <p className="text-[11px] text-white/90">{img.label}</p>
                   </div>
                 )}
               </div>
             </div>
           ))}
         </div>
-        {/* Right fade */}
         <div 
-          className="absolute right-0 top-0 bottom-2 w-8 pointer-events-none"
+          className="absolute right-0 top-0 bottom-1 w-12 pointer-events-none"
           style={{ background: "linear-gradient(to right, transparent, var(--card))" }}
         />
       </div>
-      {serviceName && price && (
-        <p className="text-sm text-muted-foreground mt-2">
-          {serviceName} starting at ${price}
-        </p>
-      )}
     </div>
   )
 }
@@ -193,7 +186,6 @@ export const LiveSitesDisplay = memo(function LiveSitesDisplay() {
   useEffect(() => {
     const measure = () => {
       if (containerRef.current) {
-        // Measure the actual container width instead of the window
         setFrameWidth(containerRef.current.offsetWidth)
       }
     }
@@ -204,21 +196,18 @@ export const LiveSitesDisplay = memo(function LiveSitesDisplay() {
   }, [])
 
   const device = isMobile ? "mobile" : "desktop"
-  // On mobile: fixed phone-sized frame (matches original 220px target).
-  // On desktop: fill the container width.
-  const displayWidth = isMobile
-    ? Math.min(220, frameWidth - 32)
-    : frameWidth
+  // Fill the chat column width — this is the hero content
+  const displayWidth = frameWidth
 
   return (
-    <div ref={containerRef} className="my-4">
-      {/* Tab selector with sliding indicator */}
-      <div className="flex gap-1.5 mb-5 overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 md:justify-center">
+    <div ref={containerRef} className="my-5">
+      {/* Tab selector */}
+      <div className="flex gap-1 mb-3 overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 md:justify-center">
         {PORTFOLIO_SITES.map((site, i) => (
           <button
             key={site.name}
             onClick={() => setSelectedIndex(i)}
-            className="relative flex-shrink-0 px-4 py-2 rounded-full text-[13px] transition-colors duration-150"
+            className="relative flex-shrink-0 px-3.5 py-1.5 rounded-full text-[12px] transition-colors duration-150"
             style={{ color: selectedIndex === i ? "var(--background)" : "var(--muted-foreground)" }}
           >
             {selectedIndex === i && (
@@ -234,7 +223,7 @@ export const LiveSitesDisplay = memo(function LiveSitesDisplay() {
         ))}
       </div>
 
-      {/* Frame with crossfade */}
+      {/* Frame */}
       {displayWidth > 0 && (
         <AnimatePresence mode="wait">
           <motion.div
@@ -243,32 +232,17 @@ export const LiveSitesDisplay = memo(function LiveSitesDisplay() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.985 }}
             transition={{ type: "spring", stiffness: 500, damping: 40, mass: 0.8 }}
-            className="flex justify-center"
           >
             <VibeFrame
               url={selectedSite.url}
               placeholder={selectedSite.name}
               device={device}
               width={displayWidth}
-              borderRadius={isMobile ? 32 : 12}
+              borderRadius={isMobile ? 20 : 12}
             />
           </motion.div>
         </AnimatePresence>
       )}
-
-      {/* Category label */}
-      <AnimatePresence mode="wait">
-        <motion.p
-          key={selectedSite.category}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.15 }}
-          className="text-[11px] text-muted-foreground text-center mt-3 uppercase tracking-[0.05em]"
-        >
-          {selectedSite.category}
-        </motion.p>
-      </AnimatePresence>
     </div>
   )
 })
@@ -351,53 +325,37 @@ export function AllPricingDisplay({
   onSelectService?: (chatPrompt: string) => void 
 }) {
   const items = Object.values(pricing)
-  // Featured item (popular) goes first, then the rest
   const featured = items.find(item => item.popular)
   const regularItems = items.filter(item => !item.popular)
   
   return (
-    <div className="my-4 space-y-3">
-      {/* Featured/Popular item - uses warm action color for conversion */}
+    <div className="my-5 space-y-2">
       {featured && (
         <button
           onClick={() => onSelectService?.(featured.chatPrompt || featured.name)}
-          className="w-full p-4 rounded-xl bg-action text-action-foreground text-left transition-all active:scale-[0.99] hover:opacity-95"
+          className="w-full p-4 rounded-xl bg-foreground text-background text-left transition-all active:scale-[0.99] hover:opacity-95"
         >
-          <div className="flex items-start justify-between gap-3 mb-2">
-            <div>
-              <span className="text-[10px] uppercase tracking-wider text-action-foreground/60 font-medium">Most Popular</span>
-              <p className="font-semibold text-base mt-0.5">{featured.name}</p>
-            </div>
-            <p className="text-lg font-bold">{featured.price}</p>
+          <div className="flex items-baseline justify-between gap-3 mb-1">
+            <p className="font-semibold text-[15px]">{featured.name}</p>
+            <p className="text-[15px] font-semibold">{featured.price}</p>
           </div>
-          <p className="text-sm text-action-foreground/70 mb-3">{featured.description}</p>
-          <div className="flex flex-wrap gap-1.5">
-            {featured.features?.slice(0, 3).map((f, i) => (
-              <span key={i} className="text-[10px] px-2 py-1 rounded-full bg-action-foreground/15 text-action-foreground/90">
-                {f}
-              </span>
-            ))}
-          </div>
+          <p className="text-[12px] text-background/50">{featured.description}</p>
         </button>
       )}
       
-      {/* 2-column grid for regular items */}
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-1.5">
         {regularItems.map((item, i) => (
           <button
             key={i}
             onClick={() => onSelectService?.(item.chatPrompt || item.name)}
-            className="p-3 rounded-xl border border-border/60 bg-background text-left hover-lift hover:border-foreground/20"
+            className="p-3 rounded-xl border border-border/50 text-left active:scale-[0.98] transition-all duration-150 hover:border-foreground/20"
           >
-            <p className="font-semibold text-sm text-foreground">{item.price}</p>
-            <p className="font-medium text-sm text-foreground mt-1 leading-tight">{item.name}</p>
-            <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-2">{item.description}</p>
+            <p className="font-semibold text-[13px] text-foreground">{item.price}</p>
+            <p className="text-[12px] text-foreground mt-0.5 leading-snug">{item.name}</p>
+            <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-1">{item.description}</p>
           </button>
         ))}
       </div>
-      
-      {/* Subtle hint */}
-      <p className="text-[10px] text-muted-foreground/60 text-center">Tap any service to learn more</p>
     </div>
   )
 }

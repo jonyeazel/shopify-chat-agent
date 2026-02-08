@@ -430,7 +430,7 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
                 damping: 35,
                 delay: isLastMessage ? 0.03 : 0 
               }}
-              className={continuation ? "mt-1" : index === 0 ? "" : "mt-4"}
+              className={continuation ? "mt-1" : index === 0 ? "" : "mt-5"}
             >
               {message.role === "user" ? (
                 <div className="flex flex-col items-end">
@@ -484,11 +484,11 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
               ) : (
                 <div className="w-full">
                   {!continuation && (
-                    <div className="flex items-center gap-2 mb-1.5">
+                    <div className="flex items-center gap-1.5 mb-1">
                       <img
                         src={avatarUrl || "/placeholder.svg"}
                         alt=""
-                        className="w-5 h-5 rounded-full object-cover ring-1 ring-border"
+                        className="w-6 h-6 rounded-full object-cover"
                       />
                       {message.createdAt && (
                         <span className="text-[10px] text-muted-foreground">{formatRelativeTime(message.createdAt)}</span>
@@ -546,10 +546,10 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
                 animate={{ opacity: 1, y: 0 }} 
                 exit={{ opacity: 0, y: -4 }}
                 transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                className="mt-4"
+                className="mt-5"
               >
-                <div className="flex items-center gap-2 mb-1.5">
-                  <img src={avatarUrl || "/placeholder.svg"} alt="" className="w-5 h-5 rounded-full object-cover ring-1 ring-border" />
+                <div className="flex items-center gap-1.5 mb-1">
+                  <img src={avatarUrl || "/placeholder.svg"} alt="" className="w-6 h-6 rounded-full object-cover" />
                 </div>
                 <div className="flex items-center gap-1.5">
                   {[0, 1, 2].map((i) => (
@@ -576,8 +576,7 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
                 className="pt-3"
               >
                 <div className="relative">
-                  <div className="flex gap-1.5 overflow-x-auto scrollbar-hide px-0 pr-4 pb-1">
-                    {/* Persistent SMS CTA — always first, always prominent */}
+                  <div className="flex gap-1.5 overflow-x-auto scrollbar-hide pb-1">
                     {(() => {
                       const cta = getSmsCta(messages)
                       return (
@@ -587,7 +586,7 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ type: "spring", stiffness: 450, damping: 30, delay: 0.1 }}
                             whileTap={{ scale: 0.96 }}
-                            className="flex-shrink-0 py-1 px-3 rounded-full text-[12px] bg-foreground text-background hover:opacity-90 transition-opacity duration-150 cursor-pointer"
+                            className="flex-shrink-0 py-1.5 px-3.5 rounded-full text-[12px] bg-foreground text-background hover:opacity-90 transition-opacity duration-150 cursor-pointer"
                           >
                             {cta.label}
                           </motion.button>
@@ -613,15 +612,14 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
                         }}
                         whileTap={{ scale: 0.96 }}
                         onClick={() => onQuickReply(reply)}
-                        className="flex-shrink-0 py-1 px-3 rounded-full text-[12px] border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 active:bg-muted transition-all duration-150"
+                        className="flex-shrink-0 py-1.5 px-3.5 rounded-full text-[12px] border border-border/80 text-muted-foreground hover:text-foreground hover:border-foreground/30 active:bg-muted/50 transition-all duration-150"
                       >
                         {reply}
                       </motion.button>
                     ))}
                   </div>
-                  {/* Right fade for scroll overflow */}
                   <div
-                    className="absolute right-0 top-0 bottom-1 w-6 pointer-events-none"
+                    className="absolute right-0 top-0 bottom-1 w-10 pointer-events-none"
                     style={{ background: "linear-gradient(to right, transparent, var(--card))" }}
                   />
                 </div>

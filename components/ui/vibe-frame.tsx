@@ -9,11 +9,14 @@ interface VibeFrameProps {
   placeholder?: string
   className?: string
   onUrlChange?: (url: string) => void
+  device?: "mobile" | "desktop"
+  width?: number
+  borderRadius?: number
 }
 
-export function VibeFrame({ url, placeholder, className, onUrlChange }: VibeFrameProps) {
+export function VibeFrame({ url, placeholder, className, onUrlChange, device: deviceProp, width: widthProp, borderRadius: borderRadiusProp }: VibeFrameProps) {
   const [isLoading, setIsLoading] = useState(true)
-  const [device, setDevice] = useState<"mobile" | "desktop">("mobile")
+  const [device, setDevice] = useState<"mobile" | "desktop">(deviceProp || "mobile")
   const [isInteractive, setIsInteractive] = useState(true)
   const [hasError, setHasError] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
@@ -61,21 +64,25 @@ export function VibeFrame({ url, placeholder, className, onUrlChange }: VibeFram
   }, [])
 
   useEffect(() => {
+    if (deviceProp) setDevice(deviceProp)
+  }, [deviceProp])
+
+  useEffect(() => {
     if (isEditing && inputRef.current) {
       inputRef.current.focus()
       inputRef.current.select()
     }
   }, [isEditing])
 
-  // Mobile: 393x673 viewport scaled to 225px width
+  // Mobile: 393x673 viewport scaled to fit
   const mobileIframeWidth = 393
   const mobileIframeHeight = 673
-  const targetMobileWidth = 225
+  const targetMobileWidth = widthProp || 225
 
-  // Desktop: 1920x1080 viewport scaled to 1100px width
+  // Desktop: 1920x1080 viewport scaled to fit
   const desktopIframeWidth = 1920
   const desktopIframeHeight = 1080
-  const targetDesktopWidth = 1100
+  const targetDesktopWidth = widthProp || 1100
 
   const transitionDuration = prefersReducedMotion ? 0 : 700
   const transitionEasing = "cubic-bezier(0.4, 0, 0.2, 1)"
@@ -151,7 +158,7 @@ export function VibeFrame({ url, placeholder, className, onUrlChange }: VibeFram
           position: "relative", overflow: "hidden",
           display: "flex", flexDirection: "column",
           width: frameTargetWidth,
-          borderRadius: visualDevice === "mobile" ? 30 : 20,
+          borderRadius: borderRadiusProp ?? (visualDevice === "mobile" ? 30 : 20),
           border: `4px solid ${colors.white950}`,
           transition: `all ${transitionDuration}ms ${transitionEasing}`,
         }}>
