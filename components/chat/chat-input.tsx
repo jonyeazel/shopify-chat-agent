@@ -6,10 +6,9 @@ import { ArrowUp, Plus, Mic, X, FileText } from "lucide-react"
 
 const PLACEHOLDER_TEXTS = [
   "Type a message...",
-  "Drop your store URL...",
+  "Drop a store URL...",
   "Ask about pricing...",
-  "What's your conversion rate?",
-  "Need a site redesign?",
+  "Ask me anything...",
 ]
 
 interface AttachedFile {
@@ -248,14 +247,14 @@ export function ChatInput({
         )}
 
         <div
-          className={`bg-card rounded-2xl border transition-all duration-150 ${
-            isDragging ? "border-foreground/30 bg-muted" : "border-border focus-within:border-foreground/20"
+          className={`rounded-xl border transition-all duration-150 ${
+            isDragging ? "bg-[#e0e0e0] border-foreground/20" : "bg-[#ebebeb] border-foreground/[0.08] focus-within:border-foreground/[0.15]"
           }`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
         >
-          <div className="relative px-4 pt-3 pb-1.5">
+          <div className="relative px-3.5 pt-2.5 pb-1">
             <textarea
               ref={textareaRef}
               value={input}
@@ -266,21 +265,20 @@ export function ChatInput({
               placeholder={isTranscribing ? "Transcribing..." : attachedFiles.length > 0 ? "Add a note..." : PLACEHOLDER_TEXTS[placeholderIndex]}
               rows={1}
               style={{ fontSize: "16px", outline: "none" }}
-              className="w-full bg-transparent text-base text-foreground placeholder:text-muted-foreground resize-none max-h-[200px] leading-relaxed scrollbar-hide"
+              className="w-full bg-transparent text-base text-foreground placeholder:text-muted-foreground/70 resize-none max-h-[200px] leading-relaxed scrollbar-hide"
               disabled={disabled || isTranscribing}
             />
-
           </div>
 
-          <div className="flex items-center justify-between px-3 pb-2.5">
+          <div className="flex items-center justify-between px-2.5 pb-2">
             <div className="flex items-center gap-0.5">
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-muted/60 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-foreground/[0.06] transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 title="Add file"
               >
-                <Plus className="w-4 h-4 text-muted-foreground" />
+                <Plus className="w-[18px] h-[18px] text-foreground/40" strokeWidth={1.5} />
               </button>
 
               <button
@@ -288,7 +286,7 @@ export function ChatInput({
                 onClick={handleMicClick}
                 disabled={isTranscribing}
                 className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
-                  isRecording ? "bg-[#dc2626] scale-110" : "hover:bg-muted/60"
+                  isRecording ? "bg-[#dc2626] scale-110" : "hover:bg-foreground/[0.06]"
                 }`}
                 title={isRecording ? "Stop recording" : "Voice input"}
               >
@@ -296,7 +294,8 @@ export function ChatInput({
                   <div className="w-2 h-2 bg-white rounded-sm" />
                 ) : (
                   <Mic
-                    className={`w-4 h-4 ${isTranscribing ? "text-muted-foreground/50 animate-pulse" : "text-muted-foreground"}`}
+                    className={`w-[18px] h-[18px] ${isTranscribing ? "text-foreground/20 animate-pulse" : "text-foreground/40"}`}
+                    strokeWidth={1.5}
                   />
                 )}
               </button>
@@ -307,13 +306,13 @@ export function ChatInput({
               disabled={disabled || isTranscribing || (!input.trim() && attachedFiles.length === 0)}
               className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                 disabled || isTranscribing || (!input.trim() && attachedFiles.length === 0)
-                  ? "bg-muted cursor-not-allowed"
-                  : "bg-foreground hover:opacity-90 active:scale-[0.88] active:opacity-80"
+                  ? "bg-foreground/[0.08] cursor-not-allowed"
+                  : "bg-foreground hover:opacity-90 active:scale-[0.92] active:opacity-80"
               }`}
             >
               <ArrowUp className={`w-4 h-4 ${
                 disabled || isTranscribing || (!input.trim() && attachedFiles.length === 0)
-                  ? "text-muted-foreground"
+                  ? "text-foreground/25"
                   : "text-background"
               }`} strokeWidth={2.5} />
             </button>

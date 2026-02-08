@@ -28,3 +28,19 @@ Prefer darker modes to lighter modes unless the user asks. Do not worry about da
 
 Always use programatic generated data when rendering data. If you do you can generate much more data, which lets you easily test other cases, lets u do less work, and makes the app look fuller for the user
 
+
+LOCKED MOBILE SETTINGS — do NOT change unless explicitly told to:
+- Card position: position: fixed, inset: 8px (hardcoded, not a CSS variable)
+- Card border: border-foreground/[0.18] on mobile, md:border-0 on desktop
+- Card radius: rounded-2xl (16px)
+- Background color: #e4e4e4
+- Card background: #ffffff
+- Header: h-14 (56px), avatar w-9 h-9, title text-[14px], subtitle text-[10px]
+- Hamburger menu: w-10 h-10 tap target, 3 lines 18x1.5px, 5.5px spread, CSS morph to X on open
+- Icon rail buttons: w-[50px] h-[50px] circles, icons w-6 h-6 (24px) strokeWidth 1.5, labels text-[9px]
+- Chat input wrapper: pb-3 px-3 (12px uniform)
+- Edge padding CSS variable: 8px mobile, 12px desktop
+- themeColor in layout.tsx: #e4e4e4
+- Scrollbar: hidden via scrollbar-width:none + ::-webkit-scrollbar display:none (no overflow:hidden)
+- Body: no overflow:hidden (allows iOS rubber band bounce)
+

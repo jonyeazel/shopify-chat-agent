@@ -311,21 +311,16 @@ export function SiteAuditInput({
 
   if (submitted) {
     return (
-      <div className="my-4 flex items-center gap-3 p-4 rounded-xl border border-border/40 bg-muted/20">
-        <div className="relative">
-          <Loader2 className="w-5 h-5 animate-spin text-foreground/60" />
-        </div>
-        <div>
-          <p className="text-sm font-medium text-foreground">Analyzing your store...</p>
-          <p className="text-xs text-muted-foreground">Checking CRO signals, load time, and more</p>
-        </div>
+      <div className="my-2 flex items-center gap-2 px-3 py-2 rounded-full border border-border bg-background">
+        <Loader2 className="w-3.5 h-3.5 animate-spin text-muted-foreground" />
+        <span className="text-[13px] text-muted-foreground">Analyzing your store...</span>
       </div>
     )
   }
 
   return (
-    <div className="my-4">
-      <div className="flex gap-2">
+    <div className="my-2">
+      <div className="flex items-center gap-1.5 rounded-full border border-border bg-background pl-3 pr-1 py-1 transition-colors duration-150">
         <input
           ref={inputRef}
           type="url"
@@ -333,18 +328,17 @@ export function SiteAuditInput({
           onChange={(e) => setUrl(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
           placeholder="paste your store URL"
-          className="flex-1 px-4 py-3 rounded-xl border border-border/60 bg-background text-sm focus:outline-none focus:border-foreground/30 focus:ring-2 focus:ring-foreground/5 transition-all"
+          className="flex-1 min-w-0 bg-transparent text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none focus-visible:outline-none"
         />
         <button
           onClick={handleSubmit}
           disabled={!url.trim()}
-          className="px-5 py-3 rounded-xl bg-action text-action-foreground text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
+          className="flex-shrink-0 w-7 h-7 rounded-full bg-foreground text-background flex items-center justify-center transition-opacity duration-150 disabled:opacity-20"
         >
-          Audit
-          <ArrowRight className="w-4 h-4" />
+          <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </div>
-      {error && <p className="text-xs text-red-500 mt-2">{error}</p>}
+      {error && <p className="text-[11px] text-destructive mt-1.5 pl-3">{error}</p>}
     </div>
   )
 }

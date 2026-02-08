@@ -9,6 +9,8 @@ import { submitBid } from "@/app/actions/bids"
 import type { Service } from "@/lib/services"
 import { detectContentToShow } from "@/lib/content-detection"
 import { SmsTrigger } from "@/components/sms-trigger"
+import type { SmsContext } from "@/lib/sms"
+import { determineConversationPhase } from "@/lib/chat-config"
 import {
   ImageGallery,
   PricingCard,
@@ -48,19 +50,49 @@ function formatRelativeTime(date: Date | undefined): string {
   return date.toLocaleDateString(undefined, { month: "short", day: "numeric" })
 }
 
-// Quick replies that should open native SMS instead of sending a chat message.
-const SMS_QUICK_REPLIES: Record<string, { context: "general" | "ready-to-start" | "post-pricing" }> = {
-  "I'll text you now": { context: "ready-to-start" },
-  "I'll text you": { context: "ready-to-start" },
-  "Text me instead": { context: "general" },
-}
+// Persistent SMS CTA — label and context shift based on where the conversation is.
+// Uses presupposition language: the next step is always framed as already decided.
 
-function isSmsReply(label: string): boolean {
-  return label in SMS_QUICK_REPLIES
-}
+function getSmsCta(messages: UIMessage[]): { label: string; context: SmsContext } {
+  const phase = determineConversationPhase(messages)
+  const msgCount = messages.length
+  const lastAssistant = messages.filter(m => m.role === "assistant").pop()
+  const lastText = lastAssistant?.parts
+    ?.filter((p): p is { type: "text"; text: string } => p.type === "text")
+    .map(p => p.text.toLowerCase())
+    .join(" ") || ""
 
-function getSmsReplyContext(label: string) {
-  return SMS_QUICK_REPLIES[label]?.context ?? "general"
+  // Deep closing — AI is asking for phone / ready to transact
+  if (lastText.includes("phone number") || lastText.includes("drop your") || lastText.includes("payment link") || lastText.includes("ready to move forward") || lastText.includes("want me to send")) {
+    return { label: "Let's do it — text me", context: "ready-to-start" }
+  }
+
+  // Post-pricing — they've seen numbers
+  if (lastText.includes("$5k") || lastText.includes("$15k") || lastText.includes("$2.5k") || lastText.includes("$2,500") || lastText.includes("$5,000") || lastText.includes("$7,500") || lastText.includes("pricing")) {
+    return { label: "Talk details over text", context: "post-pricing" }
+  }
+
+  // Post-audit — analysis delivered
+  if (phase === "analyzed") {
+    return { label: "Get the fixes — text me", context: "post-audit" }
+  }
+
+  // Metrics shared — they're invested
+  if (phase === "metrics_shared") {
+    return { label: "Continue over text", context: "general" }
+  }
+
+  // Mid-conversation — enough back and forth to feel natural
+  if (msgCount >= 6) {
+    return { label: "Finish this over text", context: "general" }
+  }
+
+  // Early conversation
+  if (msgCount >= 2) {
+    return { label: "Text me directly", context: "general" }
+  }
+
+  return { label: "Text me", context: "general" }
 }
 
 // Quick reply suggestions based on conversation context
@@ -77,14 +109,9 @@ function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[])
   const hasSharedCategory = ["supplement", "fashion", "apparel", "beauty", "skincare", "food", "beverage", "merch", "clothing"].some(c => allUserText.includes(c))
   const hasSharedProblem = ["conversion", "traffic", "design", "slow", "rebrand", "broken"].some(p => allUserText.includes(p))
   
-  // CLOSING - payment link or phone number
-  if (lower.includes("drop your") || lower.includes("phone number") || lower.includes("text you the")) {
-    return ["(send my number)", "Can we do a call first?", "I'll text you now"]
-  }
-  
-  // Ready to move forward confirmation
+  // CLOSING — AI asking for commitment
   if (lower.includes("ready to move forward") || lower.includes("want me to send") || lower.includes("payment link")) {
-    return ["Yes, send it", "What's included?", "I'll text you", "Need to think about it"]
+    return ["Yes, send it", "What's included?"]
   }
   
   // Conversion rate question
@@ -97,14 +124,14 @@ function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[])
     return ["Under $50", "$50-100", "$100-200", "Over $200"]
   }
   
-  // Revenue questions - check if not already shared
+  // Revenue questions
   if ((lower.includes("revenue") || lower.includes("monthly") || lower.includes("doing") || lower.includes("making")) && !hasSharedRevenue) {
     return ["Under $10k/mo", "$10k-50k/mo", "$50k-100k/mo", "Over $100k/mo"]
   }
   
-  // What do you sell - check if not already shared
+  // What do you sell
   if ((lower.includes("what do you sell") || lower.includes("what are you selling") || lower.includes("what kind of") || lower.includes("what's your") || lower.includes("niche") || lower.includes("industry")) && !hasSharedCategory) {
-    return ["Supplements", "Fashion/Apparel", "Beauty/Skincare", "Home/Decor", "Food/Beverage", "Other"]
+    return ["Supplements", "Fashion/Apparel", "Beauty/Skincare", "Food/Beverage", "Other"]
   }
   
   // Timeline questions  
@@ -114,7 +141,7 @@ function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[])
   
   // Problem/pain point questions
   if ((lower.includes("broken") || lower.includes("problem") || lower.includes("fixed") || lower.includes("struggling") || lower.includes("main thing") || lower.includes("biggest challenge") || lower.includes("issue")) && !hasSharedProblem) {
-    return ["Low conversions", "Ugly design", "Slow site", "Need rebrand", "Bad mobile experience", "No traffic"]
+    return ["Low conversions", "Ugly design", "Slow site", "Need rebrand"]
   }
   
   // Traffic vs conversions vs retention choice
@@ -124,79 +151,59 @@ function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[])
     }
   }
   
-  // Subscription model
-  if (lower.includes("subscription") || lower.includes("one-time") || lower.includes("recurring")) {
-    return ["Subscription", "One-time only", "Both"]
-  }
-  
   // Product count
   if (lower.includes("how many product") || lower.includes("how many sku") || lower.includes("catalog size")) {
     return ["1-10", "10-20", "20-50", "50+"]
   }
   
-  // What have you tried
-  if (lower.includes("tried") || lower.includes("done before") || lower.includes("already")) {
-    return ["Changed themes", "Hired someone", "Used apps", "Nothing yet"]
-  }
-  
-  // Post-audit results - implement offer
+  // Post-audit results
   if (lower.includes("want me to implement") || lower.includes("implement these")) {
-    return ["Yes, implement these", "How much would that cost?", "I'll try these myself first"]
-  }
-  
-  // Store/site URL question / Audit offer
-  if (lower.includes("drop your") && (lower.includes("url") || lower.includes("store")) || 
-      lower.includes("quick wins") || lower.includes("free audit")) {
-    return ["I'll paste my URL", "Don't have a store yet", "Just browsing for now"]
+    return ["Yes, implement these", "How much would that cost?"]
   }
   
   // Store/site URL question
-  if (lower.includes("store") && (lower.includes("url") || lower.includes("link") || lower.includes("see it") || lower.includes("take a look"))) {
-    return ["I'll share it", "Don't have one yet", "It's embarrassing lol"]
+  if ((lower.includes("drop your") && (lower.includes("url") || lower.includes("store"))) || 
+      lower.includes("quick wins") || lower.includes("free audit")) {
+    return ["I'll paste my URL", "Don't have a store yet"]
   }
   
-  // Smart Store AI specific
-  if (lower.includes("smart store") || lower.includes("ai system") || lower.includes("quiz funnel")) {
-    return ["How does it work?", "Show me an example", "What's the ROI?", "$15k is steep"]
+  // Store link request
+  if (lower.includes("store") && (lower.includes("url") || lower.includes("link") || lower.includes("see it") || lower.includes("take a look"))) {
+    return ["I'll share it", "Don't have one yet"]
   }
   
   // Pricing shown
   if (lower.includes("$5k") || lower.includes("$15k") || lower.includes("$2.5k") || lower.includes("$2,500") || lower.includes("$5,000") || lower.includes("$7,500")) {
-    return ["That works for me", "What's included?", "Show me examples first", "That's over my budget"]
+    return ["That works for me", "What's included?", "That's over my budget"]
   }
   
-  // Budget question from AI
+  // Budget question
   if (lower.includes("budget") || lower.includes("what can you spend") || lower.includes("comfortable with") || lower.includes("invest")) {
-    return ["Under $2,500", "$2,500-$5,000", "$5,000-$10,000", "$10,000-$15,000", "$15,000+"]
+    return ["Under $2,500", "$2,500-$5,000", "$5,000-$10,000", "$10,000+"]
   }
   
   // After getting a free tip
-  if (lower.includes("quick win") || lower.includes("sticky") || lower.includes("one-page checkout") || lower.includes("faq section") || lower.includes("implement today")) {
-    return ["Thanks! What else?", "Can you do this for me?", "What would full service cost?", "I'll try that"]
+  if (lower.includes("quick win") || lower.includes("sticky") || lower.includes("one-page checkout") || lower.includes("implement today")) {
+    return ["Can you do this for me?", "What would full service cost?"]
   }
   
-  // After free resources shared
-  if (lower.includes("canva") || lower.includes("youtube") || lower.includes("sidekick")) {
-    return ["Thanks!", "What do you charge?", "I need more help", "Show me your work"]
-  }
-  
-  // Does X work for you / confirming price
+  // Confirming price
   if (lower.includes("does") && (lower.includes("work") || lower.includes("fit"))) {
-    return ["Yes, let's do it", "That's a stretch", "Need to think about it"]
+    return ["Yes, let's do it", "That's a stretch"]
   }
   
   // Default based on conversation state
   if (!hasSharedCategory) {
-    return ["I need a store redesign", "Show me your work", "What's your pricing?", "Free audit please"]
+    return ["I need a store redesign", "Show me your work", "What's your pricing?"]
   }
   if (!hasSharedRevenue) {
-    return ["Under $10k/mo", "$10k-50k/mo", "$50k-100k/mo", "$100k+/mo", "Just starting"]
+    return ["Under $10k/mo", "$10k-50k/mo", "$50k-100k/mo", "Just starting"]
   }
   if (!hasSharedProblem) {
-    return ["Low conversions", "Need a rebrand", "Site looks dated", "Bad mobile experience", "Not sure what's wrong"]
+    return ["Low conversions", "Need a rebrand", "Site looks dated", "Bad mobile experience"]
   }
   
-  return ["Ready to start", "Show me examples", "What do you recommend?", "Text me instead"]
+  return ["Show me examples", "What do you recommend?"]
 }
 
 // Check if two messages are from the same sender and close in time (within 2min)
@@ -568,45 +575,47 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
               >
                 <div className="relative">
                   <div className="flex gap-1.5 overflow-x-auto scrollbar-hide px-0 pr-4 pb-1">
+                    {/* Persistent SMS CTA — always first, always prominent */}
+                    {(() => {
+                      const cta = getSmsCta(messages)
+                      return (
+                        <SmsTrigger key="sms-cta" context={cta.context}>
+                          <motion.button
+                            initial={{ opacity: 0, y: 6 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ type: "spring", stiffness: 450, damping: 30, delay: 0.1 }}
+                            whileTap={{ scale: 0.96 }}
+                            className="flex-shrink-0 py-1 px-3 rounded-full text-[12px] bg-foreground text-background hover:opacity-90 transition-opacity duration-150 cursor-pointer"
+                          >
+                            {cta.label}
+                          </motion.button>
+                        </SmsTrigger>
+                      )
+                    })()}
                     {getQuickReplies(
                       messages[messages.length - 1]?.parts
                         ?.filter((p): p is { type: "text"; text: string } => p.type === "text")
                         .map(p => p.text)
                         .join(" ") || "",
                       messages
-                    ).slice(0, 4).map((reply, i) => {
-                      const sms = isSmsReply(reply)
-                      const chip = (
-                        <motion.button
-                          key={reply}
-                          initial={{ opacity: 0, y: 6 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{
-                            type: "spring",
-                            stiffness: 450,
-                            damping: 30,
-                            delay: 0.1 + i * 0.025,
-                          }}
-                          whileTap={{ scale: 0.96 }}
-                          onClick={sms ? undefined : () => onQuickReply(reply)}
-                          className={`flex-shrink-0 py-1 px-3 rounded-full text-[12px] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
-                            sms
-                              ? "bg-foreground text-background hover:opacity-90 active:scale-95 cursor-pointer"
-                              : "border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 active:bg-muted"
-                          }`}
-                        >
-                          {reply}
-                        </motion.button>
-                      )
-                      if (sms) {
-                        return (
-                          <SmsTrigger key={reply} context={getSmsReplyContext(reply)}>
-                            {chip}
-                          </SmsTrigger>
-                        )
-                      }
-                      return chip
-                    })}
+                    ).slice(0, 3).map((reply, i) => (
+                      <motion.button
+                        key={reply}
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 450,
+                          damping: 30,
+                          delay: 0.12 + i * 0.025,
+                        }}
+                        whileTap={{ scale: 0.96 }}
+                        onClick={() => onQuickReply(reply)}
+                        className="flex-shrink-0 py-1 px-3 rounded-full text-[12px] border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 active:bg-muted transition-all duration-150"
+                      >
+                        {reply}
+                      </motion.button>
+                    ))}
                   </div>
                   {/* Right fade for scroll overflow */}
                   <div

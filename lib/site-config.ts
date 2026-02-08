@@ -1,7 +1,7 @@
 export const siteConfig = {
   brand: {
     name: "The Shopify Guy",
-    tagline: "I build stores that convert.",
+    tagline: "Everything you need.",
     subtitle: "Ecom Since 2012",
     avatarUrl: "/images/gemini-generated-image-d9bdhjd9bdhjd9bd.jpeg",
     domain: "theshopifyguy.dev",

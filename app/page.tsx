@@ -5,7 +5,64 @@ import { useState, useMemo, useRef, useCallback, useEffect, type MouseEvent as R
 import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
 import { motion, AnimatePresence } from "framer-motion"
-import { FileText, Volume2, VolumeX, Search, Layers, DollarSign, MessageCircle, Image } from "lucide-react"
+import { FileText, Volume2, VolumeX } from "lucide-react"
+
+/* Bespoke icon rail icons — 24×24 viewBox, stroke-based */
+function IconAudit({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="10.5" cy="10.5" r="6.5" />
+      <path d="M15.5 15.5 20 20" />
+      <path d="M8 13v-2" />
+      <path d="M10.5 13v-3.5" />
+      <path d="M13 13v-1.5" />
+    </svg>
+  )
+}
+
+function IconWork({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect x="3" y="4" width="18" height="16" rx="2.5" />
+      <path d="M3 9h18" />
+      <circle cx="6" cy="6.5" r=".75" fill="currentColor" stroke="none" />
+      <circle cx="8.5" cy="6.5" r=".75" fill="currentColor" stroke="none" />
+      <circle cx="11" cy="6.5" r=".75" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+function IconPrice({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M6 3h12v16l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5-2 1.5V3z" />
+      <path d="M9.5 8h5" />
+      <path d="M9.5 11.5h3" />
+    </svg>
+  )
+}
+
+function IconText({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H8l-4 4V6z" />
+      <circle cx="9" cy="10" r=".75" fill="currentColor" stroke="none" />
+      <circle cx="12" cy="10" r=".75" fill="currentColor" stroke="none" />
+      <circle cx="15" cy="10" r=".75" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+function IconGallery({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M4 8V5a1 1 0 0 1 1-1h3" />
+      <path d="M16 4h3a1 1 0 0 1 1 1v3" />
+      <path d="M20 16v3a1 1 0 0 1-1 1h-3" />
+      <path d="M8 20H5a1 1 0 0 1-1-1v-3" />
+    </svg>
+  )
+}
 
 import { IdentityPanel } from "@/components/chat/identity-panel"
 import { ChatInput } from "@/components/chat/chat-input"
@@ -186,11 +243,28 @@ export default function Home() {
 
   const smsHref = getSmsHref()
 
+  /* ──────────────────────────────────────────────────────────
+   * LOCKED MOBILE SETTINGS — do NOT change without explicit request
+   *
+   * Card position:    position: fixed, inset: 8px (all sides)
+   * Card border:      border-foreground/[0.18], md:border-0
+   * Card radius:      rounded-2xl (16px)
+   * Header height:    h-14 (56px)
+   * Header avatar:    w-9 h-9 (36px)
+   * Header title:     text-[14px]
+   * Header subtitle:  text-[10px]
+   * Hamburger:        w-10 h-10 tap target, 3 lines 18×1.5px, 5.5px spread, morphs to X
+   * Icon rail:        w-[50px] h-[50px] circles, icons w-[15px] h-[15px], labels text-[9px]
+   * Chat input:       pb-3 px-3 (12px all sides)
+   * Background:       #e4e4e4
+   * Card bg:          #ffffff
+   * ────────────────────────────────────────────────────────── */
+
   return (
     <main
       ref={mainRef}
-      className={`flex mx-[6px] md:m-3 bg-card rounded-2xl overflow-hidden md:bg-transparent md:rounded-none md:overflow-visible md:border md:border-foreground/[0.12] ${isResizing ? "select-none cursor-col-resize" : ""}`}
-      style={{ height: "calc(100dvh - var(--edge-padding) * 2)" }}
+      className={`flex bg-card rounded-[24px] overflow-hidden border border-foreground/20 md:bg-transparent md:rounded-none md:overflow-visible md:border-0 rubber-card md:[box-shadow:none] ${isResizing ? "select-none cursor-col-resize" : ""}`}
+      style={{ position: "fixed", inset: "8px" }}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
@@ -293,8 +367,8 @@ export default function Home() {
 
         {/* Mobile header */}
         <header className="flex-shrink-0 relative z-40 md:hidden">
-          <div className="px-4 h-14 flex items-center justify-between pt-[env(safe-area-inset-top)]">
-            <div className="flex items-center gap-3">
+          <div className="px-3 h-14 flex items-center justify-between pt-[env(safe-area-inset-top)]">
+            <div className="flex items-center gap-1.5">
               <HeaderAvatar avatarUrl={siteConfig.brand.avatarUrl} />
               <div className="flex flex-col">
                 <span className="font-medium text-foreground text-[14px] leading-none tracking-[-0.01em]">{siteConfig.brand.name}</span>
@@ -308,11 +382,14 @@ export default function Home() {
               onMouseLeave={handleMenuPressEnd}
               onTouchStart={handleMenuPressStart}
               onTouchEnd={handleMenuPressEnd}
-              className="w-10 h-10 flex flex-col items-end justify-center gap-[5px] rounded-full active:bg-muted/40 active:scale-[0.92] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="w-10 h-10 flex flex-col items-center justify-center rounded-full active:bg-muted/40 active:scale-[0.92] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               aria-label="Menu (hold for admin)"
             >
-              <span className="w-[11px] h-[1.5px] bg-foreground rounded-full" />
-              <span className="w-[18px] h-[1.5px] bg-foreground rounded-full" />
+              <div className="relative w-[18px] h-[18px] flex items-center justify-center">
+                <span className={`absolute w-[18px] h-[1.5px] bg-foreground rounded-full transition-all duration-150 ease-out ${showMenu ? "rotate-45 translate-y-0" : "-translate-y-[5.5px]"}`} />
+                <span className={`absolute w-[18px] h-[1.5px] bg-foreground rounded-full transition-all duration-150 ease-out ${showMenu ? "opacity-0 scale-x-0" : "opacity-100 scale-x-100"}`} />
+                <span className={`absolute w-[18px] h-[1.5px] bg-foreground rounded-full transition-all duration-150 ease-out ${showMenu ? "-rotate-45 translate-y-0" : "translate-y-[5.5px]"}`} />
+              </div>
             </button>
           </div>
         </header>
@@ -399,7 +476,7 @@ export default function Home() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.17 }}
                       >
-                        Shopify design & development
+                        Design. Dev. Strategy.
                       </motion.p>
 
                       {chatError && (
@@ -487,7 +564,7 @@ export default function Home() {
           {/* Mobile: Fade above input */}
           <div className="flex-shrink-0 md:hidden h-6 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent, var(--card))" }} />
           {/* Mobile: Chat input */}
-          <div className="flex-shrink-0 md:hidden pb-[max(env(safe-area-inset-bottom),8px)] px-3">
+          <div className="flex-shrink-0 md:hidden pb-3 px-3">
             <ChatInput
               input={input ?? ""}
               setInput={setInput}
@@ -499,23 +576,23 @@ export default function Home() {
         </div>
 
         {/* Mobile: Vertical icon rail */}
-        <div className={`md:hidden flex flex-col items-center justify-end gap-1.5 flex-shrink-0 pr-2.5 pb-[max(env(safe-area-inset-bottom),12px)] transition-opacity duration-150 ${showMenu ? "opacity-0 pointer-events-none" : ""}`}>
+        <div className={`md:hidden flex flex-col items-center justify-end gap-1.5 flex-shrink-0 pr-[14px] pl-[5px] pb-[max(env(safe-area-inset-bottom),12px)] transition-opacity duration-150 ${showMenu ? "opacity-0 pointer-events-none" : ""}`}>
           {[
-            { icon: Search, label: "Audit", action: () => handleChatSubmit("Can you audit my store?") },
-            { icon: Layers, label: "Work", action: () => openDrawer("portfolio") },
-            { icon: DollarSign, label: "Price", action: () => openDrawer("pricing") },
-            { icon: MessageCircle, label: "Text", action: () => { window.location.href = smsHref } },
-            { icon: Image, label: "Gallery", action: () => setShowMobileGallery(true) },
+            { icon: IconAudit, label: "Audit", action: () => handleChatSubmit("Can you audit my store?") },
+            { icon: IconWork, label: "Work", action: () => openDrawer("portfolio") },
+            { icon: IconPrice, label: "Price", action: () => openDrawer("pricing") },
+            { icon: IconText, label: "Text", action: () => { window.location.href = smsHref } },
+            { icon: IconGallery, label: "Gallery", action: () => setShowMobileGallery(true) },
           ].map(({ icon: Icon, label, action }) => (
             <button
               key={label}
               onClick={action}
               className="flex flex-col items-center gap-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
             >
-              <div className="w-10 h-10 rounded-full flex items-center justify-center active:scale-[0.88] active:opacity-80 transition-all duration-150 bg-foreground">
-                <Icon className="w-[15px] h-[15px] text-background" strokeWidth={1.5} />
+              <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-foreground rubber-button ring-1 ring-white/[0.06]">
+                <Icon className="w-6 h-6 text-background" strokeWidth={1.5} />
               </div>
-              <span className="text-[9px] text-muted-foreground leading-tight">{label}</span>
+              <span className="text-[10px] text-muted-foreground leading-tight">{label}</span>
             </button>
           ))}
         </div>

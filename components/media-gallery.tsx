@@ -112,8 +112,8 @@ export function MediaGallery({ isOpen, onClose, onAskAbout }: MediaGalleryProps)
                   />
                   <div className="flex items-center justify-between px-4 py-3 border-t border-border">
                     <div>
-                      <p className="text-[13px] text-foreground">{selected.label}</p>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">
+                      <p className="text-[14px] text-foreground">{selected.label}</p>
+                      <p className="text-[12px] text-muted-foreground mt-0.5">
                         {GALLERY_CATEGORIES.find((c) => c.value === selected.category)?.label}
                       </p>
                     </div>
@@ -186,8 +186,8 @@ export function MediaGallery({ isOpen, onClose, onAskAbout }: MediaGalleryProps)
                 </div>
 
                 {/* Grid */}
-                <div className="flex-1 overflow-y-auto scrollbar-hide p-2">
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                <div className="flex-1 overflow-y-auto scrollbar-hide p-3">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {filtered.map((item, i) => (
                       <GalleryThumbnail
                         key={i}
@@ -222,7 +222,7 @@ function GalleryThumbnail({
   return (
     <button
       onClick={() => onClick(index)}
-      className="w-full aspect-square overflow-hidden rounded-lg group relative bg-muted/40"
+      className="w-full aspect-square overflow-hidden rounded-xl group relative bg-muted/40"
     >
       <img
         src={item.url}
@@ -230,8 +230,8 @@ function GalleryThumbnail({
         className="w-full h-full object-cover transition-opacity duration-150 group-hover:opacity-90"
         loading="lazy"
       />
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#191919]/60 to-transparent px-2.5 pb-2 pt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-        <p className="text-[11px] text-white">{item.label}</p>
+      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#191919]/60 to-transparent px-3 pb-2.5 pt-8 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+        <p className="text-[13px] text-white">{item.label}</p>
       </div>
     </button>
   )

@@ -209,8 +209,8 @@ export function InstantContentDrawer({ type, onClose, isFullscreen, onAskAbout }
       title: "Product Shots",
       content: (
         <>
-          <p className="text-xs text-muted-foreground mb-3">Full 8-shot set included with every build</p>
-          <div className="grid grid-cols-2 gap-2">
+          <p className="text-[13px] text-muted-foreground mb-4">Full 8-shot set included with every build</p>
+          <div className="grid grid-cols-2 gap-3">
             {PORTFOLIO_DATA.productShots.map((img, i) => {
               const imgUrl = typeof img === "string" ? img : img.url
               const imgLabel = typeof img === "string" ? "" : img.label
@@ -228,8 +228,8 @@ export function InstantContentDrawer({ type, onClose, isFullscreen, onAskAbout }
                     className="w-full h-full object-cover"
                   />
                   {imgLabel && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2 pt-6">
-                      <p className="text-[10px] font-medium text-white">{imgLabel}</p>
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-3 pb-2.5 pt-8">
+                      <p className="text-[13px] font-medium text-white">{imgLabel}</p>
                     </div>
                   )}
                 </motion.button>
