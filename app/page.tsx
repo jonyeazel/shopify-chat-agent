@@ -72,7 +72,6 @@ import { SiteAdminPanel } from "@/components/admin/site-admin-panel"
 import { AdminLoginModal } from "@/components/admin/admin-login-modal"
 import { InstantSiteCreator } from "@/components/admin/instant-site-creator"
 import { siteConfig } from "@/lib/site-config"
-import { getSmsHref } from "@/lib/sms"
 import { SmsTrigger } from "@/components/sms-trigger"
 import { type AvailabilityStatus } from "@/lib/chat-config"
 
@@ -211,7 +210,7 @@ export default function Home() {
 
   const hasMessages = messages.length > 0
 
-  const smsHref = getSmsHref()
+
 
   /* ──────────────────────────────────────────────────────────
    * LOCKED MOBILE SETTINGS — do NOT change without explicit request
@@ -528,24 +527,30 @@ export default function Home() {
 
         {/* Mobile: Vertical icon rail */}
         <div className="md:hidden flex flex-col items-center justify-end gap-1.5 flex-shrink-0 pr-[14px] pl-[5px] pb-[max(env(safe-area-inset-bottom),12px)]">
-          {[
+          {([
             { icon: IconAudit, label: "Fix", action: () => handleChatSubmit("What would you fix on my store?") },
             { icon: IconWork, label: "Proof", action: () => handleChatSubmit("Show me what you've built") },
             { icon: IconPrice, label: "Cost", action: () => handleChatSubmit("What's this gonna run me?") },
-            { icon: IconText, label: "Text", action: () => { window.location.href = smsHref } },
+            { icon: IconText, label: "Text", sms: true as const },
             { icon: IconGallery, label: "Shots", action: () => handleChatSubmit("I need better product shots") },
-          ].map(({ icon: Icon, label, action }) => (
-            <button
-              key={label}
-              onClick={action}
-              className="flex flex-col items-center gap-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
-            >
-              <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-foreground rubber-button ring-1 ring-white/[0.06]">
-                <Icon className="w-6 h-6 text-background" strokeWidth={1.5} />
-              </div>
-              <span className="text-[10px] text-muted-foreground leading-tight">{label}</span>
-            </button>
-          ))}
+          ] as const).map(({ icon: Icon, label, ...rest }) => {
+            const btn = (
+              <button
+                key={label}
+                onClick={"action" in rest ? rest.action : undefined}
+                className="flex flex-col items-center gap-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+              >
+                <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-foreground rubber-button ring-1 ring-white/[0.06]">
+                  <Icon className="w-6 h-6 text-background" strokeWidth={1.5} />
+                </div>
+                <span className="text-[10px] text-muted-foreground leading-tight">{label}</span>
+              </button>
+            )
+            if ("sms" in rest) {
+              return <SmsTrigger key={label} context="general">{btn}</SmsTrigger>
+            }
+            return btn
+          })}
         </div>
 
         </div>

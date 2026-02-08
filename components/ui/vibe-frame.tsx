@@ -93,13 +93,13 @@ export function VibeFrame({ url, placeholder, className, onUrlChange, device: de
 
   const iframeWidth = displayedDevice === "mobile" ? mobileIframeWidth : desktopIframeWidth
   const iframeHeight = displayedDevice === "mobile" ? mobileIframeHeight : desktopIframeHeight
-  const targetWidth = displayedDevice === "mobile" ? targetMobileWidth : effectiveDesktopWidth
-  const scale = targetWidth / iframeWidth
 
+  const borderWidth = 4
   const frameTargetWidth = device === "mobile" ? targetMobileWidth : effectiveDesktopWidth
+  const frameInnerWidth = frameTargetWidth - borderWidth * 2
   const frameIframeHeight = device === "mobile" ? mobileIframeHeight : desktopIframeHeight
   const frameIframeWidth = device === "mobile" ? mobileIframeWidth : desktopIframeWidth
-  const frameScale = frameTargetWidth / frameIframeWidth
+  const frameScale = frameInnerWidth / frameIframeWidth
   const frameHeight = Math.round(frameIframeHeight * frameScale)
 
   const handleDeviceSwitch = (newDevice: "mobile" | "desktop") => {
@@ -213,7 +213,7 @@ export function VibeFrame({ url, placeholder, className, onUrlChange, device: de
             {/* Screen */}
             <div style={{
               position: "relative", overflow: "hidden", background: colors.white900,
-              width: frameTargetWidth, height: frameHeight,
+              height: frameHeight,
               transition: `all ${transitionDuration}ms ${transitionEasing}`,
             }}>
               {(isLoading || !hasUrl || hasError) && (
@@ -254,7 +254,7 @@ export function VibeFrame({ url, placeholder, className, onUrlChange, device: de
               {hasUrl && isVisible && (
                 <div style={{
                   position: "absolute", top: 0, left: 0, transformOrigin: "top left",
-                  width: iframeWidth, height: iframeHeight, transform: `scale(${scale})`,
+                  width: iframeWidth, height: iframeHeight, transform: `scale(${frameScale})`,
                   pointerEvents: isInteractive ? "auto" : "none",
                   transition: `transform ${transitionDuration}ms ${transitionEasing}`,
                 }}>
