@@ -4,6 +4,7 @@ import { useState, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, ChevronLeft, ChevronRight, MessageCircle } from "lucide-react"
 import { GALLERY_ITEMS, GALLERY_CATEGORIES, type GalleryItem } from "@/lib/portfolio-data"
+import { useDrawerGesture, springClose } from "@/hooks/use-drawer-gesture"
 
 interface MediaGalleryProps {
   isOpen: boolean
@@ -36,10 +37,12 @@ export function MediaGallery({ isOpen, onClose, onAskAbout }: MediaGalleryProps)
     setSelectedIndex(null)
   }, [])
 
+  const { controls, dragControls, handleDragEnd, close, isClosing, startDrag } = useDrawerGesture(onClose, isOpen)
+
   const handleClose = useCallback(() => {
     setSelectedIndex(null)
-    onClose()
-  }, [onClose])
+    close()
+  }, [close])
 
   const handleAskAbout = useCallback((item: GalleryItem) => {
     const categoryLabel = GALLERY_CATEGORIES.find((c) => c.value === item.category)?.label || "this"
@@ -73,16 +76,16 @@ export function MediaGallery({ isOpen, onClose, onAskAbout }: MediaGalleryProps)
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.15 }}
-          className="fixed inset-0 z-[100] flex items-end md:items-center justify-center"
+          exit={{ opacity: 0, transition: { duration: 0 } }}
+          transition={{ duration: 0.25 }}
+          className="absolute inset-0 z-[100]"
           onKeyDown={handleKeyDown}
           tabIndex={0}
           autoFocus
         >
           {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-foreground/15 backdrop-blur-sm"
+            className={`absolute inset-0 bg-black/70 transition-opacity duration-300 ease-out ${isClosing ? "opacity-0" : ""}`}
             onClick={selectedIndex !== null ? handleBack : handleClose}
           />
 
@@ -95,7 +98,7 @@ export function MediaGallery({ isOpen, onClose, onAskAbout }: MediaGalleryProps)
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.15 }}
-                className="relative z-10 flex flex-col md:flex-row items-center gap-4 mx-4 max-w-[90vw] max-h-[90vh]"
+                className="absolute inset-0 z-10 flex flex-col md:flex-row items-center justify-center gap-4 p-4"
               >
                 <button
                   onClick={handlePrev}
@@ -104,11 +107,11 @@ export function MediaGallery({ isOpen, onClose, onAskAbout }: MediaGalleryProps)
                   <ChevronLeft className="w-5 h-5 text-foreground" />
                 </button>
 
-                <div className="relative bg-card rounded-xl overflow-hidden shadow-lg border border-border">
+                <div className="relative bg-card rounded-xl overflow-hidden shadow-lg border border-border max-w-[90%] md:max-w-[65vw]">
                   <img
                     src={selected.url}
                     alt={selected.label}
-                    className="max-h-[55vh] md:max-h-[70vh] max-w-[85vw] md:max-w-[65vw] object-contain"
+                    className="max-h-[55vh] md:max-h-[65vh] w-auto object-contain"
                   />
                   <div className="flex items-center justify-between px-4 py-3 border-t border-border">
                     <div>
@@ -159,47 +162,59 @@ export function MediaGallery({ isOpen, onClose, onAskAbout }: MediaGalleryProps)
                 </div>
               </motion.div>
             ) : (
-              /* Grid view — bottom sheet on mobile, centered card on desktop */
+              /* Grid view — bottom sheet */
               <motion.div
                 key="grid"
                 initial={{ y: "100%" }}
-                animate={{ y: 0 }}
+                animate={controls}
                 exit={{ y: "100%" }}
-                transition={{ type: "tween", duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
-                className="relative z-10 w-full md:w-auto md:max-w-4xl md:mx-4 bg-card rounded-t-2xl md:rounded-xl border-t md:border border-border md:shadow-lg overflow-hidden flex flex-col"
-                style={{ maxHeight: "85vh" }}
+                transition={springClose}
+                drag="y"
+                dragControls={dragControls}
+                dragListener={false}
+                dragConstraints={{ top: 0, bottom: 0 }}
+                dragElastic={{ top: 0.04, bottom: 0.6 }}
+                onDragEnd={handleDragEnd}
+                className="absolute bottom-[2px] left-[2px] right-[2px] z-10 bg-card rounded-[20px] overflow-hidden flex flex-col"
+                style={{ height: "85vh", maxHeight: "100%" }}
               >
-                {/* Drag handle — mobile only */}
-                <div className="md:hidden flex justify-center pt-3 pb-2 flex-shrink-0">
+                {/* Drag handle */}
+                <div
+                  onPointerDown={startDrag}
+                  className="flex justify-center pt-3 pb-2 flex-shrink-0 cursor-grab active:cursor-grabbing"
+                  style={{ touchAction: "none" }}
+                >
                   <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
                 </div>
 
-                {/* Header */}
-                <div className="flex items-center justify-between px-4 pb-3 border-b border-border flex-shrink-0">
-                  <span className="text-[13px] font-medium text-foreground">Gallery</span>
-                  <button
-                    onClick={handleClose}
-                    className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors duration-150"
-                  >
-                    <X className="w-4 h-4 text-muted-foreground" />
-                  </button>
-                </div>
-
-                {/* Grid */}
-                <div className="flex-1 overflow-y-auto scrollbar-hide p-3">
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {filtered.map((item, i) => (
-                      <GalleryThumbnail
-                        key={i}
-                        item={item}
-                        index={i}
-                        onClick={handleSelect}
-                      />
-                    ))}
+                <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide overscroll-contain">
+                  {/* Header */}
+                  <div className="flex items-center justify-between px-4 pb-3 border-b border-border">
+                    <span className="text-[13px] font-medium text-foreground">Gallery</span>
+                    <button
+                      onClick={handleClose}
+                      className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors duration-150"
+                    >
+                      <X className="w-4 h-4 text-muted-foreground" />
+                    </button>
                   </div>
-                  {filtered.length === 0 && (
-                    <p className="text-center text-[13px] text-muted-foreground py-12">No images in this category.</p>
-                  )}
+
+                  {/* Grid */}
+                  <div className="p-3">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {filtered.map((item, i) => (
+                        <GalleryThumbnail
+                          key={i}
+                          item={item}
+                          index={i}
+                          onClick={handleSelect}
+                        />
+                      ))}
+                    </div>
+                    {filtered.length === 0 && (
+                      <p className="text-center text-[13px] text-muted-foreground py-12">No images in this category.</p>
+                    )}
+                  </div>
                 </div>
               </motion.div>
             )}

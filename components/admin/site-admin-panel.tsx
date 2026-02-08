@@ -20,7 +20,6 @@ import {
   MessageSquare,
   DollarSign,
   MousePointer,
-  Sparkles,
   Store,
   ImageIcon,
   RefreshCw,
@@ -28,6 +27,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { createClient } from "@/lib/supabase/client"
+import { useDrawerGesture, springClose } from "@/hooks/use-drawer-gesture"
 
 interface SiteAdminPanelProps {
   isOpen: boolean
@@ -69,7 +69,7 @@ interface Analytics {
   revenue: number
 }
 
-export function SiteAdminPanel({ isOpen, onClose, siteId, isFullscreen = false }: SiteAdminPanelProps) {
+export function SiteAdminPanel({ isOpen, onClose, siteId }: SiteAdminPanelProps) {
   const [activeTab, setActiveTab] = useState<TabType>("overview")
   const [site, setSite] = useState<SiteConfig | null>(null)
   const [analytics, setAnalytics] = useState<Analytics | null>(null)
@@ -77,7 +77,8 @@ export function SiteAdminPanel({ isOpen, onClose, siteId, isFullscreen = false }
   const [saving, setSaving] = useState(false)
   const [copied, setCopied] = useState(false)
 
-  // Form state
+  const { controls, dragControls, handleDragEnd, close, isClosing, startDrag } = useDrawerGesture(onClose, isOpen)
+
   const [formData, setFormData] = useState({
     site_name: "",
     tagline: "",
@@ -117,7 +118,6 @@ export function SiteAdminPanel({ isOpen, onClose, siteId, isFullscreen = false }
   }, [siteId])
 
   const fetchAnalytics = useCallback(async () => {
-    // Mock analytics for now - will connect to real data
     setAnalytics({
       pageViews: 12847,
       conversations: 342,
@@ -161,428 +161,443 @@ export function SiteAdminPanel({ isOpen, onClose, siteId, isFullscreen = false }
     { id: "settings", label: "Settings", icon: Settings },
   ]
 
-  const transition = { type: "tween", duration: 0.25, ease: [0.32, 0.72, 0, 1] }
-
   return (
     <AnimatePresence mode="wait">
       {isOpen && (
-        <>
-          <motion.div
-            key="backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={transition}
-            onClick={onClose}
-            className={`absolute inset-0 bg-foreground/20 backdrop-blur-sm z-50 ${isFullscreen ? "" : "sm:rounded-xl"}`}
+        <motion.div
+          key="drawer-container"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0, transition: { duration: 0 } }}
+          transition={{ duration: 0.25 }}
+          className="absolute inset-0 z-50"
+        >
+          <div
+            className={`absolute inset-0 bg-black/70 transition-opacity duration-300 ease-out ${isClosing ? "opacity-0" : ""}`}
+            onClick={close}
           />
+
           <motion.div
-            key="panel"
             initial={{ y: "100%" }}
-            animate={{ y: 0 }}
+            animate={controls}
             exit={{ y: "100%" }}
-            transition={transition}
-            className={`absolute inset-x-0 bottom-0 top-12 bg-card z-50 border-t border-border flex flex-col overflow-hidden ${isFullscreen ? "" : "rounded-t-xl"}`}
+            transition={springClose}
+            drag="y"
+            dragControls={dragControls}
+            dragListener={false}
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{ top: 0.04, bottom: 0.6 }}
+            onDragEnd={handleDragEnd}
+            className="absolute bottom-[2px] left-[2px] right-[2px] bg-card rounded-[20px] overflow-hidden flex flex-col"
+            style={{ height: "85vh", maxHeight: "100%" }}
           >
-            {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-primary" />
-                </div>
-                <div>
-                  <h2 className="font-semibold text-sm text-foreground">Site Admin</h2>
-                  <p className="text-[10px] text-muted-foreground">Card #{siteId}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  size="sm"
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="h-8 text-xs bg-primary hover:bg-primary/90"
-                >
-                  {saving ? <RefreshCw className="w-3 h-3 animate-spin mr-1" /> : <Save className="w-3 h-3 mr-1" />}
-                  Save
-                </Button>
-                <button
-                  onClick={onClose}
-                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
+            {/* Drag handle - persistent grab area outside scroll container */}
+            <div
+              onPointerDown={startDrag}
+              className="flex justify-center pt-3 pb-2 flex-shrink-0 cursor-grab active:cursor-grabbing"
+              style={{ touchAction: "none" }}
+            >
+              <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
             </div>
 
-            {/* Tabs */}
-            <div className="flex gap-1 px-3 py-2 border-b border-border overflow-x-auto scrollbar-hide">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
-                    activeTab === tab.id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"
-                  }`}
-                >
-                  <tab.icon className="w-3 h-3" />
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto p-4">
-              {loading ? (
-                <div className="flex items-center justify-center h-full">
-                  <RefreshCw className="w-5 h-5 animate-spin text-muted-foreground" />
+            <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide overscroll-contain">
+              {/* Header */}
+              <div className="flex items-center justify-between px-4 pb-3 border-b border-border">
+                <div className="flex items-center gap-3">
+                  <div>
+                    <h2 className="font-semibold text-sm text-foreground">Site Admin</h2>
+                    <p className="text-[10px] text-muted-foreground">Card #{siteId}</p>
+                  </div>
                 </div>
-              ) : (
-                <>
-                  {/* Overview Tab */}
-                  {activeTab === "overview" && analytics && (
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-muted/50 rounded-xl p-4">
-                          <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                            <Users className="w-4 h-4" />
-                            <span className="text-xs">Visitors</span>
-                          </div>
-                          <p className="text-2xl font-semibold">{analytics.pageViews.toLocaleString()}</p>
-                        </div>
-                        <div className="bg-muted/50 rounded-xl p-4">
-                          <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                            <MessageSquare className="w-4 h-4" />
-                            <span className="text-xs">Conversations</span>
-                          </div>
-                          <p className="text-2xl font-semibold">{analytics.conversations}</p>
-                        </div>
-                        <div className="bg-muted/50 rounded-xl p-4">
-                          <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                            <Mail className="w-4 h-4" />
-                            <span className="text-xs">Leads</span>
-                          </div>
-                          <p className="text-2xl font-semibold">{analytics.leads}</p>
-                        </div>
-                        <div className="bg-muted/50 rounded-xl p-4">
-                          <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                            <MousePointer className="w-4 h-4" />
-                            <span className="text-xs">Conv. Rate</span>
-                          </div>
-                          <p className="text-2xl font-semibold">{analytics.conversionRate}%</p>
-                        </div>
-                      </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    onClick={handleSave}
+                    disabled={saving}
+                    className="h-8 text-xs bg-primary hover:bg-primary/90"
+                  >
+                    {saving ? <RefreshCw className="w-3 h-3 animate-spin mr-1" /> : <Save className="w-3 h-3 mr-1" />}
+                    Save
+                  </Button>
+                  <button
+                    onClick={close}
+                    className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
 
-                      <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl p-4 border border-primary/20">
-                        <div className="flex items-center gap-2 text-primary mb-1">
-                          <DollarSign className="w-4 h-4" />
-                          <span className="text-xs font-medium">Revenue</span>
-                        </div>
-                        <p className="text-3xl font-bold text-foreground">${analytics.revenue.toLocaleString()}</p>
-                        <p className="text-xs text-muted-foreground mt-1">Last 30 days</p>
-                      </div>
+              {/* Tabs */}
+              <div className="flex gap-1 px-3 py-2 border-b border-border overflow-x-auto scrollbar-hide">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+                      activeTab === tab.id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"
+                    }`}
+                  >
+                    <tab.icon className="w-3 h-3" />
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
 
-                      <div className="bg-muted/30 rounded-xl p-4">
-                        <h3 className="text-sm font-medium mb-3">Quick Actions</h3>
-                        <div className="grid grid-cols-2 gap-2">
-                          <Button variant="outline" size="sm" className="justify-start bg-transparent">
-                            <ExternalLink className="w-3 h-3 mr-2" />
-                            View Site
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="justify-start bg-transparent"
-                            onClick={copyReferralLink}
-                          >
-                            {copied ? <Check className="w-3 h-3 mr-2" /> : <Copy className="w-3 h-3 mr-2" />}
-                            {copied ? "Copied!" : "Copy Link"}
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Branding Tab */}
-                  {activeTab === "branding" && (
-                    <div className="space-y-4">
-                      <div>
-                        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Site Name</label>
-                        <Input
-                          value={formData.site_name}
-                          onChange={(e) => setFormData({ ...formData, site_name: e.target.value })}
-                          placeholder="My Awesome Store"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Tagline</label>
-                        <Input
-                          value={formData.tagline}
-                          onChange={(e) => setFormData({ ...formData, tagline: e.target.value })}
-                          placeholder="Your catchy subtitle"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Primary Color</label>
-                        <div className="flex gap-2">
-                          <input
-                            type="color"
-                            value={formData.primary_color}
-                            onChange={(e) => setFormData({ ...formData, primary_color: e.target.value })}
-                            className="w-10 h-10 rounded-lg border border-border cursor-pointer"
-                          />
-                          <Input
-                            value={formData.primary_color}
-                            onChange={(e) => setFormData({ ...formData, primary_color: e.target.value })}
-                            className="flex-1"
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Logo</label>
-                        <div className="border-2 border-dashed border-border rounded-xl p-6 text-center">
-                          <ImageIcon className="w-8 h-8 mx-auto text-muted-foreground/50 mb-2" />
-                          <p className="text-xs text-muted-foreground">Drop logo or click to upload</p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Music Tab */}
-                  {activeTab === "music" && (
-                    <div className="space-y-4">
-                      <div className="bg-muted/30 rounded-xl p-4 mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                            <Music className="w-6 h-6 text-primary" />
+              {/* Content */}
+              <div className="p-4">
+                {loading ? (
+                  <div className="flex items-center justify-center py-12">
+                    <RefreshCw className="w-5 h-5 animate-spin text-muted-foreground" />
+                  </div>
+                ) : (
+                  <>
+                    {/* Overview Tab */}
+                    {activeTab === "overview" && analytics && (
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="bg-muted/50 rounded-xl p-4">
+                            <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                              <Users className="w-4 h-4" />
+                              <span className="text-xs">Visitors</span>
+                            </div>
+                            <p className="text-2xl font-semibold">{analytics.pageViews.toLocaleString()}</p>
                           </div>
-                          <div>
-                            <p className="font-medium text-sm">{formData.music_title || "No track set"}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {formData.music_artist || "Add a song for visitors"}
-                            </p>
+                          <div className="bg-muted/50 rounded-xl p-4">
+                            <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                              <MessageSquare className="w-4 h-4" />
+                              <span className="text-xs">Conversations</span>
+                            </div>
+                            <p className="text-2xl font-semibold">{analytics.conversations}</p>
+                          </div>
+                          <div className="bg-muted/50 rounded-xl p-4">
+                            <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                              <Mail className="w-4 h-4" />
+                              <span className="text-xs">Leads</span>
+                            </div>
+                            <p className="text-2xl font-semibold">{analytics.leads}</p>
+                          </div>
+                          <div className="bg-muted/50 rounded-xl p-4">
+                            <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                              <MousePointer className="w-4 h-4" />
+                              <span className="text-xs">Conv. Rate</span>
+                            </div>
+                            <p className="text-2xl font-semibold">{analytics.conversionRate}%</p>
+                          </div>
+                        </div>
+
+                        <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl p-4 border border-primary/20">
+                          <div className="flex items-center gap-2 text-primary mb-1">
+                            <DollarSign className="w-4 h-4" />
+                            <span className="text-xs font-medium">Revenue</span>
+                          </div>
+                          <p className="text-3xl font-bold text-foreground">${analytics.revenue.toLocaleString()}</p>
+                          <p className="text-xs text-muted-foreground mt-1">Last 30 days</p>
+                        </div>
+
+                        <div className="bg-muted/30 rounded-xl p-4">
+                          <h3 className="text-sm font-medium mb-3">Quick Actions</h3>
+                          <div className="grid grid-cols-2 gap-2">
+                            <Button variant="outline" size="sm" className="justify-start bg-transparent">
+                              <ExternalLink className="w-3 h-3 mr-2" />
+                              View Site
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="justify-start bg-transparent"
+                              onClick={copyReferralLink}
+                            >
+                              {copied ? <Check className="w-3 h-3 mr-2" /> : <Copy className="w-3 h-3 mr-2" />}
+                              {copied ? "Copied!" : "Copy Link"}
+                            </Button>
                           </div>
                         </div>
                       </div>
-                      <div>
-                        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Track URL</label>
-                        <Input
-                          value={formData.music_track_url}
-                          onChange={(e) => setFormData({ ...formData, music_track_url: e.target.value })}
-                          placeholder="https://example.com/song.mp3"
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 gap-3">
+                    )}
+
+                    {/* Branding Tab */}
+                    {activeTab === "branding" && (
+                      <div className="space-y-4">
                         <div>
-                          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Artist</label>
+                          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Site Name</label>
                           <Input
-                            value={formData.music_artist}
-                            onChange={(e) => setFormData({ ...formData, music_artist: e.target.value })}
-                            placeholder="Artist name"
+                            value={formData.site_name}
+                            onChange={(e) => setFormData({ ...formData, site_name: e.target.value })}
+                            placeholder="My Awesome Store"
                           />
                         </div>
                         <div>
-                          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Title</label>
+                          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Tagline</label>
                           <Input
-                            value={formData.music_title}
-                            onChange={(e) => setFormData({ ...formData, music_title: e.target.value })}
-                            placeholder="Song title"
+                            value={formData.tagline}
+                            onChange={(e) => setFormData({ ...formData, tagline: e.target.value })}
+                            placeholder="Your catchy subtitle"
                           />
                         </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Products Tab */}
-                  {activeTab === "products" && (
-                    <div className="space-y-4">
-                      <div className="bg-muted/30 rounded-xl p-4">
-                        <h3 className="text-sm font-medium mb-2">Connect Shopify</h3>
-                        <p className="text-xs text-muted-foreground mb-3">
-                          Link your store to auto-populate products in the action rail.
-                        </p>
-                        <div className="space-y-3">
-                          <div>
-                            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
-                              Store Domain
-                            </label>
-                            <Input
-                              value={formData.shopify_domain}
-                              onChange={(e) => setFormData({ ...formData, shopify_domain: e.target.value })}
-                              placeholder="your-store.myshopify.com"
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Primary Color</label>
+                          <div className="flex gap-2">
+                            <input
+                              type="color"
+                              value={formData.primary_color}
+                              onChange={(e) => setFormData({ ...formData, primary_color: e.target.value })}
+                              className="w-10 h-10 rounded-lg border border-border cursor-pointer"
                             />
-                          </div>
-                          <div>
-                            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
-                              Storefront API Token
-                            </label>
                             <Input
-                              type="password"
-                              value={formData.shopify_storefront_token}
-                              onChange={(e) => setFormData({ ...formData, shopify_storefront_token: e.target.value })}
-                              placeholder="shpat_xxxxx..."
+                              value={formData.primary_color}
+                              onChange={(e) => setFormData({ ...formData, primary_color: e.target.value })}
+                              className="flex-1"
                             />
                           </div>
                         </div>
-                      </div>
-                      {site?.shopify_connected && (
-                        <div className="flex items-center gap-2 text-xs text-primary">
-                          <Check className="w-4 h-4" />
-                          Shopify connected
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Pixels Tab */}
-                  {activeTab === "pixels" && (
-                    <div className="space-y-4">
-                      <div>
-                        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
-                          Facebook Pixel ID
-                        </label>
-                        <Input
-                          value={formData.fb_pixel_id}
-                          onChange={(e) => setFormData({ ...formData, fb_pixel_id: e.target.value })}
-                          placeholder="123456789012345"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
-                          TikTok Pixel ID
-                        </label>
-                        <Input
-                          value={formData.tiktok_pixel_id}
-                          onChange={(e) => setFormData({ ...formData, tiktok_pixel_id: e.target.value })}
-                          placeholder="XXXXXXXXXXXXXXXX"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
-                          GA4 Measurement ID
-                        </label>
-                        <Input
-                          value={formData.ga4_id}
-                          onChange={(e) => setFormData({ ...formData, ga4_id: e.target.value })}
-                          placeholder="G-XXXXXXXXXX"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
-                          Klaviyo Site ID
-                        </label>
-                        <Input
-                          value={formData.klaviyo_id}
-                          onChange={(e) => setFormData({ ...formData, klaviyo_id: e.target.value })}
-                          placeholder="XXXXXX"
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Affiliates Tab */}
-                  {activeTab === "affiliates" && site && (
-                    <div className="space-y-4">
-                      <div className="bg-primary/5 rounded-xl p-4 border border-primary/20">
-                        <h3 className="text-sm font-medium mb-2">Your Referral Link</h3>
-                        <div className="flex gap-2">
-                          <Input
-                            value={`theshopifyguy.dev?ref=${site.referral_code}`}
-                            readOnly
-                            className="text-xs bg-background"
-                          />
-                          <Button size="sm" variant="outline" onClick={copyReferralLink}>
-                            {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                          </Button>
-                        </div>
-                        <p className="text-[10px] text-muted-foreground mt-2">
-                          Earn 10% of revenue from every card created through this link.
-                        </p>
-                      </div>
-                      <div className="bg-muted/30 rounded-xl p-4">
-                        <h3 className="text-sm font-medium mb-3">Referral Stats</h3>
-                        <div className="grid grid-cols-3 gap-3">
-                          <div className="text-center">
-                            <p className="text-xl font-semibold">0</p>
-                            <p className="text-[10px] text-muted-foreground">Cards Created</p>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-xl font-semibold">$0</p>
-                            <p className="text-[10px] text-muted-foreground">Pending</p>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-xl font-semibold">$0</p>
-                            <p className="text-[10px] text-muted-foreground">Paid Out</p>
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Logo</label>
+                          <div className="border-2 border-dashed border-border rounded-xl p-6 text-center">
+                            <ImageIcon className="w-8 h-8 mx-auto text-muted-foreground/50 mb-2" />
+                            <p className="text-xs text-muted-foreground">Drop logo or click to upload</p>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {/* Settings Tab */}
-                  {activeTab === "settings" && site && (
-                    <div className="space-y-4">
-                      <div>
-                        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Owner Email</label>
-                        <Input value={site.owner_email || ""} readOnly className="bg-muted/50" />
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Card Number</label>
-                        <Input value={`#${site.id}`} readOnly className="bg-muted/50" />
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Status</label>
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={`w-2 h-2 rounded-full ${
-                              site.status === "active" ? "bg-[#3d6049]" : "bg-amber-500"
-                            }`}
-                          />
-                          <span className="text-sm capitalize">{site.status}</span>
-                        </div>
-                      </div>
-                      <div className="pt-4 border-t border-border">
-                        <Button variant="destructive" size="sm" className="w-full">
-                          Delete Site
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Analytics Tab */}
-                  {activeTab === "analytics" && (
-                    <div className="space-y-4">
-                      <div className="bg-muted/30 rounded-xl p-4 text-center">
-                        <BarChart3 className="w-8 h-8 mx-auto text-muted-foreground/50 mb-2" />
-                        <p className="text-sm font-medium">Heatmaps & Click Tracking</p>
-                        <p className="text-xs text-muted-foreground mt-1">Coming soon</p>
-                      </div>
-                      <div className="space-y-3">
-                        <h3 className="text-sm font-medium">Key Metrics</h3>
-                        {[
-                          { label: "Total Traffic", value: "12,847", change: "+12%" },
-                          { label: "Conversion Rate", value: "2.4%", change: "+0.3%" },
-                          { label: "Avg. Order Value", value: "$127", change: "+$8" },
-                          { label: "Revenue Per Visitor", value: "$3.05", change: "+$0.42" },
-                        ].map((metric, i) => (
-                          <div
-                            key={i}
-                            className="flex items-center justify-between py-2 border-b border-border last:border-0"
-                          >
-                            <span className="text-sm text-muted-foreground">{metric.label}</span>
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium">{metric.value}</span>
-                              <span className="text-xs text-[#3d6049]">{metric.change}</span>
+                    {/* Music Tab */}
+                    {activeTab === "music" && (
+                      <div className="space-y-4">
+                        <div className="bg-muted/30 rounded-xl p-4 mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                              <Music className="w-6 h-6 text-primary" />
+                            </div>
+                            <div>
+                              <p className="font-medium text-sm">{formData.music_title || "No track set"}</p>
+                              <p className="text-xs text-muted-foreground">
+                                {formData.music_artist || "Add a song for visitors"}
+                              </p>
                             </div>
                           </div>
-                        ))}
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Track URL</label>
+                          <Input
+                            value={formData.music_track_url}
+                            onChange={(e) => setFormData({ ...formData, music_track_url: e.target.value })}
+                            placeholder="https://example.com/song.mp3"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Artist</label>
+                            <Input
+                              value={formData.music_artist}
+                              onChange={(e) => setFormData({ ...formData, music_artist: e.target.value })}
+                              placeholder="Artist name"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Title</label>
+                            <Input
+                              value={formData.music_title}
+                              onChange={(e) => setFormData({ ...formData, music_title: e.target.value })}
+                              placeholder="Song title"
+                            />
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </>
-              )}
+                    )}
+
+                    {/* Products Tab */}
+                    {activeTab === "products" && (
+                      <div className="space-y-4">
+                        <div className="bg-muted/30 rounded-xl p-4">
+                          <h3 className="text-sm font-medium mb-2">Connect Shopify</h3>
+                          <p className="text-xs text-muted-foreground mb-3">
+                            Link your store to auto-populate products in the action rail.
+                          </p>
+                          <div className="space-y-3">
+                            <div>
+                              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
+                                Store Domain
+                              </label>
+                              <Input
+                                value={formData.shopify_domain}
+                                onChange={(e) => setFormData({ ...formData, shopify_domain: e.target.value })}
+                                placeholder="your-store.myshopify.com"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
+                                Storefront API Token
+                              </label>
+                              <Input
+                                type="password"
+                                value={formData.shopify_storefront_token}
+                                onChange={(e) => setFormData({ ...formData, shopify_storefront_token: e.target.value })}
+                                placeholder="shpat_xxxxx..."
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        {site?.shopify_connected && (
+                          <div className="flex items-center gap-2 text-xs text-primary">
+                            <Check className="w-4 h-4" />
+                            Shopify connected
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Pixels Tab */}
+                    {activeTab === "pixels" && (
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
+                            Facebook Pixel ID
+                          </label>
+                          <Input
+                            value={formData.fb_pixel_id}
+                            onChange={(e) => setFormData({ ...formData, fb_pixel_id: e.target.value })}
+                            placeholder="123456789012345"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
+                            TikTok Pixel ID
+                          </label>
+                          <Input
+                            value={formData.tiktok_pixel_id}
+                            onChange={(e) => setFormData({ ...formData, tiktok_pixel_id: e.target.value })}
+                            placeholder="XXXXXXXXXXXXXXXX"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
+                            GA4 Measurement ID
+                          </label>
+                          <Input
+                            value={formData.ga4_id}
+                            onChange={(e) => setFormData({ ...formData, ga4_id: e.target.value })}
+                            placeholder="G-XXXXXXXXXX"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
+                            Klaviyo Site ID
+                          </label>
+                          <Input
+                            value={formData.klaviyo_id}
+                            onChange={(e) => setFormData({ ...formData, klaviyo_id: e.target.value })}
+                            placeholder="XXXXXX"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Affiliates Tab */}
+                    {activeTab === "affiliates" && site && (
+                      <div className="space-y-4">
+                        <div className="bg-primary/5 rounded-xl p-4 border border-primary/20">
+                          <h3 className="text-sm font-medium mb-2">Your Referral Link</h3>
+                          <div className="flex gap-2">
+                            <Input
+                              value={`theshopifyguy.dev?ref=${site.referral_code}`}
+                              readOnly
+                              className="text-xs bg-background"
+                            />
+                            <Button size="sm" variant="outline" onClick={copyReferralLink}>
+                              {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                            </Button>
+                          </div>
+                          <p className="text-[10px] text-muted-foreground mt-2">
+                            Earn 10% of revenue from every card created through this link.
+                          </p>
+                        </div>
+                        <div className="bg-muted/30 rounded-xl p-4">
+                          <h3 className="text-sm font-medium mb-3">Referral Stats</h3>
+                          <div className="grid grid-cols-3 gap-3">
+                            <div className="text-center">
+                              <p className="text-xl font-semibold">0</p>
+                              <p className="text-[10px] text-muted-foreground">Cards Created</p>
+                            </div>
+                            <div className="text-center">
+                              <p className="text-xl font-semibold">$0</p>
+                              <p className="text-[10px] text-muted-foreground">Pending</p>
+                            </div>
+                            <div className="text-center">
+                              <p className="text-xl font-semibold">$0</p>
+                              <p className="text-[10px] text-muted-foreground">Paid Out</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Settings Tab */}
+                    {activeTab === "settings" && site && (
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Owner Email</label>
+                          <Input value={site.owner_email || ""} readOnly className="bg-muted/50" />
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Card Number</label>
+                          <Input value={`#${site.id}`} readOnly className="bg-muted/50" />
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Status</label>
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`w-2 h-2 rounded-full ${
+                                site.status === "active" ? "bg-[#3d6049]" : "bg-amber-500"
+                              }`}
+                            />
+                            <span className="text-sm capitalize">{site.status}</span>
+                          </div>
+                        </div>
+                        <div className="pt-4 border-t border-border">
+                          <Button variant="destructive" size="sm" className="w-full">
+                            Delete Site
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Analytics Tab */}
+                    {activeTab === "analytics" && (
+                      <div className="space-y-4">
+                        <div className="bg-muted/30 rounded-xl p-4 text-center">
+                          <BarChart3 className="w-8 h-8 mx-auto text-muted-foreground/50 mb-2" />
+                          <p className="text-sm font-medium">Heatmaps & Click Tracking</p>
+                          <p className="text-xs text-muted-foreground mt-1">Coming soon</p>
+                        </div>
+                        <div className="space-y-3">
+                          <h3 className="text-sm font-medium">Key Metrics</h3>
+                          {[
+                            { label: "Total Traffic", value: "12,847", change: "+12%" },
+                            { label: "Conversion Rate", value: "2.4%", change: "+0.3%" },
+                            { label: "Avg. Order Value", value: "$127", change: "+$8" },
+                            { label: "Revenue Per Visitor", value: "$3.05", change: "+$0.42" },
+                          ].map((metric, i) => (
+                            <div
+                              key={i}
+                              className="flex items-center justify-between py-2 border-b border-border last:border-0"
+                            >
+                              <span className="text-sm text-muted-foreground">{metric.label}</span>
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">{metric.value}</span>
+                                <span className="text-xs text-[#3d6049]">{metric.change}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
           </motion.div>
-        </>
+        </motion.div>
       )}
     </AnimatePresence>
   )
