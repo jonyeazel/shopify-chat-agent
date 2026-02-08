@@ -27,18 +27,22 @@ function SmsButton({ href, children }: { href: string; children: React.ReactNode
   )
 }
 
-// Parse message text and render SMS links as buttons
+// Parse message text and render SMS links as buttons, strip non-SMS markdown links
 export function renderMessageWithSmsLinks(text: string): React.ReactNode {
+  // First strip non-SMS markdown links — convert [text](url) to just "text"
+  // This prevents broken display like "(javascript:void(0))" when AI generates markdown links
+  const cleaned = text.replace(/\[([^\]]+)\]\((?!sms:)[^)]+\)/g, "$1")
+  
   // Match markdown-style SMS links: [TEXT](sms:...)
   const smsLinkRegex = /\[([^\]]+)\]\((sms:[^)]+)\)/g
   const parts: React.ReactNode[] = []
   let lastIndex = 0
   let match
 
-  while ((match = smsLinkRegex.exec(text)) !== null) {
+  while ((match = smsLinkRegex.exec(cleaned)) !== null) {
     // Add text before the link
     if (match.index > lastIndex) {
-      parts.push(text.slice(lastIndex, match.index))
+      parts.push(cleaned.slice(lastIndex, match.index))
     }
     // Add the SMS button
     parts.push(
@@ -50,11 +54,11 @@ export function renderMessageWithSmsLinks(text: string): React.ReactNode {
   }
 
   // Add remaining text
-  if (lastIndex < text.length) {
-    parts.push(text.slice(lastIndex))
+  if (lastIndex < cleaned.length) {
+    parts.push(cleaned.slice(lastIndex))
   }
 
-  return parts.length > 0 ? parts : text
+  return parts.length > 0 ? parts : cleaned
 }
 
 export function ImageGallery({
@@ -285,34 +289,35 @@ export function SiteAuditInput({
 
   if (submitted) {
     return (
-      <div className="my-2 flex items-center gap-2 px-3 py-2 rounded-full border border-border bg-background">
-        <Loader2 className="w-3.5 h-3.5 animate-spin text-muted-foreground" />
+      <div className="my-4 flex items-center gap-2.5 px-4 py-3 rounded-xl bg-[#ebebeb]">
+        <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
         <span className="text-[13px] text-muted-foreground">Analyzing your store...</span>
       </div>
     )
   }
 
   return (
-    <div className="my-2">
-      <div className="flex items-center gap-1.5 rounded-full border border-border bg-background pl-3 pr-1 py-1 transition-colors duration-150">
+    <div className="my-4">
+      <div className="flex items-center gap-2 rounded-xl bg-[#ebebeb] pl-4 pr-1.5 py-1.5">
         <input
           ref={inputRef}
           type="url"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-          placeholder="paste your store URL"
-          className="flex-1 min-w-0 bg-transparent text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-none focus-visible:outline-none"
+          placeholder="yourstore.com"
+          className="flex-1 min-w-0 bg-transparent text-foreground placeholder:text-muted-foreground/50 outline-none border-none"
+          style={{ fontSize: "16px" }}
         />
         <button
           onClick={handleSubmit}
           disabled={!url.trim()}
-          className="flex-shrink-0 w-7 h-7 rounded-full bg-foreground text-background flex items-center justify-center transition-opacity duration-150 disabled:opacity-20"
+          className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150 active:scale-[0.92] bg-foreground text-background disabled:bg-foreground/[0.08]"
         >
-          <ArrowRight className="w-3.5 h-3.5" />
+          <ArrowRight className="w-4 h-4" />
         </button>
       </div>
-      {error && <p className="text-[11px] text-destructive mt-1.5 pl-3">{error}</p>}
+      {error && <p className="text-[11px] text-destructive mt-1.5 pl-4">{error}</p>}
     </div>
   )
 }
