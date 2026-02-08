@@ -55,7 +55,7 @@ export function ChatInput({
     if (input) return // Don't cycle if there's input
     const interval = setInterval(() => {
       setPlaceholderIndex((prev) => (prev + 1) % PLACEHOLDER_TEXTS.length)
-    }, 3000)
+    }, 5000)
     return () => clearInterval(interval)
   }, [input])
 
@@ -249,7 +249,7 @@ export function ChatInput({
 
         <div
           className={`bg-card rounded-2xl border transition-all duration-150 ${
-            isDragging ? "border-foreground/30 bg-muted" : "border-border/50 focus-within:border-foreground/20"
+            isDragging ? "border-foreground/30 bg-muted" : "border-border focus-within:border-foreground/20"
           }`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}

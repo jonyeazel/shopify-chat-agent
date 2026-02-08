@@ -189,7 +189,7 @@ export default function Home() {
   return (
     <main
       ref={mainRef}
-      className={`flex mx-[6px] md:m-3 bg-card rounded-3xl overflow-hidden border border-foreground/[0.12] md:bg-transparent md:rounded-none md:overflow-visible md:border-0 ${isResizing ? "select-none cursor-col-resize" : ""}`}
+      className={`flex mx-[6px] md:m-3 bg-card rounded-2xl overflow-hidden md:bg-transparent md:rounded-none md:overflow-visible md:border md:border-foreground/[0.12] ${isResizing ? "select-none cursor-col-resize" : ""}`}
       style={{ height: "calc(100dvh - var(--edge-padding) * 2)" }}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
@@ -372,7 +372,7 @@ export default function Home() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
-                    className="h-full w-full flex flex-col items-center justify-end pb-6 px-6 md:hidden"
+                    className="h-full w-full flex flex-col items-center justify-center px-6 md:hidden"
                   >
                     <div className="text-center flex flex-col items-center w-full">
                       <motion.div
@@ -499,7 +499,7 @@ export default function Home() {
         </div>
 
         {/* Mobile: Vertical icon rail */}
-        <div className={`md:hidden flex flex-col items-center justify-end gap-2 flex-shrink-0 pr-3 pb-[max(env(safe-area-inset-bottom),12px)] ${showMenu ? "opacity-0 pointer-events-none" : ""}`}>
+        <div className={`md:hidden flex flex-col items-center justify-end gap-1.5 flex-shrink-0 pr-2.5 pb-[max(env(safe-area-inset-bottom),12px)] transition-opacity duration-150 ${showMenu ? "opacity-0 pointer-events-none" : ""}`}>
           {[
             { icon: Search, label: "Audit", action: () => handleChatSubmit("Can you audit my store?") },
             { icon: Layers, label: "Work", action: () => openDrawer("portfolio") },
@@ -510,12 +510,12 @@ export default function Home() {
             <button
               key={label}
               onClick={action}
-              className="flex flex-col items-center gap-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl"
+              className="flex flex-col items-center gap-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
             >
-              <div className="w-[48px] h-[48px] rounded-full flex items-center justify-center active:scale-[0.92] active:opacity-80 transition-all duration-150 bg-foreground">
-                <Icon className="w-4 h-4 text-background" strokeWidth={1.5} />
+              <div className="w-10 h-10 rounded-full flex items-center justify-center active:scale-[0.88] active:opacity-80 transition-all duration-150 bg-foreground">
+                <Icon className="w-[15px] h-[15px] text-background" strokeWidth={1.5} />
               </div>
-              <span className="text-[10px] text-muted-foreground leading-tight">{label}</span>
+              <span className="text-[9px] text-muted-foreground leading-tight">{label}</span>
             </button>
           ))}
         </div>

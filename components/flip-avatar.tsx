@@ -155,7 +155,7 @@ export function HeaderAvatar({ avatarUrl }: { avatarUrl: string }) {
         className="w-9 h-9 rounded-full object-cover ring-1 ring-border/50"
       />
       <div 
-        className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full ring-[1.5px] ring-background"
+        className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full ring-[1.5px] ring-card"
         style={{ backgroundColor: "var(--forest-500)" }}
       />
     </div>
