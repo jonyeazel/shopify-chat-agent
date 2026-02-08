@@ -181,6 +181,7 @@ export const LiveSitesDisplay = memo(function LiveSitesDisplay() {
   const selectedSite = PORTFOLIO_SITES[selectedIndex]
   const containerRef = useRef<HTMLDivElement>(null)
   const [frameWidth, setFrameWidth] = useState(0)
+  const [viewportHeight, setViewportHeight] = useState(0)
   const isMobile = useIsMobile()
 
   useEffect(() => {
@@ -195,8 +196,26 @@ export const LiveSitesDisplay = memo(function LiveSitesDisplay() {
     return () => observer.disconnect()
   }, [])
 
+  useEffect(() => {
+    const update = () => setViewportHeight(window.innerHeight)
+    update()
+    window.addEventListener("resize", update)
+    return () => window.removeEventListener("resize", update)
+  }, [])
+
   const device = isMobile ? "mobile" : "desktop"
-  const displayWidth = frameWidth
+  let displayWidth = frameWidth
+
+  if (isMobile && viewportHeight > 0 && frameWidth > 0) {
+    // Cap the frame to 60% of viewport height so AI text, tabs,
+    // quick reply chips, and chat input all remain visible
+    const maxTotalHeight = Math.floor(viewportHeight * 0.6)
+    const maxScreenHeight = maxTotalHeight - 100 // header(46) + footer(46) + border(8)
+    if (maxScreenHeight > 0) {
+      const maxWidth = Math.floor(maxScreenHeight * 393 / 673 + 8)
+      displayWidth = Math.min(displayWidth, maxWidth)
+    }
+  }
 
   return (
     <div ref={containerRef} className="my-5">
@@ -237,7 +256,7 @@ export const LiveSitesDisplay = memo(function LiveSitesDisplay() {
               placeholder={selectedSite.name}
               device={device}
               width={displayWidth}
-              borderRadius={isMobile ? 20 : 12}
+              borderRadius={isMobile ? 44 : 12}
             />
           </motion.div>
         </AnimatePresence>

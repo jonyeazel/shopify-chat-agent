@@ -577,13 +577,13 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
     <div className="relative h-full">
       {/* Top fade — messages dissolve as they scroll up */}
       <div
-        className="absolute top-0 left-0 right-0 h-12 z-10 pointer-events-none"
+        className="absolute top-0 left-0 right-0 h-3 z-10 pointer-events-none"
         style={{ background: "linear-gradient(to bottom, var(--card), transparent)" }}
       />
       <div
         ref={containerRef}
         onScroll={handleScroll}
-        className="h-full overflow-y-auto px-4 pt-4 pb-4 scrollbar-hide"
+        className="h-full overflow-y-auto px-4 pt-3 pb-4 scrollbar-hide"
         style={{ overflowAnchor: "auto", overscrollBehavior: "contain" }}
       >
         <div className="min-h-full flex flex-col justify-end">
