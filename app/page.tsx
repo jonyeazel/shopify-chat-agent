@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useMemo, useRef, useCallback, useEffect, type MouseEvent as ReactMouseEvent } from "react"
+import { useState, useRef, useCallback, useEffect, type MouseEvent as ReactMouseEvent } from "react"
 import { useChat } from "@ai-sdk/react"
 import { DefaultChatTransport } from "ai"
 import { motion, AnimatePresence } from "framer-motion"
@@ -67,21 +67,14 @@ function IconGallery({ className, strokeWidth = 1.5 }: { className?: string; str
 import { IdentityPanel } from "@/components/chat/identity-panel"
 import { ChatInput } from "@/components/chat/chat-input"
 import { MessageList } from "@/components/chat/message-list"
-import { SlideMenu } from "@/components/chat/slide-menu"
 import { StaticAvatar, HeaderAvatar } from "@/components/flip-avatar"
 import { SiteAdminPanel } from "@/components/admin/site-admin-panel"
 import { AdminLoginModal } from "@/components/admin/admin-login-modal"
 import { InstantSiteCreator } from "@/components/admin/instant-site-creator"
-import { InstantContentDrawer, type DrawerType } from "@/components/chat/instant-content-drawer"
-import { MediaGallery } from "@/components/media-gallery"
 import { siteConfig } from "@/lib/site-config"
 import { getSmsHref } from "@/lib/sms"
 import { SmsTrigger } from "@/components/sms-trigger"
-import {
-  getMenuItems,
-  determineConversationPhase,
-  type AvailabilityStatus,
-} from "@/lib/chat-config"
+import { type AvailabilityStatus } from "@/lib/chat-config"
 
 const SITE_ID = 1
 const TEMP_ADMIN_BYPASS = true
@@ -94,7 +87,6 @@ const QUICK_ACTIONS = [
 ]
 
 export default function Home() {
-  const [showMenu, setShowMenu] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [chatError, setChatError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -110,15 +102,7 @@ export default function Home() {
   const [showAdminLogin, setShowAdminLogin] = useState(false)
   const [showAdminPanel, setShowAdminPanel] = useState(false)
   const [showSiteCreator, setShowSiteCreator] = useState(false)
-  const [menuLongPressTimer, setMenuLongPressTimer] = useState<NodeJS.Timeout | null>(null)
-
-  const [activeDrawer, setActiveDrawer] = useState<DrawerType>(null)
-  const openDrawer = useCallback((type: DrawerType) => setActiveDrawer(type), [])
-  const closeDrawer = useCallback(() => setActiveDrawer(null), [])
-
-  const [showMobileGallery, setShowMobileGallery] = useState(false)
-  const openMobileGallery = useCallback(() => setShowMobileGallery(true), [])
-  const closeMobileGallery = useCallback(() => setShowMobileGallery(false), [])
+  const [adminLongPressTimer, setAdminLongPressTimer] = useState<NodeJS.Timeout | null>(null)
 
   // Panel resize
   const [panelWidth, setPanelWidth] = useState(25)
@@ -161,7 +145,7 @@ export default function Home() {
     if (videoRef.current) videoRef.current.muted = !isMuted
   }, [isMuted])
 
-  const handleMenuPressStart = useCallback(() => {
+  const handleAdminPressStart = useCallback(() => {
     const timer = setTimeout(() => {
       if (TEMP_ADMIN_BYPASS) {
         setShowAdminPanel(true)
@@ -169,21 +153,15 @@ export default function Home() {
         setShowAdminLogin(true)
       }
     }, 2000)
-    setMenuLongPressTimer(timer)
+    setAdminLongPressTimer(timer)
   }, [])
 
-  const handleMenuPressEnd = useCallback(() => {
-    if (menuLongPressTimer) {
-      clearTimeout(menuLongPressTimer)
-      setMenuLongPressTimer(null)
+  const handleAdminPressEnd = useCallback(() => {
+    if (adminLongPressTimer) {
+      clearTimeout(adminLongPressTimer)
+      setAdminLongPressTimer(null)
     }
-  }, [menuLongPressTimer])
-
-  const handleMenuClick = useCallback(() => {
-    if (!menuLongPressTimer) {
-      setShowMenu(true)
-    }
-  }, [menuLongPressTimer])
+  }, [adminLongPressTimer])
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -228,18 +206,6 @@ export default function Home() {
   }, [error])
 
   const hasMessages = messages.length > 0
-  const menuItems = useMemo(
-    () =>
-      getMenuItems(
-        sendMessage,
-        setShowMenu,
-        fileInputRef,
-        backgroundInputRef,
-        setShowSiteCreator,
-        openDrawer,
-      ),
-    [sendMessage, openDrawer],
-  )
 
   const smsHref = getSmsHref()
 
@@ -276,8 +242,6 @@ export default function Home() {
         className="hidden"
         onChange={handleBackgroundUpload}
       />
-
-      <MediaGallery isOpen={showMobileGallery} onClose={closeMobileGallery} onAskAbout={handleChatSubmit} />
 
       {/* Desktop: Left identity panel */}
       <IdentityPanel
@@ -367,41 +331,23 @@ export default function Home() {
 
         {/* Mobile header */}
         <header className="flex-shrink-0 relative z-40 md:hidden">
-          <div className="px-3 h-14 flex items-center justify-between pt-[env(safe-area-inset-top)]">
-            <div className="flex items-center gap-1.5">
+          <div className="px-3 h-14 flex items-center pt-[env(safe-area-inset-top)]">
+            <div
+              className="flex items-center gap-1.5"
+              onMouseDown={handleAdminPressStart}
+              onMouseUp={handleAdminPressEnd}
+              onMouseLeave={handleAdminPressEnd}
+              onTouchStart={handleAdminPressStart}
+              onTouchEnd={handleAdminPressEnd}
+            >
               <HeaderAvatar avatarUrl={siteConfig.brand.avatarUrl} />
               <div className="flex flex-col">
                 <span className="font-medium text-foreground text-[14px] leading-none tracking-[-0.01em]">{siteConfig.brand.name}</span>
                 <span className="text-[10px] text-muted-foreground leading-none mt-1">{siteConfig.brand.subtitle}</span>
               </div>
             </div>
-            <button
-              onClick={handleMenuClick}
-              onMouseDown={handleMenuPressStart}
-              onMouseUp={handleMenuPressEnd}
-              onMouseLeave={handleMenuPressEnd}
-              onTouchStart={handleMenuPressStart}
-              onTouchEnd={handleMenuPressEnd}
-              className="w-10 h-10 flex flex-col items-center justify-center rounded-full active:bg-muted/40 active:scale-[0.92] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              aria-label="Menu (hold for admin)"
-            >
-              <div className="relative w-[18px] h-[18px] flex items-center justify-center">
-                <span className={`absolute w-[18px] h-[1.5px] bg-foreground rounded-full transition-all duration-150 ease-out ${showMenu ? "rotate-45 translate-y-0" : "-translate-y-[5.5px]"}`} />
-                <span className={`absolute w-[18px] h-[1.5px] bg-foreground rounded-full transition-all duration-150 ease-out ${showMenu ? "opacity-0 scale-x-0" : "opacity-100 scale-x-100"}`} />
-                <span className={`absolute w-[18px] h-[1.5px] bg-foreground rounded-full transition-all duration-150 ease-out ${showMenu ? "-rotate-45 translate-y-0" : "translate-y-[5.5px]"}`} />
-              </div>
-            </button>
           </div>
         </header>
-
-        <InstantContentDrawer
-          type={activeDrawer}
-          onClose={closeDrawer}
-          isFullscreen={false}
-          onAskAbout={(prompt) => handleSendMessage(prompt)}
-        />
-
-        <SlideMenu isOpen={showMenu} onClose={() => setShowMenu(false)} items={menuItems} isFullscreen={false} />
 
         {/* Content row: left column + icon rail */}
         <div className="flex-1 min-h-0 flex relative">
@@ -458,7 +404,7 @@ export default function Home() {
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.05 }}
                       >
-                        <StaticAvatar avatarUrl={siteConfig.brand.avatarUrl} availabilityStatus={availabilityStatus} onLongPress={openMobileGallery} />
+                        <StaticAvatar avatarUrl={siteConfig.brand.avatarUrl} availabilityStatus={availabilityStatus} onLongPress={() => TEMP_ADMIN_BYPASS ? setShowAdminPanel(true) : setShowAdminLogin(true)} />
                       </motion.div>
 
                       <motion.h1
@@ -576,13 +522,13 @@ export default function Home() {
         </div>
 
         {/* Mobile: Vertical icon rail */}
-        <div className={`md:hidden flex flex-col items-center justify-end gap-1.5 flex-shrink-0 pr-[14px] pl-[5px] pb-[max(env(safe-area-inset-bottom),12px)] transition-opacity duration-150 ${showMenu ? "opacity-0 pointer-events-none" : ""}`}>
+        <div className="md:hidden flex flex-col items-center justify-end gap-1.5 flex-shrink-0 pr-[14px] pl-[5px] pb-[max(env(safe-area-inset-bottom),12px)]">
           {[
             { icon: IconAudit, label: "Audit", action: () => handleChatSubmit("Can you audit my store?") },
-            { icon: IconWork, label: "Work", action: () => openDrawer("portfolio") },
-            { icon: IconPrice, label: "Price", action: () => openDrawer("pricing") },
+            { icon: IconWork, label: "Work", action: () => handleChatSubmit("Show me some stores you've built") },
+            { icon: IconPrice, label: "Price", action: () => handleChatSubmit("What do you charge?") },
             { icon: IconText, label: "Text", action: () => { window.location.href = smsHref } },
-            { icon: IconGallery, label: "Gallery", action: () => setShowMobileGallery(true) },
+            { icon: IconGallery, label: "Gallery", action: () => handleChatSubmit("Show me your product shots") },
           ].map(({ icon: Icon, label, action }) => (
             <button
               key={label}
