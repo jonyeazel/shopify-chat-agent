@@ -201,35 +201,8 @@ export function SiteAdminPanel({ isOpen, onClose, siteId }: SiteAdminPanelProps)
             </div>
 
             <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide overscroll-contain">
-              {/* Header */}
-              <div className="flex items-center justify-between px-4 pb-3 border-b border-border">
-                <div className="flex items-center gap-3">
-                  <div>
-                    <h2 className="font-semibold text-sm text-foreground">Site Admin</h2>
-                    <p className="text-[10px] text-muted-foreground">Card #{siteId}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    size="sm"
-                    onClick={handleSave}
-                    disabled={saving}
-                    className="h-8 text-xs bg-primary hover:bg-primary/90"
-                  >
-                    {saving ? <RefreshCw className="w-3 h-3 animate-spin mr-1" /> : <Save className="w-3 h-3 mr-1" />}
-                    Save
-                  </Button>
-                  <button
-                    onClick={close}
-                    className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-
               {/* Tabs */}
-              <div className="flex gap-1 px-3 py-2 border-b border-border overflow-x-auto scrollbar-hide">
+              <div className="flex gap-1 px-3 py-2 border-b border-border overflow-x-auto scrollbar-hide items-center">
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
@@ -242,6 +215,15 @@ export function SiteAdminPanel({ isOpen, onClose, siteId }: SiteAdminPanelProps)
                     {tab.label}
                   </button>
                 ))}
+                <Button
+                  size="sm"
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="ml-auto h-7 text-xs bg-primary hover:bg-primary/90 flex-shrink-0"
+                >
+                  {saving ? <RefreshCw className="w-3 h-3 animate-spin mr-1" /> : <Save className="w-3 h-3 mr-1" />}
+                  Save
+                </Button>
               </div>
 
               {/* Content */}

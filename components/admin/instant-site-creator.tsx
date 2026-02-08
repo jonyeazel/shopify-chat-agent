@@ -162,23 +162,6 @@ export function InstantSiteCreator({ isOpen, onClose }: InstantSiteCreatorProps)
             </div>
 
             <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide overscroll-contain">
-              {/* Header */}
-              <div className="flex items-center justify-between px-4 pb-3 border-b border-border">
-                <div>
-                  <h2 className="font-semibold text-sm text-foreground">Create Your Card</h2>
-                  <p className="text-[10px] text-muted-foreground">Works with any website</p>
-                </div>
-                <button
-                  onClick={() => {
-                    reset()
-                    close()
-                  }}
-                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
               {/* Content */}
               <div className="p-4">
                 {/* Step 1: Input URL */}

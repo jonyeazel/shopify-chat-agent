@@ -1,7 +1,6 @@
 "use client"
 
 import { motion, AnimatePresence } from "framer-motion"
-import { X } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import { siteConfig } from "@/lib/site-config"
 import { useDrawerGesture, springClose } from "@/hooks/use-drawer-gesture"
@@ -62,27 +61,24 @@ export function SlideMenu({ isOpen, onClose, items }: SlideMenuProps) {
               <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
             </div>
 
-            <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide overscroll-contain">
-              {/* Header with close */}
-              <div className="flex items-center justify-between px-4 pb-3 border-b border-border">
-                <p className="text-[12px] text-muted-foreground">
-                  {siteConfig.stats.map((s, i) => (
-                    <span key={s.label}>
-                      {i > 0 && " · "}
-                      <span className="font-semibold text-foreground/80">{s.value}</span>{" "}{s.label}
-                    </span>
-                  ))}
-                </p>
-                <button
-                  onClick={close}
-                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted/40 transition-colors duration-150"
-                >
-                  <X className="w-4 h-4 text-muted-foreground" />
-                </button>
+            {/* Stats */}
+            <div className="px-4 pt-1 pb-4 flex-shrink-0">
+              <div className="flex items-center justify-center gap-2 text-[11px]">
+                {siteConfig.stats.map((stat, i) => (
+                  <span key={stat.label} className="flex items-center gap-1">
+                    <span className="text-foreground font-medium">{stat.value}</span>
+                    <span className="text-muted-foreground">{stat.label}</span>
+                    {i < siteConfig.stats.length - 1 && (
+                      <span className="ml-1.5 text-muted-foreground/30">·</span>
+                    )}
+                  </span>
+                ))}
               </div>
+            </div>
 
+            <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide overscroll-contain">
               {/* Menu items */}
-              <div className="px-4 pt-3 pb-3">
+              <div className="px-4 pb-3">
                 <div className="grid grid-cols-2 gap-2">
                   {items.map((item, i) => {
                     const isPrimary = i === 0
@@ -99,34 +95,61 @@ export function SlideMenu({ isOpen, onClose, items }: SlideMenuProps) {
                           delay: 0.06 + i * 0.03,
                         }}
                         onClick={item.action}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                        className={`flex flex-col items-start px-4 py-3 rounded-lg text-left transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                           isPrimary
                             ? "bg-foreground focus-visible:ring-background"
                             : "bg-muted/40 active:bg-muted/60"
                         }`}
                         whileTap={{ scale: 0.97 }}
                       >
-                        <item.icon
-                          className={`w-[18px] h-[18px] flex-shrink-0 ${
-                            isPrimary ? "text-background" : "text-foreground/60"
-                          }`}
-                          strokeWidth={1.5}
-                        />
-                        <span
-                          className={`font-medium text-[13px] leading-tight ${
-                            isPrimary ? "text-background" : "text-foreground"
-                          }`}
-                        >
-                          {item.label}
-                        </span>
+                        <div className="flex items-center gap-2.5">
+                          <item.icon
+                            className={`w-4 h-4 flex-shrink-0 ${
+                              isPrimary ? "text-background" : "text-foreground/50"
+                            }`}
+                            strokeWidth={1.5}
+                          />
+                          <span
+                            className={`font-medium text-[13px] leading-tight ${
+                              isPrimary ? "text-background" : "text-foreground"
+                            }`}
+                          >
+                            {item.label}
+                          </span>
+                        </div>
+                        {item.description && (
+                          <span
+                            className={`text-[11px] leading-tight mt-1 pl-[26px] ${
+                              isPrimary ? "text-background/50" : "text-muted-foreground"
+                            }`}
+                          >
+                            {item.description}
+                          </span>
+                        )}
                       </motion.button>
                     )
                   })}
                 </div>
               </div>
 
-              <div className="px-4 pb-[max(env(safe-area-inset-bottom),24px)] pt-2">
-                <p className="text-[10px] text-muted-foreground text-center">{siteConfig.brand.domain}</p>
+              <div className="px-4 pb-[max(env(safe-area-inset-bottom),24px)] pt-4 border-t border-foreground/[0.06]">
+                <div className="flex flex-col items-center gap-2">
+                  <a
+                    href={`mailto:${siteConfig.contact.email}`}
+                    className="text-[12px] text-muted-foreground hover:text-foreground transition-colors duration-150"
+                  >
+                    {siteConfig.contact.email}
+                  </a>
+                  <a
+                    href={siteConfig.contact.calendlyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[12px] text-foreground font-medium hover:opacity-80 transition-opacity duration-150"
+                  >
+                    Book a Call
+                  </a>
+                  <p className="text-[10px] text-muted-foreground/50 mt-1">{siteConfig.brand.domain}</p>
+                </div>
               </div>
             </div>
           </motion.div>

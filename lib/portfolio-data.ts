@@ -41,11 +41,11 @@ export const PORTFOLIO_DATA = {
     { url: "/images/blank-bottle.png", label: "Blank Bottle" },
   ],
   liveSites: [
-    { name: "Goli Gummies", url: "https://v0-vcommercepdp-three.vercel.app" },
+    { name: "Goli", url: "https://v0-vcommercepdp-three.vercel.app" },
     { name: "BREZ", url: "https://v0-brez-product-page.vercel.app" },
-    { name: "Seed Probiotics", url: "https://v0-vcommercepdp.vercel.app" },
+    { name: "Seed", url: "https://v0-vcommercepdp.vercel.app" },
     { name: "MUD\\WTR", url: "https://v0-mudwater.vercel.app" },
-    { name: "Athletic Greens", url: "https://v0-ag1-pdp.vercel.app" },
+    { name: "AG1", url: "https://v0-ag1-pdp.vercel.app" },
   ],
   pricing: {
     smartStore: { 

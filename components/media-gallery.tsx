@@ -188,17 +188,6 @@ export function MediaGallery({ isOpen, onClose, onAskAbout }: MediaGalleryProps)
                 </div>
 
                 <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide overscroll-contain">
-                  {/* Header */}
-                  <div className="flex items-center justify-between px-4 pb-3 border-b border-border">
-                    <span className="text-[13px] font-medium text-foreground">Gallery</span>
-                    <button
-                      onClick={handleClose}
-                      className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors duration-150"
-                    >
-                      <X className="w-4 h-4 text-muted-foreground" />
-                    </button>
-                  </div>
-
                   {/* Grid */}
                   <div className="p-3">
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">

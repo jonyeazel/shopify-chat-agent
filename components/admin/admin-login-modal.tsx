@@ -96,20 +96,6 @@ export function AdminLoginModal({ isOpen, onClose, siteId, onSuccess }: AdminLog
             </div>
 
             <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide overscroll-contain">
-              {/* Header */}
-              <div className="flex items-center justify-between px-4 pb-3 border-b border-border">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-[13px] font-medium text-foreground">Admin Access</span>
-                  <span className="text-[11px] text-muted-foreground">Site #{siteId}</span>
-                </div>
-                <button
-                  onClick={close}
-                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors duration-150"
-                >
-                  <X className="w-4 h-4 text-muted-foreground" />
-                </button>
-              </div>
-
               {/* Content */}
               <div className="px-6 py-6">
                 {sent ? (

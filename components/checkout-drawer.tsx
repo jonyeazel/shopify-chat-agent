@@ -99,23 +99,6 @@ export function CheckoutDrawer({
             </div>
 
             <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide overscroll-contain">
-              {/* Header */}
-              <div className="flex items-center justify-between px-4 pb-3 border-b border-border">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-[13px] font-medium text-foreground">{productName}</span>
-                  <span className="text-[13px] text-muted-foreground">
-                    ${amount.toLocaleString()}
-                    {recurring && "/mo"}
-                  </span>
-                </div>
-                <button
-                  onClick={close}
-                  className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center transition-colors duration-150"
-                >
-                  <X className="w-4 h-4 text-muted-foreground" />
-                </button>
-              </div>
-
               {/* Content */}
               <div className="p-4">
                 {status === "error" ? (

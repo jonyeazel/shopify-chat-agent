@@ -1,46 +1,31 @@
 "use client"
 
 import type React from "react"
-import { useState, useRef, useEffect, memo } from "react"
+
+import { useState, useRef, useEffect } from "react"
 
 interface VibeFrameProps {
   url?: string
   placeholder?: string
   className?: string
-  width?: number
-  interactive?: boolean
-  device?: "mobile" | "desktop"
-  borderRadius?: number
   onUrlChange?: (url: string) => void
-  fillHeight?: boolean
 }
 
-export const VibeFrame = memo(function VibeFrame({ url, placeholder, className, width, interactive = false, device = "mobile", borderRadius, onUrlChange, fillHeight = false }: VibeFrameProps) {
+export function VibeFrame({ url, placeholder, className, onUrlChange }: VibeFrameProps) {
   const [isLoading, setIsLoading] = useState(true)
-  const [isInteractive, setIsInteractive] = useState(interactive)
+  const [device, setDevice] = useState<"mobile" | "desktop">("mobile")
+  const [isInteractive, setIsInteractive] = useState(true)
   const [hasError, setHasError] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [inputValue, setInputValue] = useState("")
-  const [displayedDevice, setDisplayedDevice] = useState(device)
-  const [iframeFade, setIframeFade] = useState(1)
-  const [containerHeight, setContainerHeight] = useState(0)
+  const [displayedDevice, setDisplayedDevice] = useState<"mobile" | "desktop">("mobile")
+  const [isTransitioning, setIsTransitioning] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const hasUrl = Boolean(url)
-
-  // Measure parent for fillHeight mode
-  useEffect(() => {
-    if (!fillHeight || !containerRef.current?.parentElement) return
-    const parent = containerRef.current.parentElement
-    const measure = () => setContainerHeight(parent.clientHeight)
-    measure()
-    const ro = new ResizeObserver(measure)
-    ro.observe(parent)
-    return () => ro.disconnect()
-  }, [fillHeight])
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -57,6 +42,24 @@ export const VibeFrame = memo(function VibeFrame({ url, placeholder, className, 
     return () => observer.disconnect()
   }, [])
 
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+  const [isMobileViewport, setIsMobileViewport] = useState(false)
+  useEffect(() => {
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)")
+    setPrefersReducedMotion(motionQuery.matches)
+    const motionHandler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches)
+    motionQuery.addEventListener("change", motionHandler)
+
+    const checkMobile = () => setIsMobileViewport(window.innerWidth < 768)
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+
+    return () => {
+      motionQuery.removeEventListener("change", motionHandler)
+      window.removeEventListener("resize", checkMobile)
+    }
+  }, [])
+
   useEffect(() => {
     if (isEditing && inputRef.current) {
       inputRef.current.focus()
@@ -64,48 +67,41 @@ export const VibeFrame = memo(function VibeFrame({ url, placeholder, className, 
     }
   }, [isEditing])
 
-  // Device transition: shell morphs immediately, iframe crossfades at midpoint
-  useEffect(() => {
-    if (device === displayedDevice) return
-    setIframeFade(0)
-    const timer = setTimeout(() => {
-      setDisplayedDevice(device)
-      setIframeFade(1)
-    }, 200)
-    return () => clearTimeout(timer)
-  }, [device, displayedDevice])
+  // Mobile: 393x673 viewport scaled to 225px width
+  const mobileIframeWidth = 393
+  const mobileIframeHeight = 673
+  const targetMobileWidth = 225
 
-  const isMobile = device === "mobile"
+  // Desktop: 1920x1080 viewport scaled to 1100px width
+  const desktopIframeWidth = 1920
+  const desktopIframeHeight = 1080
+  const targetDesktopWidth = 1100
 
-  // Iframe native dimensions
-  const isMobileDisplayed = displayedDevice === "mobile"
-  const iframeWidth = isMobileDisplayed ? 393 : 1440
-  const iframeHeight = isMobileDisplayed ? 673 : 900
-  const chromeHeight = 32 + 24 // address bar + footer
-  const framePadding = 6 // 3px padding * 2
+  const transitionDuration = prefersReducedMotion ? 0 : 700
+  const transitionEasing = "cubic-bezier(0.4, 0, 0.2, 1)"
 
-  // In fillHeight mode, derive width from available height
-  let computedWidth: number
-  if (fillHeight && containerHeight > 0) {
-    const availableForViewport = containerHeight - chromeHeight - framePadding
-    const scaleFromHeight = availableForViewport / iframeHeight
-    computedWidth = Math.round(iframeWidth * scaleFromHeight)
-    // Clamp: don't exceed parent width minus some padding
-    const maxWidth = isMobileDisplayed ? 340 : 600
-    computedWidth = Math.min(computedWidth, maxWidth)
-  } else {
-    computedWidth = width || (isMobileDisplayed ? 200 : 640)
+  const effectiveDesktopWidth = isMobileViewport ? targetMobileWidth : targetDesktopWidth
+  // On mobile viewport, keep phone-like visual styling regardless of device mode
+  const visualDevice = isMobileViewport ? "mobile" : device
+
+  const iframeWidth = displayedDevice === "mobile" ? mobileIframeWidth : desktopIframeWidth
+  const iframeHeight = displayedDevice === "mobile" ? mobileIframeHeight : desktopIframeHeight
+  const targetWidth = displayedDevice === "mobile" ? targetMobileWidth : effectiveDesktopWidth
+  const scale = targetWidth / iframeWidth
+
+  const frameTargetWidth = device === "mobile" ? targetMobileWidth : effectiveDesktopWidth
+  const frameIframeHeight = device === "mobile" ? mobileIframeHeight : desktopIframeHeight
+  const frameIframeWidth = device === "mobile" ? mobileIframeWidth : desktopIframeWidth
+  const frameScale = frameTargetWidth / frameIframeWidth
+  const frameHeight = Math.round(frameIframeHeight * frameScale)
+
+  const handleDeviceSwitch = (newDevice: "mobile" | "desktop") => {
+    if (newDevice === device || isTransitioning) return
+    setIsTransitioning(true)
+    setDevice(newDevice)
+    setTimeout(() => setDisplayedDevice(newDevice), prefersReducedMotion ? 0 : transitionDuration * 0.5)
+    setTimeout(() => setIsTransitioning(false), prefersReducedMotion ? 0 : transitionDuration)
   }
-
-  const shellWidth = computedWidth
-  const shellRadius = borderRadius ?? (isMobile ? 28 : 12)
-  const innerRadius = Math.max(0, shellRadius - 3)
-
-  const displayWidth = computedWidth
-  const scale = displayWidth / iframeWidth
-  const frameHeight = Math.round(iframeHeight * scale)
-
-  const transition = "all 400ms cubic-bezier(0.4, 0, 0.2, 1)"
 
   const handleAddressBarClick = () => {
     if (onUrlChange) {
@@ -132,6 +128,7 @@ export const VibeFrame = memo(function VibeFrame({ url, placeholder, className, 
     else if (e.key === "Escape") setIsEditing(false)
   }
 
+  // Color palette (inlined for portability)
   const colors = {
     white50: "#ffffff",
     white100: "#efefef",
@@ -140,7 +137,7 @@ export const VibeFrame = memo(function VibeFrame({ url, placeholder, className, 
     white400: "#989898",
     white500: "#7c7c7c",
     white600: "#656565",
-    white700: "#525765",
+    white700: "#525252",
     white800: "#464646",
     white900: "#3d3d3d",
     white950: "#292929",
@@ -149,29 +146,19 @@ export const VibeFrame = memo(function VibeFrame({ url, placeholder, className, 
   return (
     <div ref={containerRef} className={className} style={{ position: "relative", display: "flex", flexDirection: "column", alignItems: "center" }}>
       <div style={{ position: "relative" }}>
-        {/* Shadow */}
+        {/* Bezel */}
         <div style={{
-          position: "absolute", inset: 0, pointerEvents: "none",
-          borderRadius: shellRadius,
-          boxShadow: "0 25px 50px -12px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.03)",
-          transition,
-        }} />
-
-        {/* Device frame */}
-        <div style={{
-          position: "relative", background: colors.white950, padding: 3,
-          width: shellWidth + 6, borderRadius: shellRadius,
-          transition,
+          position: "relative", overflow: "hidden",
+          display: "flex", flexDirection: "column",
+          width: frameTargetWidth,
+          borderRadius: visualDevice === "mobile" ? 30 : 20,
+          border: `4px solid ${colors.white950}`,
+          transition: `all ${transitionDuration}ms ${transitionEasing}`,
         }}>
-          <div style={{
-            position: "relative", background: colors.white900, overflow: "hidden",
-            display: "flex", flexDirection: "column", borderRadius: innerRadius,
-            transition,
-          }}>
-            {/* Address bar */}
+            {/* Header */}
             <div style={{
-              height: 32, background: colors.white50, display: "flex", alignItems: "center",
-              justifyContent: "center", padding: "0 10px", borderBottom: `1px solid ${colors.white200}`, flexShrink: 0,
+              height: 46, background: colors.white50, display: "flex", alignItems: "center",
+              justifyContent: "center", padding: "0 16px", borderBottom: `1px solid ${colors.white200}`, flexShrink: 0,
             }}>
               {isEditing ? (
                 <input
@@ -183,29 +170,31 @@ export const VibeFrame = memo(function VibeFrame({ url, placeholder, className, 
                   onKeyDown={handleKeyDown}
                   placeholder="Enter URL..."
                   style={{
-                    background: colors.white100, borderRadius: 9999, padding: "4px 10px",
-                    fontSize: 9, color: colors.white700, fontWeight: 500, textAlign: "center",
-                    border: `1px solid ${colors.white200}`, outline: "none",
-                    maxWidth: isMobile ? 160 : 320, width: "100%",
+                    background: colors.white100, borderRadius: 9999, padding: "4px 12px",
+                    fontSize: 10, color: colors.white700, fontWeight: 500, textAlign: "center",
+                    border: `1px solid ${colors.white200}`, outline: "none", WebkitAppearance: "none",
+                    maxWidth: visualDevice === "mobile" ? 180 : 360, width: "100%",
+                    transition: `max-width ${transitionDuration}ms ${transitionEasing}`,
                   }}
                 />
               ) : (
                 <div
                   onClick={handleAddressBarClick}
                   style={{
-                    background: colors.white100, borderRadius: 9999, padding: "4px 10px",
+                    background: colors.white100, borderRadius: 9999, padding: "4px 12px",
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    border: `1px solid ${colors.white200}`, gap: 5,
+                    border: `1px solid ${colors.white200}`, gap: 6,
                     cursor: onUrlChange ? "text" : "default",
-                    maxWidth: isMobile ? 160 : 320, width: "100%",
+                    maxWidth: visualDevice === "mobile" ? 180 : 360, width: "100%",
+                    transition: `max-width ${transitionDuration}ms ${transitionEasing}`,
                   }}
                 >
-                  <span style={{ fontSize: 9, color: colors.white500, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {url ? (() => { try { return new URL(url).hostname } catch { return url } })() : "Enter URL..."}
+                  <span style={{ fontSize: 10, color: colors.white500, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {url ? new URL(url).hostname : "Enter URL..."}
                   </span>
                   {hasUrl && (
                     <a href={url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} style={{ color: colors.white400, flexShrink: 0 }}>
-                      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" />
                       </svg>
                     </a>
@@ -214,111 +203,115 @@ export const VibeFrame = memo(function VibeFrame({ url, placeholder, className, 
               )}
             </div>
 
-            {/* Viewport */}
+            {/* Screen */}
             <div style={{
               position: "relative", overflow: "hidden", background: colors.white900,
-              width: shellWidth, height: frameHeight,
-              transition,
+              width: frameTargetWidth, height: frameHeight,
+              transition: `all ${transitionDuration}ms ${transitionEasing}`,
             }}>
-              {/* Click to interact overlay */}
-              {hasUrl && !isInteractive && !isLoading && !hasError && (
-                <button
-                  onClick={() => setIsInteractive(true)}
-                  style={{
-                    position: "absolute", inset: 0, zIndex: 30, display: "flex", alignItems: "flex-end", justifyContent: "center",
-                    cursor: "pointer", background: "linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 50%)", border: "none",
-                    paddingBottom: 16,
-                  }}
-                >
-                  <span style={{ 
-                    fontSize: 10, fontWeight: 500, color: "rgba(255,255,255,0.9)", 
-                    background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)",
-                    padding: "6px 12px", borderRadius: 9999,
-                  }}>
-                    Tap to interact
-                  </span>
-                </button>
-              )}
-
-              {/* Loading / Error / Empty states */}
               {(isLoading || !hasUrl || hasError) && (
                 <div style={{
                   position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-                  background: `linear-gradient(to bottom, ${colors.white100}, ${colors.white50})`, zIndex: 10, gap: 10,
+                  background: `linear-gradient(to bottom, ${colors.white100}, ${colors.white50})`, zIndex: 10, gap: 12,
+                  opacity: isTransitioning ? 0 : 1, transition: `opacity ${transitionDuration}ms ${transitionEasing}`,
                 }}>
                   {hasError ? (
                     <>
-                      <div style={{ width: 40, height: 40, borderRadius: 12, background: colors.white200, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <span style={{ color: colors.white400, fontSize: 16 }}>✕</span>
+                      <div style={{ width: 48, height: 48, borderRadius: 16, background: colors.white200, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <span style={{ color: colors.white400, fontSize: 18 }}>✕</span>
                       </div>
-                      <span style={{ fontSize: 10, color: colors.white500, fontWeight: 500, textAlign: "center", padding: "0 12px" }}>Cannot embed this site</span>
-                      {hasUrl && <a href={url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 10, color: colors.white600, fontWeight: 500, textDecoration: "underline" }}>Visit site directly</a>}
+                      <span style={{ fontSize: 11, color: colors.white500, fontWeight: 500, textAlign: "center", padding: "0 16px" }}>Cannot embed this site</span>
+                      {hasUrl && <a href={url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: colors.white600, fontWeight: 500, textDecoration: "underline" }}>Visit site directly</a>}
                     </>
                   ) : hasUrl ? (
                     <>
-                      <div style={{ width: 18, height: 18, borderRadius: "50%", border: `1.5px solid ${colors.white300}`, borderTopColor: colors.white500, animation: "spin 1s linear infinite" }} />
-                      <span style={{ fontSize: 10, color: colors.white400, fontWeight: 500 }}>Loading</span>
+                      <div style={{ width: 20, height: 20, borderRadius: "50%", border: `1.5px solid ${colors.white300}`, borderTopColor: colors.white500, animation: "spin 1s linear infinite" }} />
+                      <span style={{ fontSize: 11, color: colors.white400, fontWeight: 500 }}>Loading</span>
                     </>
                   ) : (
                     <>
-                      <div style={{ width: 52, height: 52, borderRadius: 14, background: `linear-gradient(to bottom right, ${colors.white200}, ${colors.white100})`, display: "flex", alignItems: "center", justifyContent: "center", border: `1px solid ${colors.white200}` }}>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={colors.white400} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <div style={{ width: 64, height: 64, borderRadius: 16, background: `linear-gradient(to bottom right, ${colors.white200}, ${colors.white100})`, display: "flex", alignItems: "center", justifyContent: "center", border: `1px solid ${colors.white200}` }}>
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={colors.white400} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
                         </svg>
                       </div>
                       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
-                        <span style={{ fontSize: 12, color: colors.white600, fontWeight: 600, letterSpacing: "-0.01em" }}>{placeholder || "vibeframe"}</span>
-                        <span style={{ fontSize: 9, color: colors.white400, fontWeight: 500 }}>Tap address bar to begin</span>
+                        <span style={{ fontSize: 13, color: colors.white600, fontWeight: 600, letterSpacing: "-0.01em" }}>{placeholder || "vibeframe"}</span>
+                        <span style={{ fontSize: 10, color: colors.white400, fontWeight: 500 }}>Tap address bar to begin</span>
                       </div>
                     </>
                   )}
                 </div>
               )}
 
-              {/* Iframe */}
               {hasUrl && isVisible && (
                 <div style={{
                   position: "absolute", top: 0, left: 0, transformOrigin: "top left",
                   width: iframeWidth, height: iframeHeight, transform: `scale(${scale})`,
                   pointerEvents: isInteractive ? "auto" : "none",
-                  opacity: iframeFade,
-                  transition: "opacity 200ms ease",
+                  transition: `transform ${transitionDuration}ms ${transitionEasing}`,
                 }}>
                   <iframe
                     ref={iframeRef}
                     src={url}
                     title="Site Preview"
                     style={{ width: "100%", height: "100%", border: "none", background: colors.white50 }}
-                    onLoad={() => {
-                      setIsLoading(false)
-                      setHasError(false)
-                    }}
-                    onError={() => { 
-                      setIsLoading(false)
-                      setHasError(true) 
-                    }}
-                    loading="eager"
+                    onLoad={() => setIsLoading(false)}
+                    onError={() => { setIsLoading(false); setHasError(true) }}
+                    loading="lazy"
+                    sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
                   />
                 </div>
               )}
             </div>
 
-            {/* Footer chrome */}
+            {/* Footer */}
             <div style={{
-              height: 24, background: colors.white50, flexShrink: 0,
-              borderTop: `1px solid ${colors.white200}`,
-            }} />
-          </div>
+              height: 46, background: colors.white50, display: "flex", alignItems: "center",
+              justifyContent: "center", borderTop: `1px solid ${colors.white200}`, flexShrink: 0,
+            }}>
+              <div style={{ position: "relative", display: "flex", alignItems: "center", background: colors.white100, borderRadius: 9999, padding: 2, border: `1px solid ${colors.white200}` }}>
+                <div style={{
+                  position: "absolute", top: 2, bottom: 2, background: colors.white900, borderRadius: 9999,
+                  left: device === "mobile" ? 2 : "50%", width: "calc(50% - 2px)",
+                  transition: `left ${transitionDuration}ms ${transitionEasing}`,
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                }} />
+                <button
+                  onClick={() => handleDeviceSwitch("mobile")}
+                  style={{
+                    position: "relative", zIndex: 10, width: 32, height: 22, display: "flex", alignItems: "center", justifyContent: "center",
+                    background: "none", border: "none", cursor: "pointer",
+                    color: device === "mobile" ? colors.white50 : colors.white500,
+                    transition: `color ${transitionDuration}ms ${transitionEasing}`,
+                  }}
+                  aria-label="Mobile view"
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2" /><line x1="12" y1="18" x2="12.01" y2="18" />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => handleDeviceSwitch("desktop")}
+                  style={{
+                    position: "relative", zIndex: 10, width: 32, height: 22, display: "flex", alignItems: "center", justifyContent: "center",
+                    background: "none", border: "none", cursor: "pointer",
+                    color: device === "desktop" ? colors.white50 : colors.white500,
+                    transition: `color ${transitionDuration}ms ${transitionEasing}`,
+                  }}
+                  aria-label="Desktop view"
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" />
+                  </svg>
+                </button>
+              </div>
+            </div>
         </div>
 
-        {/* Bottom shadow */}
-        <div style={{
-          position: "absolute", bottom: -12, left: "50%", transform: "translateX(-50%)",
-          height: 16, background: "rgba(41,41,41,0.06)", filter: "blur(10px)", borderRadius: 9999, width: "60%",
-        }} />
       </div>
 
       <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </div>
   )
-})
+}

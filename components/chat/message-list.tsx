@@ -459,7 +459,9 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
                       {message.createdAt && (
                         <span className="text-[10px] text-muted-foreground">{formatRelativeTime(message.createdAt)}</span>
                       )}
-                      <span className="text-[10px] font-medium text-muted-foreground">you</span>
+                      <div className="w-6 h-6 rounded-full bg-foreground flex items-center justify-center">
+                        <span className="text-[9px] font-medium text-background">you</span>
+                      </div>
                     </div>
                   )}
                   <div className="max-w-[88%] ml-auto">

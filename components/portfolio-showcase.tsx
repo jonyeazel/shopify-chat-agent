@@ -28,13 +28,6 @@ export function PortfolioShowcase({ sites, onClose }: PortfolioShowcaseProps) {
         onClick={(e) => e.stopPropagation()}
         className="w-full bg-background rounded-t-xl overflow-hidden max-h-[90vh] flex flex-col"
       >
-        <div className="flex items-center justify-between p-4 border-b border-border">
-          <h3 className="font-semibold">My Work</h3>
-          <button onClick={onClose} className="p-2 hover:bg-muted rounded-full">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
         <div className="flex-1 overflow-y-auto">
           {!selectedSite ? (
             <div className="p-4 space-y-3">

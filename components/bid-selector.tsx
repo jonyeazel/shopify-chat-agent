@@ -44,17 +44,6 @@ export function BidSelector({ service, onSelect, onClose }: BidSelectorProps) {
         onClick={(e) => e.stopPropagation()}
         className="w-full max-w-lg bg-background rounded-t-xl overflow-hidden max-h-[85vh] flex flex-col"
       >
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-border">
-          <div>
-            <h3 className="font-semibold">{service.name}</h3>
-            <p className="text-sm text-muted-foreground">{service.description}</p>
-          </div>
-          <button onClick={onClose} className="p-2 hover:bg-muted rounded-full">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
         <div className="flex-1 overflow-y-auto scrollbar-hide p-4">
           <AnimatePresence mode="wait">
             {step === "tier" && (

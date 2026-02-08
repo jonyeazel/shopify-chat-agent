@@ -76,21 +76,23 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, c
           {brand.tagline}
         </p>
 
+        <p className="text-[13px] text-muted-foreground mt-1.5">
+          Design. Dev. Strategy.
+        </p>
+
         {/* Stats */}
-        <div className="flex items-center gap-0 mt-6">
-          {stats.map((stat, i) => (
-            <div key={stat.label} className="flex items-center">
-              {i > 0 && (
-                <div className="w-px h-3 bg-foreground/10 mx-5" />
-              )}
-              <div className="text-center">
-                <span className="text-[15px] font-semibold text-foreground leading-none">
-                  {stat.value}
-                </span>
-                <span className="text-[11px] text-muted-foreground ml-1.5 uppercase tracking-[0.05em]">
-                  {stat.label}
-                </span>
-              </div>
+        <div className="flex items-center gap-2 mt-6">
+          {stats.map((stat) => (
+            <div
+              key={stat.label}
+              className="px-3 py-1.5 rounded-full border border-foreground/10 text-center"
+            >
+              <span className="text-[13px] font-semibold text-foreground leading-none">
+                {stat.value}
+              </span>
+              <span className="text-[10px] text-muted-foreground ml-1 uppercase tracking-[0.05em]">
+                {stat.label}
+              </span>
             </div>
           ))}
         </div>

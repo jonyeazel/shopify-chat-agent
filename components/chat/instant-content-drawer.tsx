@@ -1,10 +1,10 @@
 "use client"
 
 import { motion, AnimatePresence } from "framer-motion"
-import { X, ExternalLink, Smartphone, Monitor } from "lucide-react"
+import { X } from "lucide-react"
 import { PORTFOLIO_DATA } from "@/lib/portfolio-data"
 import { VibeFrame } from "@/components/ui/vibe-frame"
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback } from "react"
 import { useDrawerGesture, springClose } from "@/hooks/use-drawer-gesture"
 
 type DrawerType = "portfolio" | "photos" | "pricing" | "sites" | null
@@ -20,16 +20,6 @@ export function InstantContentDrawer({ type, onClose, onAskAbout }: InstantConte
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [selectedSiteIndex, setSelectedSiteIndex] = useState(0)
   const [slideDirection, setSlideDirection] = useState(0)
-  const [viewDevice, setViewDevice] = useState<"mobile" | "desktop">("mobile")
-  const [isMobileViewport, setIsMobileViewport] = useState(false)
-
-  useEffect(() => {
-    if (typeof window === "undefined") return
-    const check = () => setIsMobileViewport(window.innerWidth < 768)
-    check()
-    window.addEventListener("resize", check)
-    return () => window.removeEventListener("resize", check)
-  }, [])
 
   const handleAskAbout = (prompt: string) => {
     onAskAbout?.(prompt)
@@ -96,124 +86,43 @@ export function InstantContentDrawer({ type, onClose, onAskAbout }: InstantConte
               <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
             </div>
 
-            {/* Header */}
-            <div className="flex-shrink-0 flex items-center justify-between px-4 pb-2">
-              <a
-                href={selectedSite.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[12px] text-muted-foreground hover:text-foreground transition-colors duration-150 flex items-center gap-1"
-              >
-                {selectedSite.name}
-                <ExternalLink className="w-3 h-3" />
-              </a>
-              <div className="flex items-center gap-2">
-                {/* Device toggle — desktop only */}
-                <div className="hidden md:flex items-center bg-muted rounded-full p-0.5 gap-0.5">
-                  <button
-                    onClick={() => setViewDevice("mobile")}
-                    className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors duration-150 ${
-                      viewDevice === "mobile" ? "bg-card text-foreground" : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    <Smartphone className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    onClick={() => setViewDevice("desktop")}
-                    className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors duration-150 ${
-                      viewDevice === "desktop" ? "bg-card text-foreground" : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    <Monitor className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-                <button
-                  onClick={close}
-                  className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
-                >
-                  <X className="w-4 h-4 text-muted-foreground" />
-                </button>
-              </div>
-            </div>
-
             {/* Site preview — fills remaining height */}
-            {isMobileViewport ? (
-              <motion.div
-                className="flex-1 min-h-0 overflow-hidden"
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.15}
-                onDragEnd={(_e, info) => {
-                  if (Math.abs(info.offset.x) > 60) {
-                    navigateSite(info.offset.x > 0 ? -1 : 1)
-                  }
-                }}
-              >
-                <AnimatePresence mode="wait" custom={slideDirection}>
-                  <motion.div
-                    key={selectedSite.url}
-                    custom={slideDirection}
-                    initial="enter"
-                    animate="center"
-                    exit="exit"
-                    variants={{
-                      enter: (dir: number) => ({ x: dir * 80, opacity: 0 }),
-                      center: { x: 0, opacity: 1 },
-                      exit: (dir: number) => ({ x: dir * -80, opacity: 0 }),
-                    }}
-                    transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
-                    className="w-full h-full"
-                  >
-                    <iframe
-                      src={selectedSite.url}
-                      title={selectedSite.name}
-                      className="w-full h-full border-0 bg-white"
-                      loading="eager"
-                    />
-                  </motion.div>
-                </AnimatePresence>
-              </motion.div>
-            ) : (
-              <motion.div
-                className="flex-1 flex items-center justify-center overflow-hidden px-3"
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.15}
-                onDragEnd={(_e, info) => {
-                  if (Math.abs(info.offset.x) > 60) {
-                    navigateSite(info.offset.x > 0 ? -1 : 1)
-                  }
-                }}
-              >
-                <AnimatePresence mode="wait" custom={slideDirection}>
-                  <motion.div
-                    key={selectedSite.url}
-                    custom={slideDirection}
-                    initial="enter"
-                    animate="center"
-                    exit="exit"
-                    variants={{
-                      enter: (dir: number) => ({ x: dir * 80, opacity: 0 }),
-                      center: { x: 0, opacity: 1 },
-                      exit: (dir: number) => ({ x: dir * -80, opacity: 0 }),
-                    }}
-                    transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
-                  >
-                    <VibeFrame
-                      url={selectedSite.url}
-                      placeholder={selectedSite.name}
-                      device={viewDevice}
-                      interactive
-                      fillHeight
-                    />
-                  </motion.div>
-                </AnimatePresence>
-              </motion.div>
-            )}
+            <motion.div
+              className="flex-1 min-h-0 overflow-hidden flex items-center justify-center px-3 py-3"
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.15}
+              onDragEnd={(_e, info) => {
+                if (Math.abs(info.offset.x) > 60) {
+                  navigateSite(info.offset.x > 0 ? -1 : 1)
+                }
+              }}
+            >
+              <AnimatePresence mode="wait" custom={slideDirection}>
+                <motion.div
+                  key={selectedSite.url}
+                  custom={slideDirection}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  variants={{
+                    enter: (dir: number) => ({ x: dir * 80, opacity: 0 }),
+                    center: { x: 0, opacity: 1 },
+                    exit: (dir: number) => ({ x: dir * -80, opacity: 0 }),
+                  }}
+                  transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+                >
+                  <VibeFrame
+                    url={selectedSite.url}
+                    placeholder={selectedSite.name}
+                  />
+                </motion.div>
+              </AnimatePresence>
+            </motion.div>
 
             {/* Site selector */}
-            <div className="flex-shrink-0 pb-[max(env(safe-area-inset-bottom),8px)] pt-2 overflow-x-auto scrollbar-hide">
-              <div className="flex items-center gap-1 px-4 w-max min-w-full justify-center">
+            <div className="flex-shrink-0 pb-[max(env(safe-area-inset-bottom),12px)] pt-3 overflow-x-auto scrollbar-hide">
+              <div className="flex items-center gap-1.5 px-4 w-max min-w-full justify-center">
                 {liveSites.map((site, i) => (
                   <button
                     key={site.name}
@@ -375,17 +284,6 @@ export function InstantContentDrawer({ type, onClose, onAskAbout }: InstantConte
 
           {/* Scroll container */}
           <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide overscroll-contain">
-            {/* Header */}
-            <div className="flex items-center justify-between px-4 pb-3 border-b border-border">
-              <span className="text-[13px] font-medium text-foreground">{config.title}</span>
-              <button
-                onClick={close}
-                className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center transition-colors duration-150"
-              >
-                <X className="w-4 h-4 text-muted-foreground" />
-              </button>
-            </div>
-
             {/* Content */}
             <div className="p-4">{config.content}</div>
           </div>

@@ -85,24 +85,7 @@ export function CheckoutModal({
             className="bg-background border border-border rounded-xl w-full max-w-2xl max-h-[90vh] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between p-4 border-b border-border">
-              <div>
-                <h2 className="text-lg font-semibold text-foreground">{checkoutTitle}</h2>
-                <p className="text-sm text-muted-foreground">
-                  {isProposalCheckout
-                    ? "Unlock your personalized CRO audit"
-                    : `50% deposit: $${(checkoutAmount / 2).toLocaleString()}`}
-                </p>
-              </div>
-              <button
-                onClick={onClose}
-                className="w-10 h-10 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
-              >
-                <X className="w-5 h-5 text-muted-foreground" />
-              </button>
-            </div>
-
-            <div className="p-4 overflow-y-auto" style={{ maxHeight: "calc(90vh - 100px)" }}>
+            <div className="p-4 overflow-y-auto" style={{ maxHeight: "calc(90vh - 60px)" }}>
               {status === "error" ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-4">

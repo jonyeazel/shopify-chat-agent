@@ -401,10 +401,10 @@ export default function Home() {
           onAskAbout={(prompt) => handleSendMessage(prompt)}
         />
 
+        <SlideMenu isOpen={showMenu} onClose={() => setShowMenu(false)} items={menuItems} isFullscreen={false} />
+
         {/* Content row: left column + icon rail */}
         <div className="flex-1 min-h-0 flex relative">
-
-        <SlideMenu isOpen={showMenu} onClose={() => setShowMenu(false)} items={menuItems} isFullscreen={false} />
 
         <div className="flex-1 min-h-0 min-w-0 flex flex-col relative">
         <input ref={fileInputRef} type="file" accept=".csv,image/*" multiple className="hidden" />
