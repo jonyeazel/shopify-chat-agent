@@ -399,7 +399,7 @@ export default function Home() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.17 }}
                       >
-                        100+ stores · 2x avg conversion lift
+                        Shopify design & development
                       </motion.p>
 
                       {chatError && (
