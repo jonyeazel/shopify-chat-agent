@@ -83,16 +83,16 @@ export function AdminLoginModal({ isOpen, onClose, siteId, onSuccess, isFullscre
             </div>
 
             {/* Header */}
-            <div className="px-6 pb-4 flex items-center justify-between">
-              <div>
-                <h2 className="font-semibold text-lg text-foreground">Admin Access</h2>
-                <p className="text-xs text-muted-foreground">Site #{siteId}</p>
+            <div className="flex items-center justify-between px-4 pb-3 border-b border-border">
+              <div className="flex items-baseline gap-2">
+                <span className="text-[13px] font-medium text-foreground">Admin Access</span>
+                <span className="text-[11px] text-muted-foreground">Site #{siteId}</span>
               </div>
               <button
                 onClick={onClose}
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-muted hover:bg-muted/80 transition-colors"
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors duration-150"
               >
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4 text-muted-foreground" />
               </button>
             </div>
 

@@ -170,12 +170,13 @@ export function MediaGallery({ isOpen, onClose, onAskAbout }: MediaGalleryProps)
                 style={{ maxHeight: "85vh" }}
               >
                 {/* Drag handle — mobile only */}
-                <div className="md:hidden flex justify-center pt-2 pb-1 flex-shrink-0">
-                  <div className="w-8 h-1 rounded-full bg-muted-foreground/30" />
+                <div className="md:hidden flex justify-center pt-3 pb-2 flex-shrink-0">
+                  <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
                 </div>
 
                 {/* Header */}
-                <div className="flex items-center justify-end px-4 md:px-5 py-3 md:py-4 flex-shrink-0">
+                <div className="flex items-center justify-between px-4 pb-3 border-b border-border flex-shrink-0">
+                  <span className="text-[13px] font-medium text-foreground">Gallery</span>
                   <button
                     onClick={handleClose}
                     className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors duration-150"

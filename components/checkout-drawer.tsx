@@ -88,19 +88,19 @@ export function CheckoutDrawer({
             </div>
 
             {/* Header */}
-            <div className="flex items-center justify-between px-6 pb-4 border-b border-border">
-              <div>
-                <h2 className="text-lg font-semibold text-foreground">{productName}</h2>
-                <p className="text-sm text-muted-foreground">
+            <div className="flex items-center justify-between px-4 pb-3 border-b border-border">
+              <div className="flex items-baseline gap-2">
+                <span className="text-[13px] font-medium text-foreground">{productName}</span>
+                <span className="text-[13px] text-muted-foreground">
                   ${amount.toLocaleString()}
                   {recurring && "/mo"}
-                </p>
+                </span>
               </div>
               <button
                 onClick={onClose}
-                className="w-10 h-10 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
+                className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center transition-colors duration-150"
               >
-                <X className="w-5 h-5 text-muted-foreground" />
+                <X className="w-4 h-4 text-muted-foreground" />
               </button>
             </div>
 
