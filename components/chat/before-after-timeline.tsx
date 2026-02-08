@@ -47,7 +47,7 @@ export function BeforeAfterTimeline({ caseStudy }: BeforeAfterTimelineProps) {
               <button
                 key={m.date}
                 onClick={() => handleDotClick(i)}
-                className="flex flex-col items-center gap-1.5 relative z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg p-1 -m-1"
+                className="flex flex-col items-center gap-1.5 relative z-10 active:scale-[0.92] transition-transform duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg p-1 -m-1"
                 style={{ minWidth: 44, minHeight: 44 }}
               >
                 <div
@@ -55,8 +55,8 @@ export function BeforeAfterTimeline({ caseStudy }: BeforeAfterTimelineProps) {
                     i === activeIndex
                       ? "w-3 h-3 bg-foreground"
                       : i < activeIndex
-                        ? "w-2 h-2 bg-foreground/40"
-                        : "w-2 h-2 border border-foreground/40 bg-background"
+                        ? "w-2.5 h-2.5 bg-foreground/40"
+                        : "w-2 h-2 border border-foreground/30 bg-background"
                   }`}
                 />
                 <span className={`text-[10px] whitespace-nowrap ${
@@ -72,9 +72,9 @@ export function BeforeAfterTimeline({ caseStudy }: BeforeAfterTimelineProps) {
         {/* Milestone card */}
         <motion.div
           key={activeIndex}
-          initial={{ opacity: 0, x: 8 }}
+          initial={{ opacity: 0, x: 6 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.12 }}
+          transition={{ type: "spring", stiffness: 500, damping: 35 }}
           className="p-4 rounded-xl bg-muted/30"
         >
           <p className="text-[13px] font-semibold text-foreground">{milestone.label}</p>

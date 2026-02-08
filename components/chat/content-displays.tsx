@@ -98,7 +98,7 @@ export function ImageGallery({
         {/* Right fade */}
         <div 
           className="absolute right-0 top-0 bottom-2 w-8 pointer-events-none"
-          style={{ background: "linear-gradient(to right, transparent, hsl(var(--card)))" }}
+          style={{ background: "linear-gradient(to right, transparent, var(--card))" }}
         />
       </div>
       {serviceName && price && (
@@ -204,9 +204,10 @@ export const LiveSitesDisplay = memo(function LiveSitesDisplay() {
   }, [])
 
   const device = isMobile ? "mobile" : "desktop"
-  // On mobile: center a phone-sized frame. On desktop: fill the container width.
+  // On mobile: fixed phone-sized frame (matches original 220px target).
+  // On desktop: fill the container width.
   const displayWidth = isMobile
-    ? Math.min(260, frameWidth - 32)
+    ? Math.min(220, frameWidth - 32)
     : frameWidth
 
   return (
@@ -249,7 +250,7 @@ export const LiveSitesDisplay = memo(function LiveSitesDisplay() {
               placeholder={selectedSite.name}
               device={device}
               width={displayWidth}
-              borderRadius={isMobile ? 34 : 12}
+              borderRadius={isMobile ? 32 : 12}
             />
           </motion.div>
         </AnimatePresence>
@@ -392,7 +393,7 @@ export function AllPricingDisplay({
           <button
             key={i}
             onClick={() => onSelectService?.(item.chatPrompt || item.name)}
-            className="p-3 rounded-xl border border-border/60 bg-background text-left transition-all active:scale-[0.98] hover:border-foreground/20 hover:bg-muted/30"
+            className="p-3 rounded-xl border border-border/60 bg-background text-left hover-lift hover:border-foreground/20"
           >
             <p className="font-semibold text-sm text-foreground">{item.price}</p>
             <p className="font-medium text-sm text-foreground mt-1 leading-tight">{item.name}</p>

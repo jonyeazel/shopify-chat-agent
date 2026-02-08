@@ -249,7 +249,7 @@ export function ChatInput({
 
         <div
           className={`bg-card rounded-2xl border transition-all duration-150 ${
-            isDragging ? "border-foreground/30 bg-muted" : "border-border focus-within:border-foreground/15"
+            isDragging ? "border-foreground/30 bg-muted" : "border-border/50 focus-within:border-foreground/20"
           }`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
@@ -308,7 +308,7 @@ export function ChatInput({
               className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                 disabled || isTranscribing || (!input.trim() && attachedFiles.length === 0)
                   ? "bg-muted cursor-not-allowed"
-                  : "bg-foreground hover:opacity-90 active:scale-90"
+                  : "bg-foreground hover:opacity-90 active:scale-[0.88] active:opacity-80"
               }`}
             >
               <ArrowUp className={`w-4 h-4 ${

@@ -59,7 +59,7 @@ export function SpeedCommitmentSelector({ onSelect, onPhoneSubmit }: SpeedCommit
                 transition={{ ...spring, delay: 0.04 + i * 0.04 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleSelect(option)}
-                className="w-full p-4 rounded-xl border border-border/60 bg-background text-left transition-colors hover:border-foreground/20 active:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="w-full p-4 rounded-xl border border-border/60 bg-background text-left hover-lift hover:border-foreground/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <div className="flex items-start gap-3">
                   <div className="w-9 h-9 rounded-lg bg-muted/50 flex items-center justify-center flex-shrink-0 mt-0.5">

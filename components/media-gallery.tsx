@@ -1,11 +1,9 @@
 "use client"
 
-import { useState, useCallback, useMemo } from "react"
+import { useState, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, ChevronLeft, ChevronRight, MessageCircle } from "lucide-react"
-import { GALLERY_ITEMS, GALLERY_CATEGORIES, type GalleryItem, type GalleryCategory } from "@/lib/portfolio-data"
-
-type Filter = GalleryCategory | "all"
+import { GALLERY_ITEMS, GALLERY_CATEGORIES, type GalleryItem } from "@/lib/portfolio-data"
 
 interface MediaGalleryProps {
   isOpen: boolean
@@ -14,13 +12,9 @@ interface MediaGalleryProps {
 }
 
 export function MediaGallery({ isOpen, onClose, onAskAbout }: MediaGalleryProps) {
-  const [filter, setFilter] = useState<Filter>("all")
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
 
-  const filtered = useMemo(
-    () => filter === "all" ? GALLERY_ITEMS : GALLERY_ITEMS.filter((item) => item.category === filter),
-    [filter]
-  )
+  const filtered = GALLERY_ITEMS
 
   const handleSelect = useCallback((index: number) => {
     setSelectedIndex(index)
@@ -44,7 +38,6 @@ export function MediaGallery({ isOpen, onClose, onAskAbout }: MediaGalleryProps)
 
   const handleClose = useCallback(() => {
     setSelectedIndex(null)
-    setFilter("all")
     onClose()
   }, [onClose])
 
@@ -182,28 +175,10 @@ export function MediaGallery({ isOpen, onClose, onAskAbout }: MediaGalleryProps)
                 </div>
 
                 {/* Header */}
-                <div className="flex items-center justify-between px-4 md:px-5 py-3 md:py-4 border-b border-border flex-shrink-0">
-                  <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
-                    {GALLERY_CATEGORIES.map((c) => (
-                      <button
-                        key={c.value}
-                        onClick={() => {
-                          setFilter(c.value)
-                          setSelectedIndex(null)
-                        }}
-                        className={`px-3 py-1 rounded-full text-[12px] whitespace-nowrap transition-colors duration-150 ${
-                          filter === c.value
-                            ? "bg-foreground text-background"
-                            : "text-muted-foreground hover:bg-muted"
-                        }`}
-                      >
-                        {c.label}
-                      </button>
-                    ))}
-                  </div>
+                <div className="flex items-center justify-end px-4 md:px-5 py-3 md:py-4 flex-shrink-0">
                   <button
                     onClick={handleClose}
-                    className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors duration-150 ml-2"
+                    className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center hover:bg-muted transition-colors duration-150"
                   >
                     <X className="w-4 h-4 text-muted-foreground" />
                   </button>
@@ -246,7 +221,7 @@ function GalleryThumbnail({
   return (
     <button
       onClick={() => onClick(index)}
-      className="w-full aspect-square overflow-hidden rounded-lg group relative"
+      className="w-full aspect-square overflow-hidden rounded-lg group relative bg-muted/40"
     >
       <img
         src={item.url}

@@ -161,17 +161,32 @@
 @layer base {
   * {
     @apply border-border;
+    -webkit-tap-highlight-color: transparent;
+  }
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
   }
   body {
     @apply bg-background text-foreground;
+    -webkit-overflow-scrolling: touch;
+    /* Inter OpenType features: stylistic alternates for refined letterforms */
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
   }
 
   ::selection {
-    background-color: var(--primary);
-    color: var(--primary-foreground);
+    background-color: var(--forest-800);
+    color: #ffffff;
   }
 
   /* Links: non-color cue (underline) for accessibility */
@@ -222,6 +237,25 @@
 @keyframes cursor-blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
+}
+
+/* Refined floating element shadow — subtle, warm, layered */
+.shadow-float {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 4px 12px rgba(0, 0, 0, 0.06),
+    0 12px 24px rgba(0, 0, 0, 0.04);
+}
+
+/* Inline card hover lift — barely perceptible depth on hover */
+.hover-lift {
+  transition: box-shadow 150ms ease-out, transform 150ms ease-out;
+}
+.hover-lift:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+.hover-lift:active {
+  transform: scale(0.985);
 }
 
 @media print {

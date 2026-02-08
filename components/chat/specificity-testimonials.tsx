@@ -76,8 +76,8 @@ export function SpecificityTestimonials({ testimonials }: SpecificityTestimonial
 
         {/* Right fade */}
         <div
-          className="absolute right-0 top-0 bottom-2 w-6 pointer-events-none"
-          style={{ background: "linear-gradient(to right, transparent, var(--background))" }}
+          className="absolute right-0 top-0 bottom-2 w-8 pointer-events-none"
+          style={{ background: "linear-gradient(to right, transparent, var(--card))" }}
         />
       </div>
     </motion.div>

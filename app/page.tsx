@@ -190,7 +190,7 @@ export default function Home() {
     <main
       ref={mainRef}
       className={`flex m-[6px] md:m-3 bg-card rounded-3xl overflow-hidden border border-foreground/[0.12] md:bg-transparent md:rounded-none md:overflow-visible md:border-0 ${isResizing ? "select-none cursor-col-resize" : ""}`}
-      style={{ height: "calc(100dvh - var(--edge-padding) * 2)", minHeight: "calc(100vh - var(--edge-padding) * 2)" }}
+      style={{ height: "calc(100dvh - var(--edge-padding) * 2)" }}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
@@ -225,7 +225,7 @@ export default function Home() {
         <div className="absolute w-full h-full cursor-col-resize" />
       </div>
 
-      {/* Chat area - two columns on mobile (chat + icon rail), single column on desktop */}
+      {/* Chat area */}
       <div className="flex-1 min-w-0 flex flex-col relative bg-card md:rounded-2xl md:overflow-hidden md:border md:border-foreground/[0.12]">
         {/* Background media */}
         {backgroundMedia && (
@@ -308,7 +308,7 @@ export default function Home() {
               onMouseLeave={handleMenuPressEnd}
               onTouchStart={handleMenuPressStart}
               onTouchEnd={handleMenuPressEnd}
-              className="w-10 h-10 flex flex-col items-end justify-center gap-[5px] rounded-full active:bg-muted/40 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="w-10 h-10 flex flex-col items-end justify-center gap-[5px] rounded-full active:bg-muted/40 active:scale-[0.92] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               aria-label="Menu (hold for admin)"
             >
               <span className="w-[11px] h-[1.5px] bg-foreground rounded-full" />
@@ -327,11 +327,9 @@ export default function Home() {
         {/* Content row: left column + icon rail */}
         <div className="flex-1 min-h-0 flex relative">
 
-        {/* Slide menu covers full content row (chat + icon rail) */}
         <SlideMenu isOpen={showMenu} onClose={() => setShowMenu(false)} items={menuItems} isFullscreen={false} />
 
-        {/* Left column: messages + chat input */}
-        <div className="flex-1 min-w-0 flex flex-col relative">
+        <div className="flex-1 min-h-0 min-w-0 flex flex-col relative">
         <input ref={fileInputRef} type="file" accept=".csv,image/*" multiple className="hidden" />
 
         <AdminLoginModal
@@ -361,7 +359,7 @@ export default function Home() {
         {/* Scrollable content */}
         <div className="flex-1 min-h-0 flex flex-col relative z-10">
           <div
-            className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide"
+            className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-hide"
             style={{ overscrollBehavior: "contain" }}
           >
             <AnimatePresence mode="wait">
@@ -374,9 +372,9 @@ export default function Home() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
-                    className="h-full w-full flex flex-col items-center justify-center px-4 md:hidden overflow-hidden"
+                    className="h-full w-full flex flex-col items-center justify-end pb-6 px-6 md:hidden"
                   >
-                    <div className="text-center flex flex-col items-center w-full max-w-xs mx-auto">
+                    <div className="text-center flex flex-col items-center w-full">
                       <motion.div
                         className="relative mb-5"
                         initial={{ scale: 0.95, opacity: 0 }}
@@ -396,7 +394,7 @@ export default function Home() {
                       </motion.h1>
 
                       <motion.p
-                        className="text-[12px] text-muted-foreground mt-1.5 mb-8"
+                        className="text-[12px] text-muted-foreground mt-1.5"
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.17 }}
@@ -408,7 +406,7 @@ export default function Home() {
                         <motion.div
                           initial={{ opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className="mb-4 p-3 rounded-xl bg-[#fef2f2] border border-[#fecaca] text-sm max-w-xs"
+                          className="mt-4 p-3 rounded-xl bg-[#fef2f2] border border-[#fecaca] text-sm max-w-xs"
                         >
                           <p className="text-[#b91c1c]">{chatError}</p>
                           <SmsTrigger context="error-fallback">
@@ -418,43 +416,6 @@ export default function Home() {
                           </SmsTrigger>
                         </motion.div>
                       )}
-
-                      <motion.div
-                        className="relative w-full"
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.24 }}
-                      >
-                        <div className="relative">
-                          <div className="overflow-x-auto scrollbar-hide">
-                            <div className="flex gap-1.5 w-max mx-auto">
-                              {QUICK_ACTIONS.map((action, i) => {
-                                const btn = (
-                                  <motion.button
-                                    key={i}
-                                    onClick={action.sms ? undefined : () => {
-                                      if (action.message) handleChatSubmit(action.message)
-                                    }}
-                                    className={`py-1.5 px-3 rounded-full text-[11px] transition-all duration-150 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
-                                      action.sms
-                                        ? "bg-foreground text-background hover:opacity-90"
-                                        : "border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 active:bg-muted"
-                                    }`}
-                                    whileTap={{ scale: 0.96 }}
-                                  >
-                                    {action.label}
-                                  </motion.button>
-                                )
-                                if (action.sms) {
-                                  return <SmsTrigger key={i}>{btn}</SmsTrigger>
-                                }
-                                return btn
-                              })}
-                            </div>
-                          </div>
-                          <div className="absolute top-0 right-0 bottom-0 w-12 pointer-events-none bg-gradient-to-l from-card to-transparent" />
-                        </div>
-                      </motion.div>
                     </div>
                   </motion.div>
 
@@ -523,8 +484,10 @@ export default function Home() {
               })}
             </div>
           </div>
+          {/* Mobile: Fade above input */}
+          <div className="flex-shrink-0 md:hidden h-6 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent, var(--card))" }} />
           {/* Mobile: Chat input */}
-          <div className="flex-shrink-0 md:hidden px-4 pt-3 pb-[max(env(safe-area-inset-bottom),12px)] bg-card">
+          <div className="flex-shrink-0 md:hidden pb-[max(env(safe-area-inset-bottom),8px)] px-3">
             <ChatInput
               input={input ?? ""}
               setInput={setInput}
@@ -535,8 +498,8 @@ export default function Home() {
         </div>
         </div>
 
-        {/* Mobile: Icon rail */}
-        <div className={`md:hidden flex flex-col items-center justify-end gap-2 flex-shrink-0 w-[48px] mr-4 pb-[max(env(safe-area-inset-bottom),12px)] ${showMenu ? "opacity-0 pointer-events-none" : ""}`}>
+        {/* Mobile: Vertical icon rail */}
+        <div className={`md:hidden flex flex-col items-center justify-end gap-2 flex-shrink-0 pr-3 pb-[max(env(safe-area-inset-bottom),12px)] ${showMenu ? "opacity-0 pointer-events-none" : ""}`}>
           {[
             { icon: Search, label: "Audit", action: () => handleChatSubmit("Can you audit my store?") },
             { icon: Layers, label: "Work", action: () => openDrawer("portfolio") },
@@ -549,8 +512,8 @@ export default function Home() {
               onClick={action}
               className="flex flex-col items-center gap-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl"
             >
-              <div className="w-[48px] h-[48px] rounded-full flex items-center justify-center active:scale-90 transition-transform duration-150 bg-foreground">
-                <Icon className="w-[16px] h-[16px] text-background" strokeWidth={1.5} />
+              <div className="w-[48px] h-[48px] rounded-full flex items-center justify-center active:scale-[0.92] active:opacity-80 transition-all duration-150 bg-foreground">
+                <Icon className="w-4 h-4 text-background" strokeWidth={1.5} />
               </div>
               <span className="text-[10px] text-muted-foreground leading-tight">{label}</span>
             </button>

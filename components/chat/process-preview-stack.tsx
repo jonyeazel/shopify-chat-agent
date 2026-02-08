@@ -12,6 +12,7 @@ const spring = { type: "spring" as const, stiffness: 450, damping: 30 }
 
 export function ProcessPreviewStack({ deliverables }: ProcessPreviewStackProps) {
   const [activeIndex, setActiveIndex] = useState(0)
+  const [dragX, setDragX] = useState(0)
   const touchStartRef = useRef(0)
   const touchDeltaRef = useRef(0)
 
@@ -22,11 +23,15 @@ export function ProcessPreviewStack({ deliverables }: ProcessPreviewStackProps) 
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     touchDeltaRef.current = e.touches[0].clientX - touchStartRef.current
+    // Clamp visual feedback to ±60px for a rubber-band feel
+    const clamped = Math.max(-60, Math.min(60, touchDeltaRef.current * 0.4))
+    setDragX(clamped)
   }, [])
 
   const handleTouchEnd = useCallback(() => {
     const delta = touchDeltaRef.current
     const threshold = 40
+    setDragX(0)
 
     if (delta < -threshold && activeIndex < deliverables.length - 1) {
       setActiveIndex(prev => prev + 1)
@@ -61,12 +66,13 @@ export function ProcessPreviewStack({ deliverables }: ProcessPreviewStackProps) 
             initial={false}
             animate={{
               y: card.offset * 8,
-              x: card.offset * 4,
+              x: card.offset === 0 ? dragX + card.offset * 4 : card.offset * 4,
               scale: 1 - card.offset * 0.03,
               opacity: card.offset === 0 ? 1 : 0.6,
               zIndex: deliverables.length - card.offset,
+              rotateZ: card.offset === 0 ? dragX * 0.03 : 0,
             }}
-            transition={spring}
+            transition={dragX !== 0 ? { type: "tween", duration: 0 } : spring}
             className="absolute inset-0 rounded-xl border border-border/60 bg-background p-4"
           >
             {card.offset === 0 && (

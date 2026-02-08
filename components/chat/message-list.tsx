@@ -415,13 +415,13 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
             return (
             <motion.div
               key={message.id}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ 
                 type: "spring", 
                 stiffness: 500, 
                 damping: 35,
-                delay: isLastMessage ? 0.04 : 0 
+                delay: isLastMessage ? 0.03 : 0 
               }}
               className={continuation ? "mt-1" : index === 0 ? "" : "mt-4"}
             >
@@ -447,31 +447,29 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
                     }
                     return null
                   })}
-                  {!continuation && message.createdAt && (
-                    <span className="text-[10px] text-muted-foreground mb-1 mr-1 block">{formatRelativeTime(message.createdAt)}</span>
-                  )}
-                  <div className="flex items-end gap-2 ml-auto max-w-[88%]">
-                    <div>
-                      <p className="text-[14px] whitespace-pre-wrap leading-normal text-foreground">
-                        {message.parts?.map((part) => {
-                          if (part.type === "text") {
-                            return (
-                              part.text
-                                .replace(/data:image\/[^;]+;base64,[^\]]+/g, "")
-                                .replace(/\[Uploaded image: [^\]]+\]/g, "")
-                                .replace(/\n{3,}/g, "\n\n")
-                                .trim() || null
-                            )
-                          }
-                          return null
-                        })}
-                      </p>
+                  {!continuation && (
+                    <div className="flex items-center gap-2 mb-1.5">
+                      {message.createdAt && (
+                        <span className="text-[10px] text-muted-foreground">{formatRelativeTime(message.createdAt)}</span>
+                      )}
+                      <span className="text-[10px] font-medium text-muted-foreground">you</span>
                     </div>
-                    {!continuation && (
-                      <div className="w-5 h-5 rounded-full bg-muted flex-shrink-0 flex items-center justify-center mb-0.5">
-                        <span className="text-[10px] font-medium text-muted-foreground">Y</span>
-                      </div>
-                    )}
+                  )}
+                  <div className="max-w-[88%] ml-auto">
+                    <p className="text-[14px] whitespace-pre-wrap leading-normal text-foreground">
+                      {message.parts?.map((part) => {
+                        if (part.type === "text") {
+                          return (
+                            part.text
+                              .replace(/data:image\/[^;]+;base64,[^\]]+/g, "")
+                              .replace(/\[Uploaded image: [^\]]+\]/g, "")
+                              .replace(/\n{3,}/g, "\n\n")
+                              .trim() || null
+                          )
+                        }
+                        return null
+                      })}
+                    </p>
                   </div>
                 </div>
               ) : (
@@ -509,9 +507,17 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
                       }
                       if (part.type === "tool-invocation" && part.state === "call") {
                         return (
-                          <div key={i} className="flex items-center gap-2 py-1">
-                            <div className="w-1 h-1 rounded-full bg-muted-foreground/40 animate-pulse" />
-                            <span className="text-[13px] text-muted-foreground">thinking</span>
+                          <div key={i} className="flex items-center gap-2 py-1.5">
+                            <div className="flex items-center gap-1">
+                              {[0, 1, 2].map((j) => (
+                                <span
+                                  key={j}
+                                  className="w-1 h-1 rounded-full bg-muted-foreground/30 animate-pulse"
+                                  style={{ animationDelay: `${j * 200}ms` }}
+                                />
+                              ))}
+                            </div>
+                            <span className="text-[12px] text-muted-foreground">thinking</span>
                           </div>
                         )
                       }
@@ -540,9 +546,9 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
                   {[0, 1, 2].map((i) => (
                     <motion.span
                       key={i}
-                      className="w-1 h-1 rounded-full bg-foreground/40"
-                      animate={{ opacity: [0.2, 0.8, 0.2] }}
-                      transition={{ duration: 1.4, repeat: Number.POSITIVE_INFINITY, delay: i * 0.18, ease: "easeInOut" }}
+                      className="w-1.5 h-1.5 rounded-full bg-foreground/30"
+                      animate={{ opacity: [0.15, 0.6, 0.15], scale: [0.85, 1, 0.85] }}
+                      transition={{ duration: 1.6, repeat: Number.POSITIVE_INFINITY, delay: i * 0.2, ease: "easeInOut" }}
                     />
                   ))}
                 </div>
@@ -561,7 +567,7 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
                 className="pt-3"
               >
                 <div className="relative">
-                  <div className="flex gap-1.5 overflow-x-auto scrollbar-hide pr-4 pb-1">
+                  <div className="flex gap-1.5 overflow-x-auto scrollbar-hide px-0 pr-4 pb-1">
                     {getQuickReplies(
                       messages[messages.length - 1]?.parts
                         ?.filter((p): p is { type: "text"; text: string } => p.type === "text")
@@ -602,7 +608,11 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
                       return chip
                     })}
                   </div>
-
+                  {/* Right fade for scroll overflow */}
+                  <div
+                    className="absolute right-0 top-0 bottom-1 w-6 pointer-events-none"
+                    style={{ background: "linear-gradient(to right, transparent, var(--card))" }}
+                  />
                 </div>
               </motion.div>
             )}
@@ -638,7 +648,7 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             onClick={scrollToBottom}
-            className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-foreground text-background text-sm font-medium shadow-lg flex items-center gap-2"
+            className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-foreground text-background text-sm font-medium shadow-float flex items-center gap-2"
           >
             <ChevronDown className="w-4 h-4" />
             New message
