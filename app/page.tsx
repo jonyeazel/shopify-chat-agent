@@ -189,7 +189,7 @@ export default function Home() {
   return (
     <main
       ref={mainRef}
-      className={`flex m-[6px] md:m-3 bg-card rounded-3xl overflow-hidden border border-foreground/[0.12] md:bg-transparent md:rounded-none md:overflow-visible md:border-0 ${isResizing ? "select-none cursor-col-resize" : ""}`}
+      className={`flex mx-[6px] md:m-3 bg-card rounded-3xl overflow-hidden border border-foreground/[0.12] md:bg-transparent md:rounded-none md:overflow-visible md:border-0 ${isResizing ? "select-none cursor-col-resize" : ""}`}
       style={{ height: "calc(100dvh - var(--edge-padding) * 2)" }}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}

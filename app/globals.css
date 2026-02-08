@@ -13,7 +13,7 @@
  * Border #d5d2cc visible against both surfaces
  */
 :root {
-  --edge-padding: 6px;
+  --edge-padding: 0px;
   --background: #f0f0f0;
   --foreground: #1a1a1a;
 

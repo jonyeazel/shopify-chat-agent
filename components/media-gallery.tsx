@@ -189,7 +189,7 @@ export function MediaGallery({ isOpen, onClose, onAskAbout }: MediaGalleryProps)
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                     {filtered.map((item, i) => (
                       <GalleryThumbnail
-                        key={`${filter}-${i}`}
+                        key={i}
                         item={item}
                         index={i}
                         onClick={handleSelect}
