@@ -2,8 +2,8 @@
 
 import { useState, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { X, ChevronLeft, ChevronRight, MessageCircle } from "lucide-react"
-import { GALLERY_ITEMS, GALLERY_CATEGORIES, type GalleryItem } from "@/lib/portfolio-data"
+import { X, ChevronLeft, ChevronRight, MessageCircle, ExternalLink, Globe } from "lucide-react"
+import { GALLERY_ITEMS, GALLERY_CATEGORIES, type GalleryItem, type GalleryCategory } from "@/lib/portfolio-data"
 import { useDrawerGesture, springClose } from "@/hooks/use-drawer-gesture"
 
 interface MediaGalleryProps {
@@ -14,8 +14,11 @@ interface MediaGalleryProps {
 
 export function MediaGallery({ isOpen, onClose, onAskAbout }: MediaGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
+  const [activeCategory, setActiveCategory] = useState<GalleryCategory | "all">("all")
 
-  const filtered = GALLERY_ITEMS
+  const filtered = activeCategory === "all" 
+    ? GALLERY_ITEMS 
+    : GALLERY_ITEMS.filter(item => item.category === activeCategory)
 
   const handleSelect = useCallback((index: number) => {
     setSelectedIndex(index)
@@ -108,11 +111,21 @@ export function MediaGallery({ isOpen, onClose, onAskAbout }: MediaGalleryProps)
                 </button>
 
                 <div className="relative bg-card rounded-xl overflow-hidden shadow-lg border border-border max-w-[90%] md:max-w-[65vw]">
-                  <img
-                    src={selected.url}
-                    alt={selected.label}
-                    className="max-h-[55vh] md:max-h-[65vh] w-auto object-contain"
-                  />
+                  {selected.category === "live-sites" ? (
+                    <div className="w-[85vw] md:w-[60vw] aspect-video bg-muted relative">
+                      <iframe
+                        src={selected.liveUrl}
+                        className="w-full h-full"
+                        sandbox="allow-scripts allow-same-origin"
+                      />
+                    </div>
+                  ) : (
+                    <img
+                      src={selected.url}
+                      alt={selected.label}
+                      className="max-h-[55vh] md:max-h-[65vh] w-auto object-contain"
+                    />
+                  )}
                   <div className="flex items-center justify-between px-4 py-3 border-t border-border">
                     <div>
                       <p className="text-[14px] text-foreground">{selected.label}</p>
@@ -120,15 +133,28 @@ export function MediaGallery({ isOpen, onClose, onAskAbout }: MediaGalleryProps)
                         {GALLERY_CATEGORIES.find((c) => c.value === selected.category)?.label}
                       </p>
                     </div>
-                    {onAskAbout && (
-                      <button
-                        onClick={() => handleAskAbout(selected)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-foreground text-background text-[12px] hover:opacity-90 transition-opacity duration-150"
-                      >
-                        <MessageCircle className="w-3.5 h-3.5" />
-                        Ask about this
-                      </button>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {selected.liveUrl && (
+                        <a
+                          href={selected.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border text-foreground text-[12px] hover:bg-muted transition-colors duration-150"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5" />
+                          Visit
+                        </a>
+                      )}
+                      {onAskAbout && (
+                        <button
+                          onClick={() => handleAskAbout(selected)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-foreground text-background text-[12px] hover:opacity-90 transition-opacity duration-150"
+                        >
+                          <MessageCircle className="w-3.5 h-3.5" />
+                          Ask about this
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -188,12 +214,32 @@ export function MediaGallery({ isOpen, onClose, onAskAbout }: MediaGalleryProps)
                 </div>
 
                 <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide overscroll-contain">
+                  {/* Category Filter */}
+                  <div className="px-3 pt-2 pb-3 flex gap-2 overflow-x-auto scrollbar-hide">
+                    {GALLERY_CATEGORIES.map((cat) => (
+                      <button
+                        key={cat.value}
+                        onClick={() => {
+                          setActiveCategory(cat.value)
+                          setSelectedIndex(null)
+                        }}
+                        className={`px-3 py-1.5 rounded-full text-[12px] whitespace-nowrap transition-colors duration-150 ${
+                          activeCategory === cat.value
+                            ? "bg-foreground text-background"
+                            : "bg-muted text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        {cat.label}
+                      </button>
+                    ))}
+                  </div>
+
                   {/* Grid */}
-                  <div className="p-3">
+                  <div className="p-3 pt-0">
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                       {filtered.map((item, i) => (
                         <GalleryThumbnail
-                          key={i}
+                          key={`${activeCategory}-${i}`}
                           item={item}
                           index={i}
                           onClick={handleSelect}
@@ -201,7 +247,7 @@ export function MediaGallery({ isOpen, onClose, onAskAbout }: MediaGalleryProps)
                       ))}
                     </div>
                     {filtered.length === 0 && (
-                      <p className="text-center text-[13px] text-muted-foreground py-12">No images in this category.</p>
+                      <p className="text-center text-[13px] text-muted-foreground py-12">No items in this category.</p>
                     )}
                   </div>
                 </div>
@@ -223,6 +269,8 @@ function GalleryThumbnail({
   index: number
   onClick: (index: number) => void
 }) {
+  const isLiveSite = item.category === "live-sites"
+  
   return (
     <button
       onClick={() => onClick(index)}
@@ -231,11 +279,17 @@ function GalleryThumbnail({
       <img
         src={item.url}
         alt={item.label}
-        className="w-full h-full object-cover transition-opacity duration-150 group-hover:opacity-90"
+        className="w-full h-full object-cover transition-all duration-150 group-hover:scale-[1.02]"
         loading="lazy"
       />
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#191919]/60 to-transparent px-3 pb-2.5 pt-8 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-        <p className="text-[13px] text-white">{item.label}</p>
+      <div className={`absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#191919]/80 to-transparent px-3 pb-2.5 pt-10 ${isLiveSite ? "opacity-100" : "opacity-0 group-hover:opacity-100"} transition-opacity duration-150`}>
+        <div className="flex items-center gap-1.5">
+          {isLiveSite && <Globe className="w-3 h-3 text-white/80" />}
+          <p className="text-[13px] text-white font-medium">{item.label}</p>
+        </div>
+        {isLiveSite && (
+          <p className="text-[10px] text-white/60 mt-0.5">Live Site</p>
+        )}
       </div>
     </button>
   )
