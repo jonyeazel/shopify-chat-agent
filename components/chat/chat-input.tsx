@@ -390,6 +390,9 @@ export function ChatInput({
     const inputValue = input || ""
     if ((!inputValue.trim() && attachedFiles.length === 0) || disabled) return
 
+    // Haptic feedback on send
+    try { navigator.vibrate?.(12) } catch {}
+
     let messageText = inputValue.trim()
     if (attachedFiles.length > 0) {
       const fileDataString = attachedFiles
@@ -590,14 +593,20 @@ export function ChatInput({
               )}
             </div>
 
-            <button
+            <motion.button
               type="submit"
               disabled={disabled || isBusy || (!input.trim() && attachedFiles.length === 0)}
-              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+              whileTap={{ scale: 0.88 }}
+              transition={{ type: "spring", stiffness: 500, damping: 25 }}
+              className={`w-8 h-8 rounded-full flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                 disabled || isBusy || (!input.trim() && attachedFiles.length === 0)
                   ? "bg-foreground/[0.08] cursor-not-allowed"
-                  : "bg-foreground hover:opacity-90 active:scale-[0.92] active:opacity-80"
+                  : "bg-foreground shadow-sm"
               }`}
+              style={{ 
+                transition: "background-color 120ms ease-out, opacity 120ms ease-out",
+                opacity: disabled || isBusy || (!input.trim() && attachedFiles.length === 0) ? 1 : undefined
+              }}
             >
               <ArrowUp
                 className={`w-4 h-4 ${
@@ -607,7 +616,7 @@ export function ChatInput({
                 }`}
                 strokeWidth={2.5}
               />
-            </button>
+            </motion.button>
           </div>
         </div>
       </div>

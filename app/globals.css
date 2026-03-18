@@ -271,13 +271,15 @@
 
 /* Inline card hover lift — barely perceptible depth on hover */
 .hover-lift {
-  transition: box-shadow 150ms ease-out, transform 150ms ease-out;
+  transition: box-shadow 180ms cubic-bezier(0.22, 1, 0.36, 1), transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, box-shadow;
 }
 .hover-lift:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
 }
 .hover-lift:active {
-  transform: scale(0.985);
+  transform: scale(0.98);
+  transition-duration: 60ms;
 }
 
 /* Card — flat, no lift */
@@ -291,13 +293,90 @@
     0 0 0 0.5px rgba(0, 0, 0, 0.08),
     0 1px 1px rgba(0, 0, 0, 0.16),
     0 2px 4px rgba(0, 0, 0, 0.12);
-  transition: box-shadow 150ms ease-out, transform 150ms ease-out, opacity 150ms ease-out;
+  transition: box-shadow 120ms cubic-bezier(0.22, 1, 0.36, 1), transform 120ms cubic-bezier(0.22, 1, 0.36, 1), opacity 120ms ease-out;
+  will-change: transform;
 }
 .rubber-button:active {
   box-shadow:
-    inset 0 1px 3px rgba(0, 0, 0, 0.15),
-    0 0 0 0.5px rgba(0, 0, 0, 0.06);
-  transform: scale(0.92);
+    inset 0 1px 3px rgba(0, 0, 0, 0.18),
+    0 0 0 0.5px rgba(0, 0, 0, 0.04);
+  transform: scale(0.94);
+  transition-duration: 50ms;
+}
+
+/* Tactile tap feedback — instant response */
+.tap-target {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  transition: transform 80ms cubic-bezier(0.22, 1, 0.36, 1), opacity 80ms ease-out;
+}
+.tap-target:active {
+  transform: scale(0.97);
+  opacity: 0.85;
+  transition-duration: 40ms;
+}
+
+/* Softer floating shadows with warmth */
+.shadow-soft {
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.03),
+    0 2px 4px rgba(0, 0, 0, 0.04),
+    0 8px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* Glass overlay effect */
+.glass-overlay {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(255, 255, 255, 0.85);
+}
+
+/* Smooth momentum scrolling */
+.scroll-smooth-touch {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+}
+
+/* iOS-style overscroll rubber band effect */
+@supports (-webkit-overflow-scrolling: touch) {
+  .overscroll-rubber {
+    overscroll-behavior-y: auto;
+  }
+}
+
+/* Smooth content transitions */
+.content-fade-in {
+  animation: contentFadeIn 0.25s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes contentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Subtle press state for all interactive elements */
+button:not(:disabled):active,
+[role="button"]:not(:disabled):active {
+  transition-duration: 50ms !important;
+}
+
+/* Skeleton shimmer for loading states */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton-shimmer {
+  background: linear-gradient(90deg, var(--muted) 25%, rgba(255,255,255,0.15) 50%, var(--muted) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
 }
 
 @media print {

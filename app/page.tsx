@@ -335,8 +335,11 @@ export default function Home() {
         {/* Mobile header */}
         <header className="flex-shrink-0 relative z-40 md:hidden">
           <div className="px-3 h-14 flex items-center pt-[env(safe-area-inset-top)]">
-            <div
+            <motion.div
               className="flex items-center gap-1.5"
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.02 }}
               onMouseDown={handleAdminPressStart}
               onMouseUp={handleAdminPressEnd}
               onMouseLeave={handleAdminPressEnd}
@@ -345,10 +348,10 @@ export default function Home() {
             >
               <HeaderAvatar avatarUrl={siteConfig.brand.avatarUrl} />
               <div className="flex flex-col">
-                <span className="font-medium text-foreground text-[14px] leading-none tracking-[-0.01em]">{siteConfig.brand.name}</span>
-                <span className="text-[10px] text-muted-foreground leading-none mt-1">{siteConfig.brand.subtitle}</span>
+                <span className="font-medium text-foreground text-[14px] leading-none tracking-[-0.02em]">{siteConfig.brand.name}</span>
+                <span className="text-[10px] text-muted-foreground leading-none mt-1 tracking-[0.005em]">{siteConfig.brand.subtitle}</span>
               </div>
-            </div>
+            </motion.div>
           </div>
         </header>
 
@@ -396,34 +399,34 @@ export default function Home() {
                     key="landing-mobile"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+                    exit={{ opacity: 0, y: -8, transition: { duration: 0.15, ease: [0.4, 0, 1, 1] } }}
+                    transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                     className="h-full w-full flex flex-col items-center justify-center px-6 md:hidden"
                   >
                     <div className="text-center flex flex-col items-center w-full">
                       <motion.div
                         className="relative mb-5"
-                        initial={{ scale: 0.95, opacity: 0 }}
+                        initial={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.05 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 24, delay: 0.08 }}
                       >
                         <StaticAvatar avatarUrl={siteConfig.brand.avatarUrl} availabilityStatus={availabilityStatus} onLongPress={() => TEMP_ADMIN_BYPASS ? setShowAdminPanel(true) : setShowAdminLogin(true)} />
                       </motion.div>
 
                       <motion.h1
-                        className="font-semibold text-foreground text-[18px] tracking-[-0.01em]"
-                        initial={{ opacity: 0, y: 8 }}
+                        className="font-semibold text-foreground text-[18px] tracking-[-0.02em]"
+                        initial={{ opacity: 0, y: 12 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.12 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 26, delay: 0.15 }}
                       >
                         {siteConfig.brand.tagline}
                       </motion.h1>
 
                       <motion.p
-                        className="text-[12px] text-muted-foreground mt-1.5"
-                        initial={{ opacity: 0, y: 8 }}
+                        className="text-[12px] text-muted-foreground mt-1.5 tracking-[0.01em]"
+                        initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.17 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 26, delay: 0.22 }}
                       >
                         Design. Dev. Strategy.
                       </motion.p>
@@ -533,18 +536,32 @@ export default function Home() {
             { icon: IconPrice, label: "Cost", action: () => handleChatSubmit("What's this gonna run me?") },
             { icon: IconText, label: "Text", sms: true as const },
             { icon: IconGallery, label: "Shots", action: () => handleChatSubmit("I need better product shots") },
-          ] as const).map(({ icon: Icon, label, ...rest }) => {
+          ] as const).map(({ icon: Icon, label, ...rest }, index) => {
+            const handleTap = () => {
+              // Haptic feedback
+              try { navigator.vibrate?.(8) } catch {}
+              if ("action" in rest) rest.action()
+            }
             const btn = (
-              <button
+              <motion.button
                 key={label}
-                onClick={"action" in rest ? rest.action : undefined}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 400, 
+                  damping: 28,
+                  delay: index * 0.05 
+                }}
+                whileTap={{ scale: 0.92 }}
+                onClick={"action" in rest ? handleTap : undefined}
                 className="flex flex-col items-center gap-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
               >
                 <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-foreground rubber-button ring-1 ring-white/[0.06]">
                   <Icon className="w-6 h-6 text-background" strokeWidth={1.5} />
                 </div>
                 <span className="text-[10px] text-muted-foreground leading-tight">{label}</span>
-              </button>
+              </motion.button>
             )
             if ("sms" in rest) {
               return <SmsTrigger key={label} context="general">{btn}</SmsTrigger>

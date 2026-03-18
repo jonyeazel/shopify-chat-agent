@@ -716,22 +716,38 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
           <AnimatePresence>
             {status === "streaming" && messages[messages.length - 1]?.role !== "assistant" && (
               <motion.div 
-                initial={{ opacity: 0, y: 10 }} 
+                initial={{ opacity: 0, y: 12 }} 
                 animate={{ opacity: 1, y: 0 }} 
-                exit={{ opacity: 0, y: -4 }}
-                transition={{ type: "spring", stiffness: 400, damping: 32 }}
+                exit={{ opacity: 0, y: -6, transition: { duration: 0.12 } }}
+                transition={{ type: "spring", stiffness: 350, damping: 28 }}
                 className="mt-5"
               >
-                <div className="flex items-center gap-1.5 mb-1">
-                  <img src={avatarUrl || "/placeholder.svg"} alt="" className="w-6 h-6 rounded-full object-cover" />
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <motion.img 
+                    src={avatarUrl || "/placeholder.svg"} 
+                    alt="" 
+                    className="w-6 h-6 rounded-full object-cover"
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 25, delay: 0.05 }}
+                  />
                 </div>
                 <div className="flex items-center gap-[5px]">
                   {[0, 1, 2].map((i) => (
                     <motion.span
                       key={i}
-                      className="w-[5px] h-[5px] rounded-full bg-foreground/25"
-                      animate={{ opacity: [0.15, 0.55, 0.15], scale: [0.8, 1, 0.8] }}
-                      transition={{ duration: 1.4, repeat: Number.POSITIVE_INFINITY, delay: i * 0.15, ease: "easeInOut" }}
+                      className="w-[5px] h-[5px] rounded-full bg-foreground/30"
+                      animate={{ 
+                        opacity: [0.2, 0.6, 0.2], 
+                        scale: [0.85, 1.05, 0.85],
+                        y: [0, -1.5, 0]
+                      }}
+                      transition={{ 
+                        duration: 1.2, 
+                        repeat: Number.POSITIVE_INFINITY, 
+                        delay: i * 0.12, 
+                        ease: [0.4, 0, 0.2, 1] 
+                      }}
                     />
                   ))}
                 </div>
@@ -757,11 +773,13 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
                       return (
                         <SmsTrigger key="sms-cta" context={cta.context}>
                           <motion.button
-                            initial={{ opacity: 0, y: 6 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ type: "spring", stiffness: 400, damping: 32, delay: 0.08 }}
-                            whileTap={{ scale: 0.96 }}
-                            className="flex-shrink-0 py-1.5 px-3.5 rounded-full text-[12px] bg-foreground text-background hover:opacity-90 transition-opacity duration-150 cursor-pointer"
+                            initial={{ opacity: 0, y: 6, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            transition={{ type: "spring", stiffness: 350, damping: 28, delay: 0.06 }}
+                            whileTap={{ scale: 0.93 }}
+                            onClick={() => { try { navigator.vibrate?.(10) } catch {} }}
+                            className="flex-shrink-0 py-1.5 px-3.5 rounded-full text-[12px] bg-foreground text-background shadow-sm cursor-pointer"
+                            style={{ transition: "opacity 100ms ease-out" }}
                           >
                             {cta.label}
                           </motion.button>
@@ -777,17 +795,20 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
                     ).map((reply, i) => (
                       <motion.button
                         key={reply}
-                        initial={{ opacity: 0, y: 6 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0, y: 6, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
                         transition={{
                           type: "spring",
-                          stiffness: 400,
-                          damping: 32,
-                          delay: 0.1 + i * 0.02,
+                          stiffness: 350,
+                          damping: 28,
+                          delay: 0.12 + i * 0.025,
                         }}
-                        whileTap={{ scale: 0.96 }}
-                        onClick={() => onQuickReply(reply)}
-                        className="flex-shrink-0 py-1.5 px-3.5 rounded-full text-[12px] border border-border/80 text-muted-foreground hover:text-foreground hover:border-foreground/30 active:bg-muted/50 transition-all duration-150"
+                        whileTap={{ scale: 0.94 }}
+                        onClick={() => {
+                          try { navigator.vibrate?.(6) } catch {}
+                          onQuickReply(reply)
+                        }}
+                        className="flex-shrink-0 py-1.5 px-3.5 rounded-full text-[12px] border border-border/80 text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors duration-100"
                       >
                         {reply}
                       </motion.button>
