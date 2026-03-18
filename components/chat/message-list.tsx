@@ -21,6 +21,7 @@ import {
   SiteAuditInput,
   LabelUpload,
   EmailCapture,
+  BrandLaunchDisplay,
   renderMessageWithSmsLinks,
 } from "./content-displays"
 import { RevenueLeakCalculator } from "./revenue-leak-calculator"
@@ -492,6 +493,15 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
       return (
         <MicroConsultation
           onSelect={() => onQuickReply?.("I have a question for Jon")}
+        />
+      )
+    }
+
+    if (detected.type === "brandLaunch" && detected.data?.tiers) {
+      return (
+        <BrandLaunchDisplay
+          tiers={detected.data.tiers}
+          onSelectTier={onQuickReply}
         />
       )
     }

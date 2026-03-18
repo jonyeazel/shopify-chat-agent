@@ -7,6 +7,45 @@ export interface Product {
 }
 
 export const PRODUCTS: Product[] = [
+  // Brand Launch Packages
+  {
+    id: "brand-launch-prelaunch",
+    name: "Pre-Launch Package",
+    description: "Landing page + product shots + waitlist/pre-order setup",
+    priceInCents: 499700, // $4,997
+  },
+  {
+    id: "brand-launch-full",
+    name: "Full Launch Package",
+    description: "Full store + product shots + landing pages + 30 ad creatives",
+    priceInCents: 1249700, // $12,497
+  },
+  {
+    id: "brand-launch-scale",
+    name: "Scale Launch Package",
+    description: "Full store + unlimited shots + landing pages + 100 ad creatives + social branding + referral system",
+    priceInCents: 2499700, // $24,997
+  },
+  // Brand Asset Packages
+  {
+    id: "brand-assets-essentials",
+    name: "Brand Assets Essentials",
+    description: "8 product shots + 10 ad creatives",
+    priceInCents: 99700, // $997
+  },
+  {
+    id: "brand-assets-growth",
+    name: "Brand Assets Growth",
+    description: "16 product shots + 30 ad creatives + social templates",
+    priceInCents: 249700, // $2,497
+  },
+  {
+    id: "brand-assets-scale",
+    name: "Brand Assets Scale",
+    description: "Unlimited shots (3mo) + 100 ad creatives + animated ads + social branding kit",
+    priceInCents: 499700, // $4,997
+  },
+  // CRO Packages
   {
     id: "cro-audit-proposal",
     name: "CRO Audit & Proposal",
@@ -31,6 +70,7 @@ export const PRODUCTS: Product[] = [
     description: "Enterprise CRO with full automation",
     priceInCents: 1497700, // $14,977
   },
+  // Creative Services
   {
     id: "product-shots",
     name: "Product Shots (8 Pack)",

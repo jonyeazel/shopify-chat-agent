@@ -499,6 +499,63 @@ export function AllPricingDisplay({
   )
 }
 
+// Brand Launch Package Display — for new brand inquiries
+export function BrandLaunchDisplay({
+  tiers,
+  onSelectTier,
+}: {
+  tiers: { name: string; price: number; description: string }[]
+  onSelectTier?: (tierName: string) => void
+}) {
+  return (
+    <div className="my-5 space-y-2">
+      <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium px-1 mb-3">
+        Brand Launch Packages
+      </p>
+      
+      {tiers.map((tier, i) => {
+        const isPopular = tier.name === "Full Launch"
+        return (
+          <button
+            key={tier.name}
+            onClick={() => onSelectTier?.(`Tell me more about the ${tier.name} package`)}
+            className={`w-full p-4 rounded-xl text-left transition-all active:scale-[0.99] ${
+              isPopular
+                ? "bg-foreground text-background hover:opacity-95"
+                : "border border-border/50 hover:border-foreground/20"
+            }`}
+          >
+            <div className="flex items-baseline justify-between gap-3 mb-1.5">
+              <div className="flex items-center gap-2">
+                <p className={`font-semibold text-[15px] ${isPopular ? "text-background" : "text-foreground"}`}>
+                  {tier.name}
+                </p>
+                {isPopular && (
+                  <span className="text-[10px] font-medium uppercase tracking-wider bg-background/20 text-background px-2 py-0.5 rounded-full">
+                    Popular
+                  </span>
+                )}
+              </div>
+              <p className={`text-[15px] font-semibold ${isPopular ? "text-background" : "text-foreground"}`}>
+                ${tier.price.toLocaleString()}
+              </p>
+            </div>
+            <p className={`text-[12px] leading-relaxed ${isPopular ? "text-background/60" : "text-muted-foreground"}`}>
+              {tier.description}
+            </p>
+          </button>
+        )
+      })}
+      
+      <div className="pt-2 px-1">
+        <p className="text-[11px] text-muted-foreground">
+          All packages include mobile-first design, 30-day launch support, and lifetime license.
+        </p>
+      </div>
+    </div>
+  )
+}
+
 // Email capture component for strategic moments
 export function EmailCapture({ 
   context = "tips",

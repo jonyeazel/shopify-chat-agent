@@ -2,7 +2,7 @@ import { PORTFOLIO_DATA, getGalleryByCategory } from "./portfolio-data"
 import { CASE_STUDIES, TESTIMONIALS, DELIVERABLES } from "./component-data"
 
 export type DetectedContent = {
-  type: "gallery" | "liveSites" | "pricing" | "allPricing" | "siteAudit" | "emailCapture" | "revenueLeak" | "beforeAfterTimeline" | "testimonials" | "speedCommitment" | "processPreviewStack" | "paymentOptions" | "microConsultation" | "labelUpload"
+  type: "gallery" | "liveSites" | "pricing" | "allPricing" | "siteAudit" | "emailCapture" | "revenueLeak" | "beforeAfterTimeline" | "testimonials" | "speedCommitment" | "processPreviewStack" | "paymentOptions" | "microConsultation" | "labelUpload" | "brandLaunch"
   data?: any
 }
 
@@ -32,6 +32,30 @@ export function detectContentToShow(text: string): DetectedContent | null {
     (lower.includes("single question") && lower.includes("$97"))
   ) {
     return { type: "microConsultation", data: null }
+  }
+
+  // Brand Launch Packages — new brand/store build with assets
+  if (
+    lower.includes("brand launch") ||
+    lower.includes("launch package") ||
+    (lower.includes("new brand") && (lower.includes("package") || lower.includes("build") || lower.includes("pricing"))) ||
+    (lower.includes("pre-launch") && lower.includes("$")) ||
+    (lower.includes("full launch") && lower.includes("$")) ||
+    (lower.includes("scale launch") && lower.includes("$")) ||
+    (lower.includes("everything you need") && lower.includes("launch")) ||
+    (lower.includes("competitor") && lower.includes("site") && lower.includes("like")) ||
+    (lower.includes("build") && lower.includes("like") && (lower.includes("getgrinds") || lower.includes("grinds")))
+  ) {
+    return { 
+      type: "brandLaunch", 
+      data: {
+        tiers: [
+          { name: "Pre-Launch", price: 4997, description: "Landing page + product shots + waitlist/pre-order setup" },
+          { name: "Full Launch", price: 12497, description: "Full store + product shots + landing pages + 30 ad creatives" },
+          { name: "Scale Launch", price: 24997, description: "Full store + unlimited shots + landing pages + 100 ad creatives + social branding + referral system" },
+        ]
+      }
+    }
   }
 
   // PDPs / live sites - show the mobile iframe previews

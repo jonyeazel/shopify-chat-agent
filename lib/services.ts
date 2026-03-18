@@ -362,6 +362,113 @@ export const SERVICES: Service[] = [
     ],
   },
 
+  // BRAND LAUNCH - Comprehensive new brand packages
+  {
+    id: "brand-launch",
+    name: "Brand Launch Package",
+    category: "launch",
+    description: "Everything you need to launch a new brand from scratch",
+    tiers: [
+      { 
+        name: "Pre-Launch", 
+        price: 4997, 
+        description: "Landing page + product shots + waitlist/pre-order setup" 
+      },
+      { 
+        name: "Full Launch", 
+        price: 12497, 
+        description: "Full store + product shots + landing pages + 30 ad creatives" 
+      },
+      { 
+        name: "Scale Launch", 
+        price: 24997, 
+        description: "Full store + unlimited shots + landing pages + 100 ad creatives + social branding + referral system" 
+      },
+    ],
+    faqs: [
+      { 
+        question: "What's included in the Pre-Launch?", 
+        answer: "High-converting landing page for pre-orders/waitlist, 8 product shots, email capture setup with Klaviyo, and mobile-optimized design. Perfect for validating before full build." 
+      },
+      { 
+        question: "What's included in Full Launch?", 
+        answer: "Complete Shopify store (homepage, collection, PDP, about, contact), 16 product shots, 2 landing pages, 30 ad creatives, newsletter signup, promo code system, and mobile-first design." 
+      },
+      { 
+        question: "What's included in Scale Launch?", 
+        answer: "Everything in Full Launch plus unlimited product shots for 3 months, 100 ad creatives, social media branding kit, influencer/affiliate referral system, upsell funnels, and priority support." 
+      },
+      { 
+        question: "How long does a brand launch take?", 
+        answer: "Pre-Launch: 1-2 weeks. Full Launch: 3-4 weeks. Scale Launch: 4-6 weeks. We move fast." 
+      },
+      { 
+        question: "Do you help with branding/logo?", 
+        answer: "Logo refinement is included. Full brand identity from scratch is a separate add-on starting at $2,500." 
+      },
+      { 
+        question: "Can you work with my existing logo?", 
+        answer: "Absolutely. Send me your files and I'll make sure everything is cohesive." 
+      },
+      { 
+        question: "What about ongoing support after launch?", 
+        answer: "30 days of launch support included. Ongoing retainers available starting at $500/mo." 
+      },
+    ],
+    portfolioSites: [
+      { name: "Grinds (Competitor Reference)", url: "https://www.getgrinds.com", thumbnail: "/images/sites/grinds-ref.jpg" },
+      { name: "Stadics", url: "https://www.stadics.com" },
+      { name: "The Shopify Guy", url: "https://www.theshopifyguy.dev" },
+    ],
+  },
+  {
+    id: "brand-assets",
+    name: "Brand Asset Package",
+    category: "launch",
+    description: "Creative assets for your product launch",
+    tiers: [
+      { 
+        name: "Essentials", 
+        price: 997, 
+        description: "8 product shots + 10 ad creatives" 
+      },
+      { 
+        name: "Growth", 
+        price: 2497, 
+        description: "16 product shots + 30 ad creatives + social templates" 
+      },
+      { 
+        name: "Scale", 
+        price: 4997, 
+        description: "Unlimited shots (3mo) + 100 ad creatives + animated ads + social branding kit" 
+      },
+    ],
+    faqs: [
+      { 
+        question: "What do I need to provide?", 
+        answer: "Product photo or sample, label file (AI, PSD, or PDF), and any brand guidelines you have." 
+      },
+      { 
+        question: "What ad sizes do you deliver?", 
+        answer: "1080x1080 (feed), 1080x1920 (story/reels), 1200x628 (Facebook feed). All formats for each concept." 
+      },
+      { 
+        question: "Can you do animated/motion ads?", 
+        answer: "Included in Scale tier. Static + motion for each concept." 
+      },
+      { 
+        question: "Turnaround time?", 
+        answer: "Essentials: 48 hours. Growth: 5 days. Scale: 7 days for initial batch, then ongoing." 
+      },
+    ],
+    portfolioImages: [
+      "/images/product-shot.png",
+      "/images/gravity-shot.png",
+      "/images/2pk-bundle.png",
+      "/images/3pk-aov-booster.png",
+    ],
+  },
+
   // CUSTOM
   {
     id: "custom-project",
@@ -384,6 +491,7 @@ export const SERVICES: Service[] = [
 ]
 
 export const SERVICE_CATEGORIES = [
+  { id: "launch", name: "Brand Launch", icon: "Rocket" },
   { id: "consulting", name: "Consulting", icon: "MessageSquare" },
   { id: "creative", name: "Creative", icon: "Camera" },
   { id: "pages", name: "Page Builds", icon: "Layout" },
