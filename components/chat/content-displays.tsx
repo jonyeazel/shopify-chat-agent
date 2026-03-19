@@ -2,12 +2,55 @@
 
 import React, { useState, useEffect, useRef, useCallback, memo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronRight, Loader2, ArrowRight, Upload, X } from "lucide-react"
+import { ChevronRight, Loader2, ArrowRight, Upload, X, Play } from "lucide-react"
 import type { PricingItem } from "@/lib/portfolio-data"
 import type { PORTFOLIO_DATA } from "@/lib/portfolio-data"
 import { VibeFrame } from "@/components/ui/vibe-frame"
 import { SmsTrigger } from "@/components/sms-trigger"
 import { useIsMobile } from "@/hooks/use-mobile"
+
+// Video Preview Card — shows the 3-minute video thumbnail with play button
+export function VideoPreview({ 
+  onPlay 
+}: { 
+  onPlay?: () => void 
+}) {
+  return (
+    <div className="my-4">
+      <div 
+        className="relative rounded-2xl overflow-hidden bg-neutral-100 cursor-pointer group"
+        onClick={onPlay}
+      >
+        <img
+          src="/images/video-thumbnail.jpg"
+          alt="v0 University Video"
+          className="w-full aspect-video object-cover"
+        />
+        
+        {/* Play button overlay */}
+        <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors duration-200">
+          <div className="w-16 h-16 rounded-full bg-white/95 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-200">
+            <Play className="w-7 h-7 text-neutral-900 ml-1" fill="currentColor" />
+          </div>
+        </div>
+        
+        {/* Duration badge */}
+        <div className="absolute bottom-3 right-3 px-2 py-1 rounded-md bg-black/70 text-white text-xs font-medium">
+          2:47
+        </div>
+      </div>
+      
+      <div className="mt-3 px-1">
+        <p className="text-[15px] font-medium text-foreground">
+          Build a website in 3 minutes
+        </p>
+        <p className="text-[13px] text-muted-foreground mt-0.5">
+          No code. No design skills. No fluff.
+        </p>
+      </div>
+    </div>
+  )
+}
 
 // SMS Button — renders inline SMS deep links as tappable text in chat.
 // Styled like an iMessage link: blue, underlined, same weight as surrounding text.

@@ -1,8 +1,8 @@
 export const siteConfig = {
   brand: {
     name: "v0 University",
-    tagline: "Build real websites with AI.",
-    subtitle: "No code required.",
+    tagline: "Build websites with AI.",
+    subtitle: "3 minutes. No code.",
     avatarUrl: "/images/jon-profile.png",
     headerLogoUrl: "/images/v0-university-logo.png",
     logoUrl: "/images/v0-university-logo.png",
@@ -19,52 +19,38 @@ export const siteConfig = {
   },
 
   stats: [
-    { value: "2hrs", label: "to launch" },
-    { value: "$0", label: "dev costs" },
-    { value: "100%", label: "ownership" },
+    { value: "3min", label: "video" },
+    { value: "$297", label: "once" },
+    { value: "20", label: "spots" },
   ],
 
   pricing: {
-    course: {
-      name: "The v0 Masterclass",
+    video: {
+      name: "v0 University",
       price: 297,
-      description: "Everything you need to build professional websites with v0",
+      description: "One video. All templates. Build a site today.",
     },
-    coaching: [
-      {
-        name: "Accelerator",
-        price: 1497,
-        description: "Course + 4 weeks of 1:1 coaching calls",
-      },
-      {
-        name: "Done-With-You",
-        price: 3497,
-        description: "Course + 8 weeks coaching + we build your first site together",
-      },
-    ],
   },
 
   meta: {
-    title: "v0 University | Learn to Build Websites with AI",
+    title: "v0 University | Build Websites in 3 Minutes",
     description:
-      "Learn how to build professional websites using v0. Perfect for Shopify founders and anyone who wants to ship real projects without writing code.",
+      "A 3-minute video that teaches you how to build a website. No code. No fluff. No 40-hour course.",
     keywords: [
       "v0",
       "v0 tutorial",
       "AI website builder",
       "no-code",
       "Shopify design",
-      "website course",
       "AI design",
       "Vercel v0",
       "build websites with AI",
-      "Shopify founders",
     ],
-    ogTitle: "v0 University | Build Real Websites with AI",
+    ogTitle: "v0 University | 3 Minutes to Build Websites",
     ogDescription:
-      "Learn how to build professional websites using v0. No code required.",
+      "One video. Under 3 minutes. You watch it, you can build websites.",
     twitterDescription:
-      "Learn to build real websites with v0. No code required.",
+      "A 3-minute video that teaches you to build websites. No code. No fluff.",
   },
 } as const
 

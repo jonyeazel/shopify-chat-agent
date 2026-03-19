@@ -21,6 +21,7 @@ import {
   SiteAuditInput,
   LabelUpload,
   EmailCapture,
+  VideoPreview,
   renderMessageWithSmsLinks,
 } from "./content-displays"
 import { RevenueLeakCalculator } from "./revenue-leak-calculator"
@@ -306,6 +307,9 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
     }
     if (detected.type === "liveSites") {
       return <LiveSitesDisplay />
+    }
+    if (detected.type === "videoPreview") {
+      return <VideoPreview />
     }
     if (detected.type === "pricing") {
       return <PricingCard name={detected.data.name} price={detected.data.price} description={detected.data.description} />

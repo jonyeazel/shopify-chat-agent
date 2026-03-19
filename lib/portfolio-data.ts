@@ -55,82 +55,25 @@ export const PORTFOLIO_DATA = {
     { name: "Stadics (Live)", url: "https://www.stadics.com", category: "SaaS" },
   ],
   
-  // Course curriculum modules
-  curriculum: {
-    module1: {
-      name: "Foundation",
-      description: "How v0 thinks — the mental model that changes everything",
-      lessons: ["Understanding v0's design system", "Prompt structure that works", "Your first real build"],
-    },
-    module2: {
-      name: "Components",
-      description: "Building blocks for any website",
-      lessons: ["Navigation & headers", "Hero sections that convert", "Feature grids & cards", "Footer & CTAs"],
-    },
-    module3: {
-      name: "Full Pages",
-      description: "Landing pages, portfolios, product pages",
-      lessons: ["Landing page framework", "Portfolio structure", "Shopify product pages", "Multi-section layouts"],
-    },
-    module4: {
-      name: "Advanced Techniques",
-      description: "Animations, responsive design, polish",
-      lessons: ["Animation patterns", "Mobile-first responsive", "Dark mode & themes", "Performance optimization"],
-    },
-    module5: {
-      name: "Production",
-      description: "From v0 to live site",
-      lessons: ["Export & deployment", "Custom domain setup", "Iterating with v0", "Client handoff"],
-    },
-  },
-
-  // Pricing tiers
+  // Pricing - simple, anti-course positioning
   pricing: {
-    masterclass: { 
-      name: "The v0 Masterclass", 
+    video: { 
+      name: "v0 University", 
       price: "$297", 
-      description: "Complete video curriculum",
-      features: ["5 modules, 20+ lessons", "Prompt library", "Component templates", "Community access", "Lifetime updates"],
+      description: "One 3-minute video. All templates included.",
+      features: ["3-minute video tutorial", "AI-powered smart templates", "Build a site the same day"],
       popular: true,
-      chatPrompt: "Tell me about the v0 Masterclass"
-    },
-    accelerator: { 
-      name: "Accelerator", 
-      price: "$1,497", 
-      description: "Course + 4 weeks coaching",
-      features: ["Everything in Masterclass", "4 weekly calls", "Personalized feedback", "Direct Slack access", "Priority support"],
-      popular: false,
-      chatPrompt: "Tell me about Accelerator coaching"
-    },
-    doneWithYou: { 
-      name: "Done-With-You", 
-      price: "$3,497",
-      description: "Course + 8 weeks + we build together",
-      features: ["Everything in Accelerator", "8 weeks of coaching", "Build your first project together", "Great for Shopify founders", "White-glove support"],
-      popular: false,
-      chatPrompt: "Tell me about the Done-With-You program"
+      chatPrompt: "Tell me about v0 University"
     },
   },
 
-  // Testimonials / social proof
+  // Testimonials - collecting first 20
   testimonials: [
     {
-      name: "Sarah M.",
-      role: "Shopify Founder",
-      quote: "I was paying an agency for every small change. After Module 3, I rebuilt my entire product page library in one weekend.",
-      result: "Built 12 pages in a weekend",
-    },
-    {
-      name: "Marcus T.",
-      role: "Freelance Developer",
-      quote: "Went from never using v0 to launching a client site in 4 days. The prompt library alone saved me hours.",
-      result: "First client site in 4 days",
-    },
-    {
-      name: "Emily R.",
-      role: "Marketing Director",
-      quote: "I'm not technical at all. Within 48 hours of starting, I built a landing page that matched our brand perfectly.",
-      result: "Built first site in 48hrs",
+      name: "Coming soon",
+      role: "First 20 students",
+      quote: "We're collecting testimonials from the first 20 people who can vouch this works.",
+      result: "Be one of the first 20",
     },
   ],
 }
