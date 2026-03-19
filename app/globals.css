@@ -4,83 +4,79 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * LOCKED — do NOT change without explicit request
- * --background: #e4e4e4
- * --card: #ffffff
- * --border: #d4d4d4
- * --edge-padding: 8px (mobile), 12px (desktop)
- * themeColor in layout.tsx: #e4e4e4
- *
- * WCAG 2.1 AAA color system
- * Foreground #1a1a1a on #ffffff = 16.6:1 (AAA)
- * Foreground #1a1a1a on #f5f3f0 = 14.5:1 (AAA)
- * Muted #4a4a4a on #ffffff = 9.7:1 (AAA)
- * Muted #4a4a4a on #f5f3f0 = 8.5:1 (AAA)
- * Primary #253a2e on #ffffff = 11.7:1 (AAA)
- * Border #d5d2cc visible against both surfaces
+ * v0 University - Vercel/v0 inspired color system
+ * Clean whites, neutral grays, black accents
+ * --background: #fafafa (light gray)
+ * --card: #ffffff (white)
+ * --input-bg: #171717 (near black for input area)
  */
 :root {
   --edge-padding: 8px;
-  --background: #e4e4e4;
-  --foreground: #1a1a1a;
+  --background: #fafafa;
+  --foreground: #0a0a0a;
 
   --card: #ffffff;
-  --card-foreground: #1a1a1a;
+  --card-foreground: #0a0a0a;
   --popover: #ffffff;
-  --popover-foreground: #1a1a1a;
+  --popover-foreground: #0a0a0a;
 
-  --primary: #253a2e;
-  --primary-foreground: #ffffff;
+  --primary: #0a0a0a;
+  --primary-foreground: #fafafa;
 
-  --secondary: #edeae5;
-  --secondary-foreground: #1a1a1a;
+  --secondary: #f5f5f5;
+  --secondary-foreground: #0a0a0a;
 
-  --muted: #edeae5;
-  --muted-foreground: #4a4a4a;
+  --muted: #f5f5f5;
+  --muted-foreground: #737373;
 
-  --accent: #253a2e;
-  --accent-foreground: #ffffff;
+  --accent: #0a0a0a;
+  --accent-foreground: #fafafa;
 
-  --destructive: #c42b2b;
-  --destructive-foreground: #ffffff;
+  --destructive: #dc2626;
+  --destructive-foreground: #fafafa;
 
-  --border: #d4d4d4;
-  --input: #d4d4d4;
-  --ring: #253a2e;
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: #0a0a0a;
 
-  --chart-1: #253a2e;
-  --chart-2: #3d6049;
-  --chart-3: #6a9976;
-  --chart-4: #93b89d;
-  --chart-5: #c4dbc9;
+  --chart-1: #0a0a0a;
+  --chart-2: #404040;
+  --chart-3: #737373;
+  --chart-4: #a3a3a3;
+  --chart-5: #d4d4d4;
 
-  --action: #1a3a28;
-  --action-foreground: #ffffff;
+  --action: #0a0a0a;
+  --action-foreground: #fafafa;
 
   --radius: 0.625rem;
 
   --sidebar: #ffffff;
-  --sidebar-foreground: #1a1a1a;
-  --sidebar-primary: #253a2e;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #edeae5;
-  --sidebar-accent-foreground: #1a1a1a;
-  --sidebar-border: #d5d2cc;
-  --sidebar-ring: #253a2e;
+  --sidebar-foreground: #0a0a0a;
+  --sidebar-primary: #0a0a0a;
+  --sidebar-primary-foreground: #fafafa;
+  --sidebar-accent: #f5f5f5;
+  --sidebar-accent-foreground: #0a0a0a;
+  --sidebar-border: #e5e5e5;
+  --sidebar-ring: #0a0a0a;
 
-  --forest-950: #0d1610;
-  --forest-900: #162118;
-  --forest-800: #1c2b22;
-  --forest-700: #253a2e;
-  --forest-600: #2f4a3a;
-  --forest-500: #3d6049;
-  --forest-400: #4f7a5e;
-  --forest-300: #6a9976;
-  --forest-200: #93b89d;
-  --forest-100: #c4dbc9;
-  --forest-50: #e8f2ea;
+  /* Neutral scale for v0 style */
+  --neutral-950: #0a0a0a;
+  --neutral-900: #171717;
+  --neutral-800: #262626;
+  --neutral-700: #404040;
+  --neutral-600: #525252;
+  --neutral-500: #737373;
+  --neutral-400: #a3a3a3;
+  --neutral-300: #d4d4d4;
+  --neutral-200: #e5e5e5;
+  --neutral-100: #f5f5f5;
+  --neutral-50: #fafafa;
 
-  --phthalo: #0A4D3A;
+  /* Input area dark theme */
+  --input-bg: #171717;
+  --input-fg: #fafafa;
+  --input-border: #262626;
+  --input-placeholder: #737373;
 }
 
 .dark {
@@ -201,7 +197,7 @@
   }
 
   ::selection {
-    background-color: var(--forest-800);
+    background-color: var(--neutral-800);
     color: #ffffff;
   }
 

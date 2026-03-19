@@ -6,9 +6,9 @@ import { ArrowUp, Plus, Mic, MicOff, X, FileText } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 const PLACEHOLDER_TEXTS = [
-  "What are you working on...",
-  "Drop a store URL...",
-  "Tell me what you sell...",
+  "What do you want to build...",
+  "Ask me anything about v0...",
+  "Tell me about your project...",
   "Ask me anything...",
 ]
 
@@ -473,8 +473,8 @@ export function ChatInput({
         <div
           className={`rounded-xl border transition-all duration-150 ${
             isDragging
-              ? "bg-[#e0e0e0] border-foreground/20"
-              : "bg-[#ebebeb] border-foreground/[0.08] focus-within:border-foreground/[0.15]"
+              ? "bg-neutral-800 border-neutral-600"
+              : "bg-neutral-900 border-neutral-700 focus-within:border-neutral-500"
           }`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
@@ -491,7 +491,7 @@ export function ChatInput({
               placeholder={getPlaceholder()}
               rows={1}
               style={{ fontSize: "16px", outline: "none" }}
-              className="w-full bg-transparent text-base text-foreground placeholder:text-muted-foreground/70 resize-none max-h-[200px] leading-relaxed scrollbar-hide"
+              className="w-full bg-transparent text-base text-white placeholder:text-neutral-500 resize-none max-h-[200px] leading-relaxed scrollbar-hide"
               disabled={disabled || isBusy}
             />
           </div>
@@ -501,10 +501,10 @@ export function ChatInput({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-foreground/[0.06] transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
                 title="Add file"
               >
-                <Plus className="w-[18px] h-[18px] text-foreground/40" strokeWidth={1.5} />
+                <Plus className="w-[18px] h-[18px] text-neutral-400" strokeWidth={1.5} />
               </button>
 
               {micSupported && (
@@ -538,12 +538,12 @@ export function ChatInput({
                     type="button"
                     onClick={handleMicClick}
                     disabled={micState === "requesting"}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 ${
                       micState === "recording"
                         ? "bg-[#dc2626]"
                         : micState === "processing"
-                          ? "bg-foreground/[0.06]"
-                          : "hover:bg-foreground/[0.06]"
+                          ? "bg-white/10"
+                          : "hover:bg-white/10"
                     }`}
                     style={
                       micState === "recording"
@@ -572,15 +572,15 @@ export function ChatInput({
                     ) : micState === "processing" ? (
                       <ProcessingDots />
                     ) : micState === "denied" ? (
-                      <MicOff className="w-[18px] h-[18px] text-foreground/30" strokeWidth={1.5} />
+                      <MicOff className="w-[18px] h-[18px] text-neutral-500" strokeWidth={1.5} />
                     ) : (
                       <Mic
                         className={`w-[18px] h-[18px] transition-colors duration-150 ${
                           micState === "error" || micState === "empty"
-                            ? "text-[#dc2626]/40"
+                            ? "text-[#dc2626]/60"
                             : micState === "requesting"
-                              ? "text-foreground/20"
-                              : "text-foreground/40"
+                              ? "text-neutral-600"
+                              : "text-neutral-400"
                         }`}
                         strokeWidth={1.5}
                       />
@@ -593,17 +593,17 @@ export function ChatInput({
             <button
               type="submit"
               disabled={disabled || isBusy || (!input.trim() && attachedFiles.length === 0)}
-              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 ${
                 disabled || isBusy || (!input.trim() && attachedFiles.length === 0)
-                  ? "bg-foreground/[0.08] cursor-not-allowed"
-                  : "bg-foreground hover:opacity-90 active:scale-[0.92] active:opacity-80"
+                  ? "bg-neutral-700 cursor-not-allowed"
+                  : "bg-white hover:bg-neutral-200 active:scale-[0.92]"
               }`}
             >
               <ArrowUp
                 className={`w-4 h-4 ${
                   disabled || isBusy || (!input.trim() && attachedFiles.length === 0)
-                    ? "text-foreground/25"
-                    : "text-background"
+                    ? "text-neutral-500"
+                    : "text-neutral-900"
                 }`}
                 strokeWidth={2.5}
               />
@@ -630,7 +630,7 @@ function ProcessingDots() {
       {[0, 1, 2].map((i) => (
         <motion.span
           key={i}
-          className="w-[3px] h-[3px] rounded-full bg-foreground/35"
+          className="w-[3px] h-[3px] rounded-full bg-neutral-400"
           animate={{ opacity: [0.25, 1, 0.25] }}
           transition={{
             duration: 1.2,

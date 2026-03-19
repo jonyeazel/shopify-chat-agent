@@ -72,12 +72,8 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, c
         <div className="w-8 h-px bg-foreground/10 my-6" />
 
         {/* Tagline */}
-        <p className="text-[16px] text-foreground leading-relaxed text-center max-w-[240px]">
+        <p className="text-[15px] text-foreground leading-relaxed text-center max-w-[220px]">
           {brand.tagline}
-        </p>
-
-        <p className="text-[13px] text-muted-foreground mt-1.5">
-          Learn. Build. Ship.
         </p>
 
         {/* Stats */}

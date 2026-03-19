@@ -420,12 +420,12 @@ export default function Home() {
                       </motion.h1>
 
                       <motion.p
-                        className="text-[12px] text-muted-foreground mt-1.5"
+                        className="text-[12px] text-muted-foreground mt-1"
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.17 }}
                       >
-                        Learn. Build. Ship.
+                        {siteConfig.brand.subtitle}
                       </motion.p>
 
                       {chatError && (

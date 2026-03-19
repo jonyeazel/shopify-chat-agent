@@ -1,8 +1,8 @@
 export const siteConfig = {
   brand: {
     name: "v0 University",
-    tagline: "Build websites that print money.",
-    subtitle: "Zero code. Zero design skills. Zero limits.",
+    tagline: "Build real websites with AI.",
+    subtitle: "No code required.",
     avatarUrl: "/images/jon-profile.png",
     logoUrl: "/images/v0-university-logo.png",
     domain: "v0university.com",
@@ -44,9 +44,9 @@ export const siteConfig = {
   },
 
   meta: {
-    title: "v0 University | Build Professional Websites Without Code",
+    title: "v0 University | Learn to Build Websites with AI",
     description:
-      "Learn the highest-leverage AI skill. Build stunning websites in hours, not weeks. Perfect for Shopify founders who want to never hire a designer or developer again.",
+      "Learn how to build professional websites using v0. Perfect for Shopify founders and anyone who wants to ship real projects without writing code.",
     keywords: [
       "v0",
       "v0 tutorial",
@@ -59,11 +59,11 @@ export const siteConfig = {
       "build websites with AI",
       "Shopify founders",
     ],
-    ogTitle: "v0 University | The Freedom Skill for Founders",
+    ogTitle: "v0 University | Build Real Websites with AI",
     ogDescription:
-      "Stop paying $5k-$15k for websites. Build them yourself in hours. Zero code required.",
+      "Learn how to build professional websites using v0. No code required.",
     twitterDescription:
-      "Learn v0 and never hire a designer or developer again. The highest-leverage AI skill for founders.",
+      "Learn to build real websites with v0. No code required.",
   },
 } as const
 
