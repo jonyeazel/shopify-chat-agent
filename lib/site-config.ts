@@ -4,6 +4,7 @@ export const siteConfig = {
     tagline: "Build real websites with AI.",
     subtitle: "No code required.",
     avatarUrl: "/images/jon-profile.png",
+    headerLogoUrl: "/images/v0-university-logo.png",
     logoUrl: "/images/v0-university-logo.png",
     domain: "v0university.com",
   },

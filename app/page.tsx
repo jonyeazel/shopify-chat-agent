@@ -343,7 +343,7 @@ export default function Home() {
               onTouchStart={handleAdminPressStart}
               onTouchEnd={handleAdminPressEnd}
             >
-              <HeaderAvatar avatarUrl={siteConfig.brand.avatarUrl} />
+              <HeaderAvatar avatarUrl={siteConfig.brand.headerLogoUrl} />
               <div className="flex flex-col">
                 <span className="font-medium text-foreground text-[14px] leading-none tracking-[-0.01em]">{siteConfig.brand.name}</span>
                 <span className="text-[10px] text-muted-foreground leading-none mt-1">{siteConfig.brand.subtitle}</span>
@@ -407,7 +407,7 @@ export default function Home() {
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.05 }}
                       >
-                        <StaticAvatar avatarUrl={siteConfig.brand.avatarUrl} availabilityStatus={availabilityStatus} onLongPress={() => TEMP_ADMIN_BYPASS ? setShowAdminPanel(true) : setShowAdminLogin(true)} />
+                        <StaticAvatar avatarUrl={siteConfig.brand.avatarUrl} onLongPress={() => TEMP_ADMIN_BYPASS ? setShowAdminPanel(true) : setShowAdminLogin(true)} />
                       </motion.div>
 
                       <motion.h1
