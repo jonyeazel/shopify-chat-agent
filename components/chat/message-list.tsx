@@ -53,281 +53,148 @@ function formatRelativeTime(date: Date | undefined): string {
   return date.toLocaleDateString(undefined, { month: "short", day: "numeric" })
 }
 
-// Persistent SMS CTA — label and context shift based on where the conversation is.
-// Uses presupposition language: the next step is always framed as already decided.
-
+// Text Jon CTA — context-aware based on conversation phase
 function getSmsCta(messages: UIMessage[]): { label: string; context: SmsContext; show: boolean } {
   const phase = determineConversationPhase(messages)
   const msgCount = messages.length
   const allText = messages
     .flatMap(m => m.parts?.filter((p): p is { type: "text"; text: string } => p.type === "text").map(p => p.text.toLowerCase()) || [])
     .join(" ")
-  const lastAssistant = messages.filter(m => m.role === "assistant").pop()
-  const lastText = lastAssistant?.parts
-    ?.filter((p): p is { type: "text"; text: string } => p.type === "text")
-    .map(p => p.text.toLowerCase())
-    .join(" ") || ""
-
-  // Check if the conversation has been qualified — user has shared what they sell + some problem/revenue info
-  const userText = messages
-    .filter(m => m.role === "user")
-    .flatMap(m => m.parts?.filter((p): p is { type: "text"; text: string } => p.type === "text").map(p => p.text.toLowerCase()) || [])
-    .join(" ")
   
-  const hasSharedCategory = ["supplement", "fashion", "apparel", "beauty", "skincare", "food", "beverage", "merch", "clothing", "streetwear", "candle", "jewelry", "pet", "home", "decor", "wellness", "fitness", "sports", "electronics", "tech", "health", "cbd", "hemp", "coffee", "tea", "accessories", "shoes", "cosmetics", "gym", "athletic"].some(c => userText.includes(c))
-  const hasSharedProblem = ["conversion", "converting", "traffic", "design", "slow", "rebrand", "broken", "redesign", "rebuild", "product page", "product shot", "render", "photo", "email", "ad", "creative", "don't buy", "not buying", "nobody buys", "not enough", "doesn't look", "look right", "fresh start", "sales"].some(p => userText.includes(p))
-  const hasSharedRevenue = /\$?\d+k/.test(userText) || userText.includes("revenue") || userText.includes("/mo") || userText.includes("a month") || userText.includes("per month")
+  // Show SMS CTA after meaningful engagement
+  const isEngaged = msgCount >= 8
+  const hasShownInterest = allText.includes("enroll") || allText.includes("coaching") || allText.includes("$297") || allText.includes("$1,497") || allText.includes("$3,497")
   
-  // Only show SMS CTA after meaningful qualification (shared product + at least problem or revenue)
-  const isQualified = hasSharedCategory && (hasSharedProblem || hasSharedRevenue)
-  
-  // Also show if conversation is deep enough (10+ messages means real engagement)
-  const isEngaged = msgCount >= 10
-  
-  // Or if pricing/gate has been discussed
-  const gateDiscussed = allText.includes("jonyeazel@gmail.com") || allText.includes("$97") || allText.includes("consult fee")
-  
-  const shouldShow = isQualified || isEngaged || gateDiscussed
+  const shouldShow = isEngaged || hasShownInterest || phase === "ready_to_buy"
 
-  // Payment methods shown — strongest close
-  const paymentShown = lastText.includes("cash app") || lastText.includes("venmo") || lastText.includes("zelle") || lastText.includes("apple cash")
-  if (paymentShown && lastText.includes("$97")) {
-    return { label: "I paid — text Jon", context: "ready-to-start", show: true }
+  if (phase === "ready_to_buy") {
+    return { label: "I'm ready — text Jon", context: "ready-to-start", show: true }
   }
 
-  // Deep closing — gate steps have been shared
-  if (gateDiscussed || lastText.includes("add jonyeazel") || lastText.includes("ready to get started") || lastText.includes("text him here")) {
-    return { label: "I'm ready — text Jon", context: "ready-to-start", show: shouldShow }
+  if (hasShownInterest) {
+    return { label: "Questions? Text Jon", context: "post-pricing", show: shouldShow }
   }
 
-  // Post-pricing — they've seen numbers
-  if (lastText.includes("$5k") || lastText.includes("$15k") || lastText.includes("$2.5k") || lastText.includes("$2,500") || lastText.includes("$5,000") || lastText.includes("$7,500") || lastText.includes("pricing") || /\d+[\-–]\d+k/.test(lastText) || /around \d+k/.test(lastText)) {
-    return { label: "Talk details — text Jon", context: "post-pricing", show: shouldShow }
+  if (phase === "interested") {
+    return { label: "Talk to Jon", context: "general", show: shouldShow }
   }
 
-  // Post-audit — analysis delivered
-  if (phase === "analyzed") {
-    return { label: "Get the fixes — text Jon", context: "post-audit", show: shouldShow }
-  }
-
-  // Metrics shared — they're invested
-  if (phase === "metrics_shared") {
-    return { label: "Next steps — text Jon", context: "general", show: shouldShow }
-  }
-
-  // Qualified but still early
-  if (isQualified) {
-    return { label: "Talk to Jon", context: "general", show: true }
-  }
-
-  // Fallback — hide if not qualified
   return { label: "Text Jon", context: "general", show: false }
 }
 
-// Quick reply suggestions based on conversation context
+// Quick reply suggestions for v0 University — discovery flow for course sales
 function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[]): string[] {
   const lower = lastAssistantMessage.toLowerCase()
   
-  // Check conversation history to avoid redundant options
+  // Check conversation history
   const allUserText = allMessages
     .filter(m => m.role === "user")
     .flatMap(m => m.parts?.filter((p): p is { type: "text"; text: string } => p.type === "text").map(p => p.text.toLowerCase()) || [])
     .join(" ")
   
-  const hasSharedRevenue = /\$?\d+k/.test(allUserText) || allUserText.includes("revenue") || allUserText.includes("/mo")
-  const hasSharedCategory = ["supplement", "fashion", "apparel", "beauty", "skincare", "food", "beverage", "merch", "clothing", "streetwear", "candle", "jewelry", "pet", "home", "decor", "wellness", "fitness", "sports", "electronics", "tech", "toy", "craft", "vintage", "outdoor", "health", "cbd", "hemp", "coffee", "tea", "gym", "athletic", "accessories", "shoes", "cosmetics"].some(c => allUserText.includes(c))
-  const hasSharedProblem = ["conversion", "converting", "traffic", "design", "slow", "rebrand", "broken", "don't buy", "not buying", "nobody buys", "not enough", "doesn't look", "look right", "fresh start", "sales"].some(p => allUserText.includes(p))
-  const hasSharedBudget = /\$?\d+k\b/.test(allUserText) || /\$\d{1,3}(,\d{3})+/.test(allUserText) || /\$\d{3,}/.test(allUserText) || allUserText.includes("budget")
-  const isPreLaunch = allUserText.includes("launching") || allUserText.includes("starting") || allUserText.includes("pre-launch") || allUserText.includes("not live") || allUserText.includes("haven't launched")
-  const hasSharedAds = ["paid ads", "organic", "facebook ads", "google ads", "tiktok ads", "running ads", "not running ads"].some(a => allUserText.includes(a))
+  const hasSharedGoal = ["shopify", "store", "landing page", "portfolio", "website", "client", "freelance", "agency"].some(g => allUserText.includes(g))
+  const hasSharedExperience = ["tried v0", "used v0", "never", "beginner", "don't code", "no code", "designer", "developer"].some(e => allUserText.includes(e))
+  const hasAskedPrice = ["how much", "price", "cost", "$297", "expensive", "afford"].some(p => allUserText.includes(p))
   
-  // GATE with payment methods shown — AI has shared payment options (Cash App, Venmo, etc.)
-  if ((lower.includes("cash app") || lower.includes("venmo") || lower.includes("zelle") || lower.includes("apple cash")) && lower.includes("$97")) {
-    return ["Done, just sent it", "Jon's added to my store", "Is it refundable?"]
+  // ENROLLMENT — AI showing enrollment page
+  if (lower.includes("enrollment") || lower.includes("here's how to enroll") || lower.includes("sign up")) {
+    return ["Take me there", "What's included again?", "Do you have a payment plan?"]
   }
 
-  // GATE — AI has shared the steps (add email + $97 fee) without payment methods
-  // Require $97 in payment/gate context, not just pricing context (e.g. "product shots start at $97")
-  const is97GateContext = lower.includes("$97") && (lower.includes("send") || lower.includes("pay") || lower.includes("consultation") || lower.includes("deposit") || lower.includes("goes toward") || lower.includes("refund") || lower.includes("consult") || lower.includes("skip the line") || lower.includes("applied to"))
-  if (lower.includes("jonyeazel@gmail.com") || is97GateContext || lower.includes("consult fee") || lower.includes("text him here")) {
-    return ["Jon's added — what's next?", "How do I pay?", "Where does the $97 go?"]
+  // READY TO BUY — signals they want to proceed
+  if (lower.includes("ready to start") || lower.includes("let's do it") || lower.includes("how do i enroll")) {
+    return ["Sign me up", "One more question first"]
   }
 
-  // "I already paid" — fast-track to SMS
-  if (lower.includes("text jon") && (lower.includes("nice") || lower.includes("sent") || lower.includes("paid"))) {
-    return ["Done, texted him", "When will he reply?"]
+  // PRICE SHOWN — $297, $1,497, or $3,497 mentioned
+  if (lower.includes("$297") || lower.includes("$1,497") || lower.includes("$3,497") || lower.includes("the course is")) {
+    return ["That works for me", "What's included?", "Do students actually get results?", "Is there a guarantee?"]
   }
 
-  // Micro consultation mentioned
-  if (lower.includes("micro consultation") || (lower.includes("one question") && lower.includes("$97"))) {
-    return ["I've got a question", "Tell me about the full project instead"]
-  }
-  
-  // CLOSING — AI asking for commitment
-  if (lower.includes("ready to move forward") || lower.includes("want me to send") || lower.includes("ready to get started")) {
-    return ["I'm in — what now?", "What do I get?"]
-  }
-  
-  // Conversion rate question
-  if (lower.includes("conversion rate") || lower.includes("converting at")) {
-    return ["Under 1%", "1-2%", "2-3%", "Honestly not sure"]
-  }
-  
-  // AOV question
-  if (lower.includes("average order") || lower.includes("aov") || lower.includes("order value")) {
-    return ["Under $50", "$50-100", "$100-200", "Over $200"]
-  }
-  
-  // Revenue questions
-  if ((lower.includes("revenue") || lower.includes("monthly") || lower.includes("doing") || lower.includes("making")) && !hasSharedRevenue) {
-    return ["Under $10k/mo", "$10k-50k/mo", "$50k-100k/mo", "Over $100k/mo"]
-  }
-  
-  // What do you sell — require actual product/niche context
-  if ((lower.includes("what do you sell") || lower.includes("what are you selling") || lower.includes("what kind of product") || lower.includes("what's your niche") || lower.includes("what's your product") || lower.includes("what's your store") || lower.includes("what are you working on") || lower.includes("what kind of store") || lower.includes("niche") || lower.includes("industry") || lower.includes("what products")) && !hasSharedCategory) {
-    return [
-      "Supplements", "Fashion/Apparel", "Beauty/Skincare", "Health/Wellness",
-      "Food/Beverage", "Home/Decor", "Jewelry", "Fitness/Sports",
-      "Pet Products", "Electronics", "CBD/Hemp", "Coffee/Tea", "Other"
-    ]
-  }
-  
-  // Running ads / traffic source question
-  if ((lower.includes("running ads") || lower.includes("paid traffic") || lower.includes("organic traffic") || lower.includes("ads or organic") || lower.includes("how are you driving")) && !hasSharedAds) {
-    return ["Paid ads", "Organic only", "Both", "Not yet"]
+  // OBJECTION HANDLING — price concern
+  if (lower.includes("compared to") || lower.includes("make it back") || lower.includes("save that") || lower.includes("pays for itself")) {
+    return ["That makes sense", "Show me some results", "I need to think about it"]
   }
 
-  // Have a store already question
-  if ((lower.includes("have a store") || lower.includes("got a store") || lower.includes("store already") || lower.includes("live yet") || lower.includes("site up") || lower.includes("store up")) && !allUserText.includes("shopify") && !allUserText.includes(".com")) {
-    return ["Yeah, on Shopify", "Building one now", "Starting from scratch"]
+  // SHOPIFY FOUNDER FLOW — specific to store owners
+  if (lower.includes("how much have you spent") || lower.includes("design work") || lower.includes("designer") || lower.includes("developer")) {
+    return ["Thousands, honestly", "A few hundred", "I do it all myself", "I'm just starting out"]
   }
 
-  // What platform question
-  if (lower.includes("what platform") || lower.includes("which platform") || lower.includes("currently on")) {
-    return ["Shopify", "WooCommerce", "Other platform", "Starting fresh"]
+  // SHOPIFY CONTEXT — they mentioned having a store
+  if (lower.includes("product page") || lower.includes("landing page") || lower.includes("campaign") || lower.includes("module 3")) {
+    return ["Show me examples", "How long does that take to learn?", "What's the course cost?"]
   }
 
-  // Pre-launch stage question — "got a product ready?" / "what stage are you at?"
-  if ((lower.includes("stage") || lower.includes("product ready") || lower.includes("in development") || lower.includes("from scratch")) && (lower.includes("?") || lower.includes("what"))) {
-    return ["Product's ready, just need the store", "Still in development", "Got the idea, need everything"]
+  // STUDENT RESULTS — after showing portfolio or success stories
+  if (lower.includes("student") && (lower.includes("built") || lower.includes("launched") || lower.includes("zero experience"))) {
+    return ["I want results like that", "How long did that take them?", "What's the course cost?"]
   }
 
-  // Past agency/freelancer experience
-  if (lower.includes("worked with") && (lower.includes("agency") || lower.includes("someone") || lower.includes("designer") || lower.includes("developer") || lower.includes("before"))) {
-    return ["Yeah, it didn't work out", "First time hiring for this", "Been doing it myself"]
+  // BEGINNER REASSURANCE — addressing "I'm not technical" concern
+  if (lower.includes("zero code") || lower.includes("plain english") || lower.includes("describe what you want") || lower.includes("no design experience")) {
+    return ["That's exactly what I need", "What would I build first?", "Show me how it works"]
   }
 
-  // Timeline questions  
-  if (lower.includes("timeline") || lower.includes("when do you need") || lower.includes("how soon") || lower.includes("when are you") || lower.includes("when do you want")) {
-    return ["Yesterday", "This week", "This month", "No rush"]
-  }
-  
-  // Problem/pain point questions
-  if ((lower.includes("broken") || lower.includes("problem") || lower.includes("fixed") || lower.includes("struggling") || lower.includes("main thing") || lower.includes("biggest challenge") || lower.includes("issue") || lower.includes("what's going on") || lower.includes("what brings you")) && !hasSharedProblem) {
-    return ["People visit but don't buy", "The site doesn't look right", "Everything loads slow", "I need a fresh start"]
-  }
-  
-  // Budget question — check before traffic/pricing to avoid false positives
-  if ((lower.includes("budget") || lower.includes("what can you spend") || lower.includes("comfortable with") || lower.includes("invest")) && !hasSharedBudget) {
-    return ["Under $2,500", "$2,500-$5,000", "$5,000-$10,000", "$10,000+"]
-  }
-  
-  // Turnaround time mentioned
-  if (lower.includes("48 hour") || lower.includes("48hr") || lower.includes("2 days")) {
-    return ["That's what I need", "What's the first step?", "What's that run?"]
+  // FREE VALUE — offered a preview or sample
+  if (lower.includes("preview") || lower.includes("module 1") || lower.includes("sample") || lower.includes("free")) {
+    return ["Yes, show me", "What's in the full course?", "Just tell me the price"]
   }
 
-  // "Think about it" / soft close — AI offering free value or micro consultation as downgrade
-  if (lower.includes("no pressure") || lower.includes("no strings") || lower.includes("while you decide") || lower.includes("whenever you're ready") || lower.includes("take your time")) {
-    return ["Actually, let's do it", "Check my store first", "I've got one question"]
+  // YOUTUBE COMPARISON — addressing free content objection
+  if (lower.includes("shortcut") || lower.includes("structured") || lower.includes("trial and error") || lower.includes("youtube")) {
+    return ["I'd rather have the shortcut", "What makes this different?", "What's it cost?"]
   }
 
-  // Pricing shown — match various price formats the AI uses
-  if (/\$?\d+[\-–]\d+k/i.test(lower) || /\$\d+k/i.test(lower) || lower.includes("$2,500") || lower.includes("$5,000") || lower.includes("$7,500") || lower.includes("$15,000") || /around \d+k/.test(lower) || /probably \d+k/.test(lower)) {
-    return ["Works for me — what's next?", "When can we start?", "What can we do at a lower number?"]
-  }
-  
-  // Traffic vs conversions vs retention — only when explicitly offering a choice
-  if (/\btraffic\b/.test(lower) && /\bconversion/.test(lower) && /\bretention\b/.test(lower)) {
-    return ["Traffic", "Conversions", "Retention", "All of the above"]
-  }
-  
-  // Product count
-  if (lower.includes("how many product") || lower.includes("how many sku") || lower.includes("catalog size")) {
-    return ["1-10", "10-20", "20-50", "50+"]
-  }
-  
-  // Post-audit results — AI has delivered specific analysis/recommendations
-  if (lower.includes("want me to implement") || lower.includes("implement these")) {
-    return ["Yeah, let's fix it", "What would that run me?"]
-  }
-  
-  // Post-audit — AI gave store analysis (mentions headlines, product pages, CTAs, add-to-cart, etc.)
-  const isAuditAnalysis = (lower.includes("i'd test") || lower.includes("i'd change") || lower.includes("i'd fix") || lower.includes("first thing i notice") || lower.includes("here's what i see") || lower.includes("biggest issue")) && (lower.includes("headline") || lower.includes("hero") || lower.includes("product page") || lower.includes("add-to-cart") || lower.includes("above the fold") || lower.includes("mobile") || lower.includes("messaging") || lower.includes("conversion"))
-  if (isAuditAnalysis) {
-    return ["How do we fix that?", "What would that run me?", "How fast can you turn this around?"]
-  }
-  
-  // Post-portfolio — AI just showed live sites/builds
-  if (lower.includes("stores i've built") || lower.includes("stores i built") || lower.includes("recent builds") || (lower.includes("here are a few") && lower.includes("built"))) {
-    return ["What would mine cost?", "How fast do you build?", "I need something like that"]
-  }
-  
-  // Post-gallery — AI just showed product shots/renders
-  if (lower.includes("here are some renders") || lower.includes("here are some shots") || lower.includes("recent renders") || (lower.includes("here are") && lower.includes("shot"))) {
-    return ["What do you need from me to start?", "How much for eight?", "How fast do you turn these around?"]
+  // WHAT BRINGS YOU HERE — opening question
+  if (lower.includes("what brings you") || lower.includes("wondering if they needed to") || lower.includes("paid someone")) {
+    return ["I'm a Shopify founder", "I want to learn v0", "I've been burned by agencies", "Just curious what this is"]
   }
 
-  // Store/site URL question
-  if ((lower.includes("drop your") && (lower.includes("url") || lower.includes("store"))) || 
-      lower.includes("quick wins") || lower.includes("free audit")) {
-    return ["Yeah, here it is", "I'm still building it"]
-  }
-  
-  // Store link request
-  if (lower.includes("store") && (lower.includes("url") || lower.includes("link") || lower.includes("see it") || lower.includes("take a look"))) {
-    return ["Yeah, one sec", "Still building it"]
-  }
-  
-  // After getting a free tip
-  if (lower.includes("quick win") || lower.includes("sticky") || lower.includes("one-page checkout") || lower.includes("implement today")) {
-    return ["Can you just do it for me?", "What would the full thing cost?"]
-  }
-  
-  // Confirming price
-  if (lower.includes("does") && (lower.includes("work") || lower.includes("fit"))) {
-    return ["Let's do it", "That's a stretch for me"]
+  // WHAT DO YOU WANT TO BUILD — discovery question
+  if (lower.includes("what are you trying to build") || lower.includes("what would you build") || lower.includes("what's the first thing")) {
+    return ["Landing pages for my store", "A portfolio site", "Client websites", "I'm not sure yet"]
   }
 
-  // "Should I" / "Want me to" — AI offering to do something
-  if ((lower.includes("should i") || (lower.includes("want me to") && !lower.includes("implement"))) && lower.includes("?")) {
-    return ["Yeah, do it", "Tell me more first", "What's that run?"]
+  // TRIED V0 BEFORE — diagnosing past experience
+  if (lower.includes("what happened") || lower.includes("went wrong") || lower.includes("prompt") || lower.includes("generic results")) {
+    return ["It looked too basic", "I couldn't get the code to work", "I didn't know how to prompt it", "I got frustrated and quit"]
+  }
+
+  // SHOWING COURSE CONTENT — curriculum or modules
+  if (lower.includes("module") || lower.includes("curriculum") || lower.includes("what's included") || lower.includes("what you get")) {
+    return ["That's exactly what I need", "How long does it take?", "What's the price?"]
+  }
+
+  // GUARANTEE QUESTION
+  if (lower.includes("guarantee") || lower.includes("refund") || lower.includes("money back")) {
+    return ["That's fair", "How do I sign up?", "Show me some results first"]
+  }
+
+  // TIME QUESTION — how long does it take
+  if (lower.includes("45 minutes") || lower.includes("by the end of the day") || lower.includes("weekend") || lower.includes("how long")) {
+    return ["That's faster than I expected", "What would I build first?", "What's the cost?"]
+  }
+
+  // COACHING MENTION — higher tier products
+  if (lower.includes("coaching") || lower.includes("1:1") || lower.includes("jon") || lower.includes("direct help")) {
+    return ["Tell me about coaching", "The course is enough", "What's the difference?"]
+  }
+
+  // DEFAULT — based on conversation state
+  if (!hasSharedGoal) {
+    return ["I have a Shopify store", "I want to build websites", "I'm just exploring", "What is v0?"]
   }
   
-  // Default based on conversation state — check what the conversation is actually about
-  const isAboutProductShots = allUserText.includes("product shot") || allUserText.includes("product photo") || allUserText.includes("render") || allUserText.includes("3d")
-  const isAboutAgency = allUserText.includes("agency") || allUserText.includes("white-label") || allUserText.includes("white label")
-  
-  if (isAboutProductShots) {
-    return ["What do you need from me to start?", "How much for a set of eight?"]
+  if (!hasSharedExperience) {
+    return ["I've never used v0", "I tried it but got stuck", "I know the basics", "I'm a complete beginner"]
   }
-  if (isAboutAgency) {
-    return ["Show me what you've built", "What does that run?"]
+
+  if (!hasAskedPrice) {
+    return ["What's the course cost?", "Show me what students built", "Is this right for me?"]
   }
-  if (!hasSharedCategory && isPreLaunch) {
-    return ["I need a store built", "I need product shots first", "What do most brands start with?"]
-  }
-  if (!hasSharedCategory) {
-    return ["My store needs work", "What would you fix?", "I need this done fast"]
-  }
-  if (!hasSharedRevenue && !isPreLaunch && !hasSharedBudget) {
-    return ["Under $10k/mo", "$10k-50k/mo", "$50k-100k/mo", "Just getting started"]
-  }
-  if (!hasSharedProblem) {
-    return ["People visit but don't buy", "It doesn't look right", "The site feels slow"]
-  }
-  
-  return ["Show me what you've done", "What would you recommend?"]
+
+  return ["Show me student sites", "What's included?", "How do I get started?"]
 }
 
 // Check if two messages are from the same sender and close in time (within 2min)
@@ -483,7 +350,7 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
       return (
         <PaymentOptions
           serviceName={detected.data?.serviceName || undefined}
-          onPaid={() => onQuickReply?.("I just sent $97")}
+          onPaid={() => onQuickReply?.("I just enrolled")}
         />
       )
     }
@@ -815,7 +682,7 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
                   color: "#253a2e",
                 }}
               >
-                Request submitted! I'll get back to you within 24 hours.
+                Request submitted. You'll hear back within 24 hours.
               </motion.div>
             )}
           </AnimatePresence>

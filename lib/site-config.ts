@@ -1,47 +1,69 @@
 export const siteConfig = {
   brand: {
-    name: "The Shopify Guy",
-    tagline: "Everything you need.",
-    subtitle: "Ecom Since 2012",
-    avatarUrl: "/images/gemini-generated-image-d9bdhjd9bdhjd9bd.jpeg",
-    domain: "theshopifyguy.dev",
+    name: "v0 University",
+    tagline: "Build websites that print money.",
+    subtitle: "Zero code. Zero design skills. Zero limits.",
+    avatarUrl: "/images/jon-profile.png",
+    logoUrl: "/images/v0-university-logo.png",
+    domain: "v0university.com",
   },
 
   contact: {
     phone: "+14078677201",
-    smsBody: "Hey Jon, I found you on theshopifyguy.dev",
-    email: "support@theshopifyguy.com",
-    adminEmail: "admin@theshopifyguy.com",
-    calendlyUrl: "https://calendly.com/theshopifyguy/cro-strategy",
-    calendlySupportUrl: "https://calendly.com/theshopifyguy/support",
+    smsBody: "Hey Jon, I found you on v0university.com",
+    email: "support@v0university.com",
+    adminEmail: "admin@v0university.com",
+    calendlyUrl: "https://calendly.com/v0university/coaching",
+    calendlySupportUrl: "https://calendly.com/v0university/support",
   },
 
   stats: [
-    { value: "14", label: "years" },
-    { value: "50+", label: "stores" },
-    { value: "48hr", label: "delivery" },
+    { value: "2hrs", label: "to launch" },
+    { value: "$0", label: "dev costs" },
+    { value: "100%", label: "ownership" },
   ],
 
-  meta: {
-    title: "the shopify guy - ai chat",
-    description:
-      "I build Shopify stores that convert. 14 years experience, 100+ stores built, $50M+ GMV generated. Get a free store audit or start your project today.",
-    keywords: [
-      "Shopify",
-      "Shopify expert",
-      "Shopify developer",
-      "ecommerce",
-      "store design",
-      "CRO",
-      "conversion optimization",
-      "Shopify plus",
-      "DTC brands",
+  pricing: {
+    course: {
+      name: "The v0 Masterclass",
+      price: 297,
+      description: "Everything you need to build professional websites with v0",
+    },
+    coaching: [
+      {
+        name: "Accelerator",
+        price: 1497,
+        description: "Course + 4 weeks of 1:1 coaching calls",
+      },
+      {
+        name: "Done-With-You",
+        price: 3497,
+        description: "Course + 8 weeks coaching + we build your first site together",
+      },
     ],
-    ogTitle: "The Shopify Guy | Stores That Convert",
+  },
+
+  meta: {
+    title: "v0 University | Build Professional Websites Without Code",
+    description:
+      "Learn the highest-leverage AI skill. Build stunning websites in hours, not weeks. Perfect for Shopify founders who want to never hire a designer or developer again.",
+    keywords: [
+      "v0",
+      "v0 tutorial",
+      "AI website builder",
+      "no-code",
+      "Shopify design",
+      "website course",
+      "AI design",
+      "Vercel v0",
+      "build websites with AI",
+      "Shopify founders",
+    ],
+    ogTitle: "v0 University | The Freedom Skill for Founders",
     ogDescription:
-      "14 years experience. 100+ stores. $50M+ GMV. Free store audits. Let's build something that converts.",
+      "Stop paying $5k-$15k for websites. Build them yourself in hours. Zero code required.",
     twitterDescription:
-      "I build Shopify stores that convert. 14 years, 100+ stores. Free audits available.",
+      "Learn v0 and never hire a designer or developer again. The highest-leverage AI skill for founders.",
   },
 } as const
 

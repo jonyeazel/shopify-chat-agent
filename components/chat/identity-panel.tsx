@@ -77,7 +77,7 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, c
         </p>
 
         <p className="text-[13px] text-muted-foreground mt-1.5">
-          Design. Dev. Strategy.
+          Learn. Build. Ship.
         </p>
 
         {/* Stats */}
@@ -105,7 +105,7 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, c
           setInput={setInput}
           onSubmit={onSubmit}
           disabled={chatDisabled}
-          placeholder="Type a message..."
+          placeholder="Ask me anything..."
         />
       </div>
     </aside>
