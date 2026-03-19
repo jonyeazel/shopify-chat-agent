@@ -40,19 +40,12 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, c
           <img
             src={brand.avatarUrl || "/placeholder.svg"}
             alt={brand.name}
-            className="w-[104px] h-[104px] rounded-full object-cover"
+            className="w-[104px] h-[104px] rounded-full object-cover cursor-pointer"
             style={{
               boxShadow: "0 0 0 1px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.08)",
             }}
             draggable={false}
             onClick={openGallery}
-          />
-          <div
-            className="absolute bottom-1.5 right-1.5 w-3 h-3 rounded-full"
-            style={{
-              backgroundColor: STATUS_COLOR[availabilityStatus] ?? STATUS_COLOR.offline,
-              boxShadow: "0 0 0 2.5px var(--card)",
-            }}
           />
         </div>
 

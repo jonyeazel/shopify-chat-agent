@@ -627,8 +627,8 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
                             initial={{ opacity: 0, y: 6 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ type: "spring", stiffness: 400, damping: 32, delay: 0.08 }}
-                            whileTap={{ scale: 0.96 }}
-                            className="flex-shrink-0 py-1.5 px-3.5 rounded-full text-[12px] bg-foreground text-background hover:opacity-90 transition-opacity duration-150 cursor-pointer"
+                            whileTap={{ scale: 0.97 }}
+                            className="flex-shrink-0 py-2 px-4 rounded-full text-[13px] font-medium bg-neutral-900 text-white hover:bg-neutral-800 active:bg-neutral-700 transition-colors duration-150 cursor-pointer shadow-sm"
                           >
                             {cta.label}
                           </motion.button>
@@ -652,9 +652,9 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
                           damping: 32,
                           delay: 0.1 + i * 0.02,
                         }}
-                        whileTap={{ scale: 0.96 }}
+                        whileTap={{ scale: 0.97 }}
                         onClick={() => onQuickReply(reply)}
-                        className="flex-shrink-0 py-1.5 px-3.5 rounded-full text-[12px] border border-border/80 text-muted-foreground hover:text-foreground hover:border-foreground/30 active:bg-muted/50 transition-all duration-150"
+                        className="flex-shrink-0 py-2 px-4 rounded-full text-[13px] font-medium bg-neutral-100 text-neutral-700 hover:bg-neutral-200 active:bg-neutral-300 transition-colors duration-150 shadow-sm"
                       >
                         {reply}
                       </motion.button>
