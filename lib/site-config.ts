@@ -1,47 +1,56 @@
 export const siteConfig = {
   brand: {
-    name: "The Shopify Guy",
-    tagline: "Everything you need.",
-    subtitle: "Ecom Since 2012",
-    avatarUrl: "/images/gemini-generated-image-d9bdhjd9bdhjd9bd.jpeg",
-    domain: "theshopifyguy.dev",
+    name: "v0 University",
+    tagline: "Build websites with AI.",
+    subtitle: "3 minutes. No code.",
+    avatarUrl: "/images/jon-profile.png",
+    headerLogoUrl: "/images/v0-university-logo.png",
+    logoUrl: "/images/v0-university-logo.png",
+    domain: "v0university.com",
   },
 
   contact: {
     phone: "+14078677201",
-    smsBody: "Hey Jon, I found you on theshopifyguy.dev",
-    email: "support@theshopifyguy.com",
-    adminEmail: "admin@theshopifyguy.com",
-    calendlyUrl: "https://calendly.com/theshopifyguy/cro-strategy",
-    calendlySupportUrl: "https://calendly.com/theshopifyguy/support",
+    smsBody: "Hey Jon, I found you on v0university.com",
+    email: "support@v0university.com",
+    adminEmail: "admin@v0university.com",
+    calendlyUrl: "https://calendly.com/v0university/coaching",
+    calendlySupportUrl: "https://calendly.com/v0university/support",
   },
 
   stats: [
-    { value: "14", label: "years" },
-    { value: "50+", label: "stores" },
-    { value: "48hr", label: "delivery" },
+    { value: "3min", label: "video" },
+    { value: "$297", label: "once" },
+    { value: "20", label: "spots" },
   ],
 
+  pricing: {
+    video: {
+      name: "v0 University",
+      price: 297,
+      description: "One video. All templates. Build a site today.",
+    },
+  },
+
   meta: {
-    title: "the shopify guy - ai chat",
+    title: "v0 University | Build Websites in 3 Minutes",
     description:
-      "I build Shopify stores that convert. 14 years experience, 100+ stores built, $50M+ GMV generated. Get a free store audit or start your project today.",
+      "A 3-minute video that teaches you how to build a website. No code. No fluff. No 40-hour course.",
     keywords: [
-      "Shopify",
-      "Shopify expert",
-      "Shopify developer",
-      "ecommerce",
-      "store design",
-      "CRO",
-      "conversion optimization",
-      "Shopify plus",
-      "DTC brands",
+      "v0",
+      "v0 tutorial",
+      "AI website builder",
+      "no-code",
+      "Shopify design",
+      "AI design",
+      "Vercel v0",
+      "build websites with AI",
     ],
-    ogTitle: "The Shopify Guy | Stores That Convert",
+    ogTitle: "v0 University | 3 Minutes to Build Websites",
     ogDescription:
-      "14 years experience. 100+ stores. $50M+ GMV. Free store audits. Let's build something that converts.",
+      "One video. Under 3 minutes. You watch it, you can build websites.",
     twitterDescription:
-      "I build Shopify stores that convert. 14 years, 100+ stores. Free audits available.",
+      "A 3-minute video that teaches you to build websites. No code. No fluff.",
   },
 } as const
 

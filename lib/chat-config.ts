@@ -1,11 +1,12 @@
 import type React from "react"
 import {
-  DollarSign,
+  PlayCircle,
   MessageCircle,
   Layers,
   Gift,
   Lightbulb,
-  ExternalLink,
+  GraduationCap,
+  Store,
 } from "lucide-react"
 import { siteConfig } from "./site-config"
 import { getSmsHref } from "./sms"
@@ -13,12 +14,12 @@ import { getSmsHref } from "./sms"
 export const AVATAR_URL = siteConfig.brand.avatarUrl
 
 export const CURRENT_TRACK = {
-  title: "Shoppers Delight",
-  artist: "Lil' Bird",
+  title: "Building Mode",
+  artist: "v0 University",
   src: "/images/shopify-20guy-20option-202.mp3",
 }
 
-export type ConversationPhase = "empty" | "chatting" | "metrics_shared" | "analyzed"
+export type ConversationPhase = "empty" | "exploring" | "interested" | "ready_to_buy" | "objection"
 export type AvailabilityStatus = "online" | "away" | "offline"
 export type DrawerType = "portfolio" | "photos" | "pricing" | null
 
@@ -38,18 +39,36 @@ export function getMenuItems(
 ) {
   return [
     {
-      icon: Layers,
-      label: "See My Work",
-      description: "100+ stores built",
+      icon: PlayCircle,
+      label: "Watch Preview",
+      description: "See what you'll build",
       action: () => {
         setShowMenu(false)
-        sendMessage({ text: "Show me some stores you've built" })
+        sendMessage({ text: "Show me what I'll be able to build after this course" })
       },
     },
     {
-      icon: DollarSign,
-      label: "Pricing",
-      description: "See all packages",
+      icon: Layers,
+      label: "Student Sites",
+      description: "Built by beginners",
+      action: () => {
+        setShowMenu(false)
+        sendMessage({ text: "Show me sites built by students with zero experience" })
+      },
+    },
+    {
+      icon: Store,
+      label: "For Shopify Founders",
+      description: "Never hire again",
+      action: () => {
+        setShowMenu(false)
+        sendMessage({ text: "How does this help me as a Shopify store owner?" })
+      },
+    },
+    {
+      icon: GraduationCap,
+      label: "What's Included",
+      description: "Full curriculum",
       action: () => {
         setShowMenu(false)
         openDrawer?.("pricing")
@@ -57,35 +76,26 @@ export function getMenuItems(
     },
     {
       icon: Lightbulb,
-      label: "Free Quick Win",
-      description: "Get actionable advice",
+      label: "Free Sample",
+      description: "Try before you buy",
       action: () => {
         setShowMenu(false)
-        sendMessage({ text: "Give me a quick win I can implement today" })
+        sendMessage({ text: "Can I see a free sample of the course?" })
       },
     },
     {
       icon: Gift,
-      label: "Free Ad Templates",
-      description: "Canva creative pack",
+      label: "Free Prompt Pack",
+      description: "10 prompts that work",
       action: () => {
         setShowMenu(false)
-        window.open("https://www.canva.com/design/DAGU-3D9MdA/842omsxClUHEnVk4TQb-ig/edit", "_blank")
-      },
-    },
-    {
-      icon: ExternalLink,
-      label: "Free Resources",
-      description: "YouTube, tutorials",
-      action: () => {
-        setShowMenu(false)
-        sendMessage({ text: "What free resources do you have?" })
+        sendMessage({ text: "I want the free prompt pack" })
       },
     },
     {
       icon: MessageCircle,
-      label: "Text Me",
-      description: "Opens your messages app",
+      label: "Text Jon",
+      description: "Opens your messages",
       action: () => {
         setShowMenu(false)
         window.location.href = getSmsHref()
@@ -102,24 +112,40 @@ export function determineConversationPhase(messages: any[]): ConversationPhase {
     .join(" ")
     .toLowerCase()
 
+  // Check for objection signals
   if (
-    allText.includes("health score") ||
-    allText.includes("opportunity") ||
-    allText.includes("revenue gap") ||
-    allText.includes("leaving on the table")
+    allText.includes("too expensive") ||
+    allText.includes("can't afford") ||
+    allText.includes("not sure") ||
+    allText.includes("think about it") ||
+    allText.includes("maybe later")
   ) {
-    return "analyzed"
+    return "objection"
   }
 
+  // Check for buying signals
   if (
-    allText.includes("conversion") ||
-    allText.includes("sessions") ||
-    allText.includes("aov") ||
-    allText.includes("average order") ||
-    allText.includes(".csv")
+    allText.includes("how do i buy") ||
+    allText.includes("ready to start") ||
+    allText.includes("sign me up") ||
+    allText.includes("enroll") ||
+    allText.includes("checkout") ||
+    allText.includes("purchase")
   ) {
-    return "metrics_shared"
+    return "ready_to_buy"
   }
 
-  return "chatting"
+  // Check for interest signals
+  if (
+    allText.includes("what's included") ||
+    allText.includes("curriculum") ||
+    allText.includes("pricing") ||
+    allText.includes("how long") ||
+    allText.includes("guarantee") ||
+    allText.includes("results")
+  ) {
+    return "interested"
+  }
+
+  return "exploring"
 }

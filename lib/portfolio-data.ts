@@ -1,10 +1,11 @@
-export type GalleryCategory = "product-shots" | "store-design" | "ad-creatives"
+export type GalleryCategory = "ecommerce" | "saas" | "portfolios" | "tools"
 
 export const GALLERY_CATEGORIES: { value: GalleryCategory | "all"; label: string }[] = [
   { value: "all", label: "All" },
-  { value: "product-shots", label: "Product Shots" },
-  { value: "store-design", label: "Store Design" },
-  { value: "ad-creatives", label: "Ad Creatives" },
+  { value: "ecommerce", label: "E-commerce" },
+  { value: "saas", label: "SaaS" },
+  { value: "portfolios", label: "Portfolios" },
+  { value: "tools", label: "Tools" },
 ]
 
 export type GalleryItem = {
@@ -15,14 +16,20 @@ export type GalleryItem = {
 }
 
 export const GALLERY_ITEMS: GalleryItem[] = [
-  { url: "/images/product-shot.png", label: "Product Shot", aspect: "1:1", category: "product-shots" },
-  { url: "/images/gravity-shot.png", label: "Gravity Shot", aspect: "9:16", category: "product-shots" },
-  { url: "/images/2pk-bundle.png", label: "2pk Bundle", aspect: "1:1", category: "product-shots" },
-  { url: "/images/3pk-aov-booster.png", label: "3pk AOV Booster", aspect: "9:16", category: "product-shots" },
-  { url: "/images/50-50-infographic.png", label: "50/50 Infographic", aspect: "1:1", category: "ad-creatives" },
-  { url: "/images/label-info.png", label: "Label Display", aspect: "9:16", category: "store-design" },
-  { url: "/images/abstract-graphic.png", label: "Abstract Graphic", aspect: "1:1", category: "ad-creatives" },
-  { url: "/images/blank-bottle.png", label: "Blank Bottle", aspect: "9:16", category: "product-shots" },
+  { url: "https://v0-stadics.vercel.app/", label: "Stadics", aspect: "9:16", category: "saas" },
+  { url: "https://www.stadics.com", label: "Stadics Live", aspect: "9:16", category: "saas" },
+  { url: "https://v0-neon-v0-templates.vercel.app/", label: "Neon Templates", aspect: "9:16", category: "tools" },
+  { url: "https://www.theshopifyguy.dev", label: "Shopify Guy", aspect: "9:16", category: "portfolios" },
+  { url: "https://v0-shopifystorefront.vercel.app/", label: "Storefront", aspect: "9:16", category: "ecommerce" },
+  { url: "https://v0-aiblocks.vercel.app/", label: "AI Blocks", aspect: "9:16", category: "tools" },
+  { url: "https://v0-designblocks.vercel.app/", label: "Design Blocks", aspect: "9:16", category: "tools" },
+  { url: "https://vibecode-black.vercel.app/", label: "Vibecode", aspect: "9:16", category: "saas" },
+  { url: "https://v0-vcommercepdp-three.vercel.app", label: "Commerce PDP", aspect: "9:16", category: "ecommerce" },
+  { url: "https://v0-brez-product-page.vercel.app", label: "Brez Product", aspect: "9:16", category: "ecommerce" },
+  { url: "https://v0-mudwater.vercel.app", label: "MUD\\WTR", aspect: "9:16", category: "ecommerce" },
+  { url: "https://www.ilyavolgin.com", label: "Ilya Volgin", aspect: "9:16", category: "portfolios" },
+  { url: "https://www.molar.digital", label: "Molar Digital", aspect: "9:16", category: "portfolios" },
+  { url: "https://v0-viberrpro.vercel.app/", label: "Viberr Pro", aspect: "9:16", category: "saas" },
 ]
 
 export function getGalleryByCategory(category: GalleryCategory): GalleryItem[] {
@@ -30,81 +37,45 @@ export function getGalleryByCategory(category: GalleryCategory): GalleryItem[] {
 }
 
 export const PORTFOLIO_DATA = {
-  productShots: [
-    { url: "/images/product-shot.png", label: "Product Shot" },
-    { url: "/images/gravity-shot.png", label: "Gravity Shot" },
-    { url: "/images/2pk-bundle.png", label: "2pk Bundle" },
-    { url: "/images/3pk-aov-booster.png", label: "3pk AOV Booster" },
-    { url: "/images/50-50-infographic.png", label: "50/50 Infographic" },
-    { url: "/images/label-info.png", label: "Label Display" },
-    { url: "/images/abstract-graphic.png", label: "Abstract Graphic" },
-    { url: "/images/blank-bottle.png", label: "Blank Bottle" },
-  ],
+  // Live sites built with v0 to showcase in iframes
   liveSites: [
-    { name: "Goli", url: "https://v0-vcommercepdp-three.vercel.app" },
-    { name: "BREZ", url: "https://v0-brez-product-page.vercel.app" },
-    { name: "Seed", url: "https://v0-vcommercepdp.vercel.app" },
-    { name: "MUD\\WTR", url: "https://v0-mudwater.vercel.app" },
+    { name: "Stadics Analytics", url: "https://v0-stadics.vercel.app/", category: "SaaS" },
+    { name: "Neon Templates", url: "https://v0-neon-v0-templates.vercel.app/", category: "Tools" },
+    { name: "Shopify Storefront", url: "https://v0-shopifystorefront.vercel.app/", category: "E-commerce" },
+    { name: "AI Blocks", url: "https://v0-aiblocks.vercel.app/", category: "Tools" },
+    { name: "Design Blocks", url: "https://v0-designblocks.vercel.app/", category: "Tools" },
+    { name: "Commerce PDP", url: "https://v0-vcommercepdp-three.vercel.app", category: "E-commerce" },
+    { name: "Brez Product Page", url: "https://v0-brez-product-page.vercel.app", category: "E-commerce" },
+    { name: "MUD\\WTR Clone", url: "https://v0-mudwater.vercel.app", category: "E-commerce" },
+    { name: "Vibecode", url: "https://vibecode-black.vercel.app/", category: "SaaS" },
+    { name: "Viberr Pro", url: "https://v0-viberrpro.vercel.app/", category: "SaaS" },
+    { name: "Ilya Volgin Portfolio", url: "https://www.ilyavolgin.com", category: "Portfolio" },
+    { name: "Molar Digital", url: "https://www.molar.digital", category: "Portfolio" },
+    { name: "The Shopify Guy", url: "https://www.theshopifyguy.dev", category: "Portfolio" },
+    { name: "Stadics (Live)", url: "https://www.stadics.com", category: "SaaS" },
   ],
+  
+  // Pricing - simple, anti-course positioning
   pricing: {
-    smartStore: { 
-      name: "Smart Store AI System", 
-      price: "$15,000", 
-      description: "AI-powered personalization",
-      features: ["AI quiz funnel", "10 customer-profile PDPs", "100 ad creatives", "Full Shopify integration"],
+    video: { 
+      name: "v0 University", 
+      price: "$297", 
+      description: "One 3-minute video. All templates included.",
+      features: ["3-minute video tutorial", "AI-powered smart templates", "Build a site the same day"],
       popular: true,
-      isAI: true,
-      chatPrompt: "Tell me about the Smart Store AI System"
-    },
-    storeRedesign: { 
-      name: "Store Redesign", 
-      price: "$5,000", 
-      description: "$2k start + $3k on delivery",
-      features: ["Up to 20 products", "Full CRO buildout", "48-hour turnaround", "Conversion focused"],
-      popular: false,
-      chatPrompt: "I want a store redesign"
-    },
-    singleShot: { 
-      name: "Single Product Shot", 
-      price: "$97",
-      description: "One stunning image",
-      features: ["1 hero shot", "White or lifestyle", "Hi-res delivery"],
-      popular: false,
-      chatPrompt: "I need a single product shot"
-    },
-    shotBundle: { 
-      name: "Product Shot Bundle", 
-      price: "$397",
-      description: "8-shot package",
-      features: ["8 high-quality shots", "Mix of styles", "Unlimited revisions"],
-      popular: false,
-      chatPrompt: "I want the 8-shot product bundle"
-    },
-    staticAds: { 
-      name: "Ad Creatives", 
-      price: "$249",
-      description: "30 static ads",
-      features: ["Platform optimized", "A/B variants", "Source files included"],
-      popular: false,
-      chatPrompt: "I need ad creatives for my store"
-    },
-    pdp: { 
-      name: "Product Page", 
-      price: "$1,497",
-      description: "High-converting PDP",
-      features: ["Custom sections", "Mobile-first", "Speed optimized"],
-      popular: false,
-      chatPrompt: "I want a custom product page built"
-    },
-    consulting: { 
-      name: "Strategy Call", 
-      price: "$500",
-      description: "30 min deep dive",
-      features: ["Screen share audit", "Action items", "Recording included"],
-      popular: false,
-      chatPrompt: "I'd like to book a strategy call"
+      chatPrompt: "Tell me about v0 University"
     },
   },
+
+  // Testimonials - collecting first 20
+  testimonials: [
+    {
+      name: "Coming soon",
+      role: "First 20 students",
+      quote: "We're collecting testimonials from the first 20 people who can vouch this works.",
+      result: "Be one of the first 20",
+    },
+  ],
 }
 
 export type PricingItem = { 
@@ -113,7 +84,7 @@ export type PricingItem = {
   description: string
   features: string[]
   popular?: boolean
-  isAI?: boolean
   chatPrompt?: string
 }
-export type LiveSite = { name: string; url: string }
+export type LiveSite = { name: string; url: string; category?: string }
+export type Testimonial = { name: string; role: string; quote: string; result: string }

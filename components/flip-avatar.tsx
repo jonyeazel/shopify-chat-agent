@@ -101,7 +101,7 @@ export function FlipAvatar({
   )
 }
 
-export function StaticAvatar({ avatarUrl, availabilityStatus, onLongPress }: StaticAvatarProps) {
+export function StaticAvatar({ avatarUrl, onLongPress }: Omit<StaticAvatarProps, 'availabilityStatus'>) {
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const firedRef = useRef(false)
 
@@ -136,10 +136,6 @@ export function StaticAvatar({ avatarUrl, availabilityStatus, onLongPress }: Sta
         alt="Profile"
         className="relative w-[84px] h-[84px] rounded-full object-cover ring-2 ring-border/60 ring-offset-2 ring-offset-card"
         draggable={false}
-      />
-      <div 
-        className="absolute bottom-1 right-1 w-3.5 h-3.5 rounded-full ring-2 ring-card"
-        style={{ backgroundColor: "var(--forest-500)" }}
       />
     </div>
   )

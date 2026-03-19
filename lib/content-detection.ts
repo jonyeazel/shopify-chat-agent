@@ -2,12 +2,25 @@ import { PORTFOLIO_DATA, getGalleryByCategory } from "./portfolio-data"
 import { CASE_STUDIES, TESTIMONIALS, DELIVERABLES } from "./component-data"
 
 export type DetectedContent = {
-  type: "gallery" | "liveSites" | "pricing" | "allPricing" | "siteAudit" | "emailCapture" | "revenueLeak" | "beforeAfterTimeline" | "testimonials" | "speedCommitment" | "processPreviewStack" | "paymentOptions" | "microConsultation" | "labelUpload"
+  type: "gallery" | "liveSites" | "pricing" | "allPricing" | "siteAudit" | "emailCapture" | "revenueLeak" | "beforeAfterTimeline" | "testimonials" | "speedCommitment" | "processPreviewStack" | "paymentOptions" | "microConsultation" | "labelUpload" | "videoPreview"
   data?: any
 }
 
 export function detectContentToShow(text: string): DetectedContent | null {
   const lower = text.toLowerCase()
+
+  // Video preview — show when AI mentions the video or preview
+  if (
+    lower.includes("preview of the video") ||
+    lower.includes("here's a preview") ||
+    lower.includes("here's the video") ||
+    lower.includes("what you get") ||
+    lower.includes("3-minute video") ||
+    lower.includes("3 minute video") ||
+    (lower.includes("video") && lower.includes("preview"))
+  ) {
+    return { type: "videoPreview", data: null }
+  }
 
   // Payment options — show when AI presents the payment gate with methods
   if (

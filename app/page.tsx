@@ -79,9 +79,9 @@ const SITE_ID = 1
 const TEMP_ADMIN_BYPASS = true
 
 const QUICK_ACTIONS = [
-  { label: "Audit my store", message: "Can you audit my Shopify store?" },
-  { label: "I need a new store", message: "I need a new Shopify store built from scratch" },
-  { label: "What do you charge?", message: "What does it cost to work with you?" },
+  { label: "What will I learn?", message: "What will I learn in the v0 Masterclass?" },
+  { label: "Show me student sites", message: "Show me sites built by students with zero experience" },
+  { label: "What's it cost?", message: "How much is the course?" },
   { label: "Text Jon", message: null, sms: true },
 ]
 
@@ -343,7 +343,7 @@ export default function Home() {
               onTouchStart={handleAdminPressStart}
               onTouchEnd={handleAdminPressEnd}
             >
-              <HeaderAvatar avatarUrl={siteConfig.brand.avatarUrl} />
+              <HeaderAvatar avatarUrl={siteConfig.brand.headerLogoUrl} />
               <div className="flex flex-col">
                 <span className="font-medium text-foreground text-[14px] leading-none tracking-[-0.01em]">{siteConfig.brand.name}</span>
                 <span className="text-[10px] text-muted-foreground leading-none mt-1">{siteConfig.brand.subtitle}</span>
@@ -407,7 +407,7 @@ export default function Home() {
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.05 }}
                       >
-                        <StaticAvatar avatarUrl={siteConfig.brand.avatarUrl} availabilityStatus={availabilityStatus} onLongPress={() => TEMP_ADMIN_BYPASS ? setShowAdminPanel(true) : setShowAdminLogin(true)} />
+                        <StaticAvatar avatarUrl={siteConfig.brand.avatarUrl} onLongPress={() => TEMP_ADMIN_BYPASS ? setShowAdminPanel(true) : setShowAdminLogin(true)} />
                       </motion.div>
 
                       <motion.h1
@@ -420,12 +420,12 @@ export default function Home() {
                       </motion.h1>
 
                       <motion.p
-                        className="text-[12px] text-muted-foreground mt-1.5"
+                        className="text-[12px] text-muted-foreground mt-1"
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.17 }}
                       >
-                        Design. Dev. Strategy.
+                        {siteConfig.brand.subtitle}
                       </motion.p>
 
                       {chatError && (
@@ -454,7 +454,7 @@ export default function Home() {
                     className="h-full hidden md:flex flex-col items-center justify-center px-4"
                   >
                     <p className="text-sm text-muted-foreground">
-                      Ask me anything about your store.
+                      Ask me anything about building websites with v0.
                     </p>
                   </motion.div>
                 </>
@@ -528,11 +528,11 @@ export default function Home() {
         {/* Mobile: Vertical icon rail */}
         <div className="md:hidden flex flex-col items-center justify-end gap-1.5 flex-shrink-0 pr-[14px] pl-[5px] pb-[max(env(safe-area-inset-bottom),12px)]">
           {([
-            { icon: IconAudit, label: "Fix", action: () => handleChatSubmit("What would you fix on my store?") },
-            { icon: IconWork, label: "Proof", action: () => handleChatSubmit("Show me what you've built") },
-            { icon: IconPrice, label: "Cost", action: () => handleChatSubmit("What's this gonna run me?") },
+            { icon: IconAudit, label: "Learn", action: () => handleChatSubmit("What will I learn in this course?") },
+            { icon: IconWork, label: "Sites", action: () => handleChatSubmit("Show me sites built by students") },
+            { icon: IconPrice, label: "Cost", action: () => handleChatSubmit("What's the course cost?") },
             { icon: IconText, label: "Text", sms: true as const },
-            { icon: IconGallery, label: "Shots", action: () => handleChatSubmit("I need better product shots") },
+            { icon: IconGallery, label: "Preview", action: () => handleChatSubmit("Can I see a preview of the course?") },
           ] as const).map(({ icon: Icon, label, ...rest }) => {
             const btn = (
               <button

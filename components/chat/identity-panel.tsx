@@ -40,19 +40,12 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, c
           <img
             src={brand.avatarUrl || "/placeholder.svg"}
             alt={brand.name}
-            className="w-[104px] h-[104px] rounded-full object-cover"
+            className="w-[104px] h-[104px] rounded-full object-cover cursor-pointer"
             style={{
               boxShadow: "0 0 0 1px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.08)",
             }}
             draggable={false}
             onClick={openGallery}
-          />
-          <div
-            className="absolute bottom-1.5 right-1.5 w-3 h-3 rounded-full"
-            style={{
-              backgroundColor: STATUS_COLOR[availabilityStatus] ?? STATUS_COLOR.offline,
-              boxShadow: "0 0 0 2.5px var(--card)",
-            }}
           />
         </div>
 
@@ -72,12 +65,8 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, c
         <div className="w-8 h-px bg-foreground/10 my-6" />
 
         {/* Tagline */}
-        <p className="text-[16px] text-foreground leading-relaxed text-center max-w-[240px]">
+        <p className="text-[15px] text-foreground leading-relaxed text-center max-w-[220px]">
           {brand.tagline}
-        </p>
-
-        <p className="text-[13px] text-muted-foreground mt-1.5">
-          Design. Dev. Strategy.
         </p>
 
         {/* Stats */}
@@ -105,7 +94,7 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, c
           setInput={setInput}
           onSubmit={onSubmit}
           disabled={chatDisabled}
-          placeholder="Type a message..."
+          placeholder="Ask me anything..."
         />
       </div>
     </aside>
