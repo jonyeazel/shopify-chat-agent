@@ -72,6 +72,7 @@ import { SiteAdminPanel } from "@/components/admin/site-admin-panel"
 import { AdminLoginModal } from "@/components/admin/admin-login-modal"
 import { InstantSiteCreator } from "@/components/admin/instant-site-creator"
 import { CheckoutDrawer } from "@/components/checkout-drawer"
+import { LiveShowcase } from "@/components/live-showcase"
 import { siteConfig } from "@/lib/site-config"
 import { SmsTrigger } from "@/components/sms-trigger"
 import { type AvailabilityStatus } from "@/lib/chat-config"
@@ -448,17 +449,16 @@ export default function Home() {
                     </div>
                   </motion.div>
 
-                  {/* Desktop empty state */}
+                  {/* Desktop: Live site showcase */}
                   <motion.div
                     key="landing-desktop"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="h-full hidden md:flex flex-col items-center justify-center px-4"
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    transition={{ duration: 0.3 }}
+                    className="h-full hidden md:flex p-4"
                   >
-                    <p className="text-sm text-muted-foreground">
-                      Ask me anything about building websites with v0.
-                    </p>
+                    <LiveShowcase />
                   </motion.div>
                 </>
               ) : (
