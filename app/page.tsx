@@ -1,5 +1,5 @@
 "use client"
-
+// v0 University - Main Page
 import type React from "react"
 import { useState, useRef, useCallback, useEffect, type MouseEvent as ReactMouseEvent } from "react"
 import { useChat } from "@ai-sdk/react"
@@ -94,7 +94,7 @@ import { AdminLoginModal } from "@/components/admin/admin-login-modal"
 import { InstantSiteCreator } from "@/components/admin/instant-site-creator"
 import { CheckoutDrawer } from "@/components/checkout-drawer"
 import { LiveShowcase } from "@/components/live-showcase"
-import { ShowcaseDrawer } from "@/components/showcase-drawer" // swipeable examples
+import { ShowcaseDrawer } from "@/components/showcase-drawer"
 import { VideoDrawer } from "@/components/video-drawer"
 import { siteConfig } from "@/lib/site-config"
 import { SmsTrigger } from "@/components/sms-trigger"
