@@ -348,7 +348,7 @@ export default function Home() {
               <HeaderAvatar avatarUrl={siteConfig.brand.headerLogoUrl} />
               <div className="flex flex-col">
                 <span className="font-semibold text-foreground text-[16px] leading-none tracking-[-0.01em]">{siteConfig.brand.name}</span>
-                <span className="text-[12px] text-muted-foreground leading-none mt-1.5 max-w-[200px] truncate">{siteConfig.brand.subtitle}</span>
+                <span className="text-[12px] text-muted-foreground leading-none mt-1.5">{siteConfig.brand.headerSubtitle}</span>
               </div>
             </div>
           </div>
