@@ -131,8 +131,8 @@ export default function Home() {
   const [showVideo, setShowVideo] = useState(false)
   const [adminLongPressTimer, setAdminLongPressTimer] = useState<NodeJS.Timeout | null>(null)
 
-  // Panel resize
-  const [panelWidth, setPanelWidth] = useState(35)
+  // Panel resize - 30/70 split default
+  const [panelWidth, setPanelWidth] = useState(30)
   const [isResizing, setIsResizing] = useState(false)
   const mainRef = useRef<HTMLElement>(null)
 
@@ -291,7 +291,7 @@ export default function Home() {
       <div
         className="hidden md:flex items-center justify-center w-3 relative z-20 group"
         onMouseDown={handleResizeStart}
-        onDoubleClick={() => setPanelWidth(35)}
+        onDoubleClick={() => setPanelWidth(30)}
       >
         <div className={`absolute w-1 h-12 rounded-full transition-colors duration-150 ${isResizing ? "bg-foreground/50" : "bg-foreground/20 group-hover:bg-foreground/40"}`} />
         <div className="absolute w-full h-full cursor-col-resize" />
@@ -518,22 +518,25 @@ export default function Home() {
             { icon: IconExamples, label: "Examples", action: () => setShowShowcase(true) },
             { icon: IconInfo, label: "Info", action: () => handleChatSubmit("Tell me more about v0 University") },
             { icon: IconFAQ, label: "FAQ", action: () => handleChatSubmit("What are the most common questions about v0 University?") },
-            { icon: IconBuy, label: "Buy", action: () => setShowCheckout(true) },
-          ] as const).map(({ icon: Icon, label, ...rest }) => {
-            const btn = (
-              <button
-                key={label}
-                onClick={"action" in rest ? rest.action : undefined}
-                className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
-              >
-                <div className="w-[56px] h-[56px] rounded-full flex items-center justify-center bg-foreground rubber-button ring-1 ring-white/[0.06]">
-                  <Icon className="w-7 h-7 text-background" strokeWidth={1.5} />
-                </div>
-                <span className="text-[11px] text-muted-foreground leading-tight font-medium">{label}</span>
-              </button>
-            )
-            return btn
-          })}
+            { icon: IconBuy, label: "Buy", action: () => setShowCheckout(true), highlight: true },
+          ] as const).map(({ icon: Icon, label, highlight, ...rest }, index) => (
+            <motion.button
+              key={label}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.04, type: "spring", stiffness: 400, damping: 30 }}
+              whileTap={{ scale: 0.92 }}
+              onClick={"action" in rest ? rest.action : undefined}
+              className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+            >
+              <div className={`w-[56px] h-[56px] rounded-full flex items-center justify-center rubber-button ring-1 ring-white/[0.06] ${
+                highlight ? "bg-foreground" : "bg-foreground"
+              }`}>
+                <Icon className="w-7 h-7 text-background" strokeWidth={1.5} />
+              </div>
+              <span className="text-[11px] text-muted-foreground leading-tight font-medium">{label}</span>
+            </motion.button>
+          ))}
         </div>
 
         </div>

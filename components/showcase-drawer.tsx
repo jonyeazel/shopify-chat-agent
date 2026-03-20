@@ -31,6 +31,20 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
     }
   }, [isOpen, currentIndex])
 
+  // Keyboard navigation
+  useEffect(() => {
+    if (!isOpen) return
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") goPrev()
+      if (e.key === "ArrowRight") goNext()
+      if (e.key === "Escape") onClose()
+    }
+    
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [isOpen, currentIndex])
+
   const goNext = () => {
     if (currentIndex < portfolioSites.length - 1) {
       setDirection(1)
