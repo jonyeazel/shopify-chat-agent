@@ -270,16 +270,21 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
   // Smooth auto-scroll during streaming — keeps content pinned to bottom
   useEffect(() => {
     if (status !== "streaming") return
-    let raf: number
-    const tick = () => {
-      if (containerRef.current && checkIfNearBottom()) {
-        const el = containerRef.current
-        el.scrollTop = el.scrollHeight - el.clientHeight
+    const el = containerRef.current
+    if (!el) return
+    
+    let lastScrollHeight = el.scrollHeight
+    const interval = setInterval(() => {
+      if (el.scrollHeight !== lastScrollHeight && checkIfNearBottom()) {
+        el.scrollTo({
+          top: el.scrollHeight - el.clientHeight,
+          behavior: "smooth"
+        })
+        lastScrollHeight = el.scrollHeight
       }
-      raf = requestAnimationFrame(tick)
-    }
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
+    }, 100)
+    
+    return () => clearInterval(interval)
   }, [status, checkIfNearBottom])
 
   // Scroll to bottom when streaming ends (chips appear)
@@ -287,7 +292,7 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
     if (status === "ready" && checkIfNearBottom()) {
       setTimeout(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-      }, 120)
+      }, 80)
     }
   }, [status, checkIfNearBottom])
 
@@ -387,14 +392,14 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
             return (
             <motion.div
               key={message.id}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ 
-                type: "spring", 
-                stiffness: 400, 
-                damping: 32,
-                delay: isLastMessage ? 0.04 : 0 
+                duration: 0.2,
+                ease: [0.25, 0.1, 0.25, 1]
               }}
+              layout="position"
+              layoutId={`message-${message.id}`}
               className={continuation ? "mt-1" : index === 0 ? "" : "mt-5"}
             >
               {message.role === "user" ? (
@@ -537,13 +542,13 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
             )
           })}
 
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {status === "streaming" && messages[messages.length - 1]?.role !== "assistant" && (
               <motion.div 
-                initial={{ opacity: 0, y: 10 }} 
-                animate={{ opacity: 1, y: 0 }} 
-                exit={{ opacity: 0, y: -4 }}
-                transition={{ type: "spring", stiffness: 400, damping: 32 }}
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
                 className="mt-5"
               >
                 <div className="flex items-center gap-1.5 mb-1.5">
@@ -556,13 +561,13 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
                       key={i}
                       className="w-[6px] h-[6px] rounded-full bg-neutral-400"
                       animate={{ 
-                        y: [0, -4, 0],
-                        opacity: [0.4, 1, 0.4] 
+                        y: [0, -3, 0],
+                        opacity: [0.5, 1, 0.5] 
                       }}
                       transition={{ 
-                        duration: 0.8, 
+                        duration: 0.6, 
                         repeat: Number.POSITIVE_INFINITY, 
-                        delay: i * 0.12, 
+                        delay: i * 0.1, 
                         ease: "easeInOut" 
                       }}
                     />
@@ -573,13 +578,13 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
           </AnimatePresence>
 
           {/* Quick Reply Chips */}
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {status === "ready" && messages.length > 0 && messages[messages.length - 1]?.role === "assistant" && onQuickReply && (
               <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 4 }}
-                transition={{ type: "spring", stiffness: 400, damping: 32, delay: 0.06 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
                 className="pt-3"
               >
                 <div className="relative">
@@ -590,11 +595,11 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
                       return (
                         <SmsTrigger key="sms-cta" context={cta.context}>
                           <motion.button
-                            initial={{ opacity: 0, y: 6 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ type: "spring", stiffness: 400, damping: 32, delay: 0.08 }}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.15 }}
                             whileTap={{ scale: 0.97 }}
-                            className="flex-shrink-0 py-2 px-4 rounded-full text-[13px] font-medium bg-neutral-900 text-white hover:bg-neutral-800 active:bg-neutral-700 transition-colors duration-150 cursor-pointer shadow-sm"
+                            className="flex-shrink-0 py-2.5 px-4 rounded-full text-[13px] font-medium bg-neutral-900 text-white hover:bg-neutral-800 active:bg-neutral-700 transition-colors duration-150 cursor-pointer"
                           >
                             {cta.label}
                           </motion.button>
@@ -610,15 +615,12 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
                     ).map((reply, i) => (
                       <motion.button
                         key={reply}
-                        initial={{ opacity: 0, y: 6 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
                         transition={{
-                          type: "spring",
-                          stiffness: 400,
-                          damping: 32,
-                          delay: 0.1 + i * 0.025,
+                          duration: 0.15,
+                          delay: i * 0.02,
                         }}
-                        whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.97 }}
                         onClick={() => onQuickReply(reply)}
                         className="flex-shrink-0 py-2.5 px-4 rounded-full text-[13px] font-medium border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50 active:bg-neutral-100 transition-all duration-150"

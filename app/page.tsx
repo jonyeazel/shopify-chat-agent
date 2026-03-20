@@ -131,8 +131,8 @@ export default function Home() {
   const [showVideo, setShowVideo] = useState(false)
   const [adminLongPressTimer, setAdminLongPressTimer] = useState<NodeJS.Timeout | null>(null)
 
-  // Panel resize - 30/70 split default
-  const [panelWidth, setPanelWidth] = useState(30)
+  // Panel resize - 25/75 split default
+  const [panelWidth, setPanelWidth] = useState(25)
   const [isResizing, setIsResizing] = useState(false)
   const mainRef = useRef<HTMLElement>(null)
 
@@ -291,7 +291,7 @@ export default function Home() {
       <div
         className="hidden md:flex items-center justify-center w-3 relative z-20 group"
         onMouseDown={handleResizeStart}
-        onDoubleClick={() => setPanelWidth(30)}
+        onDoubleClick={() => setPanelWidth(25)}
       >
         <div className={`absolute w-1 h-12 rounded-full transition-colors duration-150 ${isResizing ? "bg-foreground/50" : "bg-foreground/20 group-hover:bg-foreground/40"}`} />
         <div className="absolute w-full h-full cursor-col-resize" />
