@@ -32,34 +32,55 @@ function IconWork({ className, strokeWidth = 1.5 }: { className?: string; stroke
   )
 }
 
-function IconPrice({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
+// Video - Play button icon
+function IconVideo({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M6 3h12v16l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5-2 1.5V3z" />
-      <path d="M9.5 8h5" />
-      <path d="M9.5 11.5h3" />
+      <polygon points="5 3 19 12 5 21 5 3" fill="currentColor" stroke="none" />
     </svg>
   )
 }
 
-function IconText({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
+// Examples - Grid icon
+function IconExamples({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H8l-4 4V6z" />
-      <circle cx="9" cy="10" r=".75" fill="currentColor" stroke="none" />
-      <circle cx="12" cy="10" r=".75" fill="currentColor" stroke="none" />
-      <circle cx="15" cy="10" r=".75" fill="currentColor" stroke="none" />
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <rect x="14" y="14" width="7" height="7" rx="1" />
     </svg>
   )
 }
 
-function IconGallery({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
+// Info - Circle with i
+function IconInfo({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M4 8V5a1 1 0 0 1 1-1h3" />
-      <path d="M16 4h3a1 1 0 0 1 1 1v3" />
-      <path d="M20 16v3a1 1 0 0 1-1 1h-3" />
-      <path d="M8 20H5a1 1 0 0 1-1-1v-3" />
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 16v-4" />
+      <path d="M12 8h.01" />
+    </svg>
+  )
+}
+
+// FAQ - Question mark
+function IconFAQ({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+      <path d="M12 17h.01" />
+    </svg>
+  )
+}
+
+// Buy - Credit card icon
+function IconBuy({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect x="1" y="4" width="22" height="16" rx="2" />
+      <path d="M1 10h22" />
     </svg>
   )
 }
@@ -493,11 +514,11 @@ export default function Home() {
         {/* Mobile: Vertical icon rail */}
         <div className="md:hidden flex flex-col items-center justify-end gap-2 flex-shrink-0 pr-[16px] pl-[6px] pb-[max(env(safe-area-inset-bottom),16px)]">
           {([
-            { icon: IconGallery, label: "Video", action: () => setShowVideo(true) },
-            { icon: IconWork, label: "Examples", action: () => setShowShowcase(true) },
-            { icon: IconAudit, label: "Info", action: () => handleChatSubmit("Tell me more about v0 University") },
-            { icon: IconPrice, label: "FAQ", action: () => handleChatSubmit("What are the most common questions about v0 University?") },
-            { icon: IconText, label: "Buy", action: () => setShowCheckout(true) },
+            { icon: IconVideo, label: "Video", action: () => setShowVideo(true) },
+            { icon: IconExamples, label: "Examples", action: () => setShowShowcase(true) },
+            { icon: IconInfo, label: "Info", action: () => handleChatSubmit("Tell me more about v0 University") },
+            { icon: IconFAQ, label: "FAQ", action: () => handleChatSubmit("What are the most common questions about v0 University?") },
+            { icon: IconBuy, label: "Buy", action: () => setShowCheckout(true) },
           ] as const).map(({ icon: Icon, label, ...rest }) => {
             const btn = (
               <button
