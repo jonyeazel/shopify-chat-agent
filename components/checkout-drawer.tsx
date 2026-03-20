@@ -2,14 +2,10 @@
 
 import { useState, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { X, Zap, Clock, Shield, ArrowRight, Check } from "lucide-react"
-import { loadStripe } from "@stripe/stripe-js"
-import { EmbeddedCheckout, EmbeddedCheckoutProvider } from "@stripe/react-stripe-js"
+import { X, Zap, Clock, Shield, ArrowRight, Check, Loader2 } from "lucide-react"
 import { V0_UNIVERSITY } from "@/lib/products"
-import { startEmbeddedCheckout } from "@/app/actions/stripe"
+import { startCheckout } from "@/app/actions/stripe"
 import Image from "next/image"
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
 interface CheckoutDrawerProps {
   isOpen: boolean
@@ -18,22 +14,46 @@ interface CheckoutDrawerProps {
 }
 
 export function CheckoutDrawer({ isOpen, onClose }: CheckoutDrawerProps) {
-  const [showCheckout, setShowCheckout] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const price = (V0_UNIVERSITY.priceInCents / 100).toFixed(0)
 
-  const fetchClientSecret = useCallback(
-    () => startEmbeddedCheckout(V0_UNIVERSITY.id),
-    []
-  )
-
-  const handleProceed = () => {
-    setShowCheckout(true)
+  const handleCheckout = async () => {
+    setIsLoading(true)
+    setError(null)
+    
+    try {
+      const checkoutUrl = await startCheckout(V0_UNIVERSITY.id)
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl
+      } else {
+        setError("Failed to create checkout session")
+      }
+    } catch (err) {
+      setError("Something went wrong. Please try again.")
+      console.error("[v0] Checkout error:", err)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleClose = () => {
-    setShowCheckout(false)
+    setError(null)
     onClose()
   }
+
+  const benefits = [
+    { icon: Zap, text: "Instant access" },
+    { icon: Clock, text: "57 second lesson" },
+    { icon: Shield, text: "Lifetime access" },
+  ]
+
+  const features = [
+    "Complete v0 workflow tutorial",
+    "Real project examples",
+    "Prompting techniques",
+    "Best practices guide",
+  ]
 
   return (
     <AnimatePresence>
@@ -57,159 +77,99 @@ export function CheckoutDrawer({ isOpen, onClose }: CheckoutDrawerProps) {
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 350 }}
-            className="fixed inset-x-0 bottom-0 z-50 md:hidden max-h-[95vh] overflow-hidden"
+            className="fixed inset-x-0 bottom-0 z-50 md:hidden max-h-[90vh] overflow-hidden"
           >
-        <div className="bg-white rounded-t-[20px] shadow-2xl overflow-hidden flex flex-col max-h-[95vh]">
-          {/* Drag handle */}
-          <div className="flex justify-center pt-2 pb-1 flex-shrink-0">
-            <div className="w-9 h-1 rounded-full bg-neutral-300" />
-          </div>
+            <div className="bg-white rounded-t-3xl shadow-2xl">
+              {/* Drag handle */}
+              <div className="flex justify-center pt-3 pb-2">
+                <div className="w-10 h-1 bg-neutral-200 rounded-full" />
+              </div>
 
-          <AnimatePresence mode="wait">
-            {!showCheckout ? (
-              <motion.div
-                key="info"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="px-5 pb-8 pt-2 overflow-y-auto"
-              >
-                {/* Header */}
-                <div className="flex items-center justify-between mb-5">
-                  <h2 className="text-lg font-semibold text-neutral-900">Get Instant Access</h2>
-                  <button
-                    onClick={handleClose}
-                    className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center"
-                  >
-                    <X className="w-4 h-4 text-neutral-500" />
-                  </button>
-                </div>
-
-                {/* Product */}
-                <div className="flex items-center gap-4 p-4 bg-neutral-50 rounded-2xl mb-5">
-                  {V0_UNIVERSITY.thumbnail && (
-                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-neutral-200 flex-shrink-0">
-                      <img 
-                        src={V0_UNIVERSITY.thumbnail} 
-                        alt={V0_UNIVERSITY.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-neutral-900">{V0_UNIVERSITY.name}</p>
+              {/* Header */}
+              <div className="flex items-start justify-between px-5 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-16 h-12 rounded-lg overflow-hidden bg-neutral-100 flex-shrink-0">
+                    <Image
+                      src={V0_UNIVERSITY.images[0]}
+                      alt={V0_UNIVERSITY.name}
+                      width={64}
+                      height={48}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold text-neutral-900">{V0_UNIVERSITY.name}</h2>
                     <p className="text-2xl font-bold text-neutral-900">${price}</p>
                   </div>
                 </div>
+                <button
+                  onClick={handleClose}
+                  className="w-8 h-8 flex items-center justify-center rounded-full bg-neutral-100"
+                >
+                  <X className="w-4 h-4 text-neutral-600" />
+                </button>
+              </div>
 
-                {/* Benefits */}
-                <div className="space-y-3 mb-5">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-neutral-900 flex items-center justify-center flex-shrink-0">
-                      <Zap className="w-4 h-4 text-white" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-neutral-900">57-second video lesson</p>
-                      <p className="text-xs text-neutral-500">Learn the core technique fast</p>
-                    </div>
+              {/* Benefits */}
+              <div className="flex gap-2 px-5 pb-4">
+                {benefits.map((benefit, i) => (
+                  <div key={i} className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 rounded-full">
+                    <benefit.icon className="w-3.5 h-3.5 text-neutral-600" />
+                    <span className="text-xs font-medium text-neutral-700">{benefit.text}</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-neutral-900 flex items-center justify-center flex-shrink-0">
-                      <Clock className="w-4 h-4 text-white" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-neutral-900">Smart templates included</p>
-                      <p className="text-xs text-neutral-500">Skip the setup, start building</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-neutral-900 flex items-center justify-center flex-shrink-0">
-                      <Shield className="w-4 h-4 text-white" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-neutral-900">Lifetime access</p>
-                      <p className="text-xs text-neutral-500">All future updates included</p>
-                    </div>
-                  </div>
-                </div>
+                ))}
+              </div>
 
-                {/* v0 Referral - branded with actual logo */}
-                <a 
+              {/* v0 Referral */}
+              <div className="px-5 pb-4">
+                <a
                   href="https://v0.link/jon"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 mb-6 p-3 bg-neutral-900 rounded-xl active:bg-neutral-800 transition-colors"
+                  className="flex items-center gap-3 p-3 bg-neutral-900 rounded-xl"
                 >
-                  <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center flex-shrink-0 overflow-hidden">
-                    <Image 
-                      src="/v0-logo-light.png" 
-                      alt="v0" 
-                      width={24} 
-                      height={24}
-                      className="object-contain"
-                    />
+                  <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <Image src="/v0-logo-light.png" alt="v0" width={24} height={24} className="object-contain" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-white font-medium">Get $10 free on v0</p>
                     <p className="text-xs text-neutral-400">Sign up with this link</p>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-neutral-500 flex-shrink-0" />
+                  <ArrowRight className="w-4 h-4 text-neutral-400" />
                 </a>
+              </div>
 
-                {/* CTA */}
+              {/* Error */}
+              {error && (
+                <div className="mx-5 mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-xl">
+                  {error}
+                </div>
+              )}
+
+              {/* CTA */}
+              <div className="px-5 pb-6">
                 <button
-                  onClick={handleProceed}
-                  className="w-full py-4 bg-neutral-900 text-white font-semibold rounded-xl flex items-center justify-center gap-2 active:bg-neutral-800 transition-colors"
+                  onClick={handleCheckout}
+                  disabled={isLoading}
+                  className="w-full py-4 bg-neutral-900 text-white font-semibold rounded-xl flex items-center justify-center gap-2 hover:bg-neutral-800 disabled:opacity-50 transition-colors"
                 >
-                  Continue to Payment
-                  <ArrowRight className="w-4 h-4" />
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>Get Instant Access - ${price}</>
+                  )}
                 </button>
-
-                <p className="text-xs text-neutral-400 text-center mt-4">
+                <p className="text-xs text-neutral-400 text-center mt-3">
                   Secure checkout powered by Stripe
                 </p>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="checkout"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0 }}
-                className="flex-1 overflow-hidden flex flex-col"
-              >
-                {/* Header */}
-                <div className="flex items-center justify-between px-5 py-3 border-b border-neutral-100 flex-shrink-0">
-                  <button
-                    onClick={() => setShowCheckout(false)}
-                    className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors"
-                  >
-                    Back
-                  </button>
-                  <p className="text-sm font-medium text-neutral-900">Secure Checkout</p>
-                  <button
-                    onClick={handleClose}
-                    className="w-7 h-7 rounded-full bg-neutral-100 flex items-center justify-center"
-                  >
-                    <X className="w-3.5 h-3.5 text-neutral-500" />
-                  </button>
-                </div>
+              </div>
+            </div>
+          </motion.div>
 
-                {/* Embedded checkout */}
-                <div className="flex-1 overflow-y-auto">
-                  <EmbeddedCheckoutProvider
-                    stripe={stripePromise}
-                    options={{ clientSecret: fetchClientSecret }}
-                  >
-                    <EmbeddedCheckout className="h-full" />
-                  </EmbeddedCheckoutProvider>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </motion.div>
-
-      {/* Desktop: Side panel */}
+          {/* Desktop: Side panel */}
           <motion.div
             key="desktop-drawer"
             initial={{ x: "100%" }}
@@ -218,157 +178,104 @@ export function CheckoutDrawer({ isOpen, onClose }: CheckoutDrawerProps) {
             transition={{ type: "spring", damping: 30, stiffness: 350 }}
             className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-md hidden md:block"
           >
-        <div className="h-full bg-white shadow-2xl flex flex-col">
-          <AnimatePresence mode="wait">
-            {!showCheckout ? (
-              <motion.div
-                key="info"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="h-full flex flex-col"
-              >
-                {/* Header */}
-                <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-100">
-                  <h2 className="text-lg font-semibold text-neutral-900">Get Instant Access</h2>
-                  <button
-                    onClick={handleClose}
-                    className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-neutral-200 transition-colors"
-                  >
-                    <X className="w-4 h-4 text-neutral-500" />
-                  </button>
-                </div>
+            <div className="h-full bg-white shadow-2xl flex flex-col">
+              {/* Header */}
+              <div className="flex items-center justify-between p-6 border-b border-neutral-100">
+                <h2 className="text-xl font-semibold text-neutral-900">Checkout</h2>
+                <button
+                  onClick={handleClose}
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-100 hover:bg-neutral-200 transition-colors"
+                >
+                  <X className="w-5 h-5 text-neutral-600" />
+                </button>
+              </div>
 
-                {/* Content */}
-                <div className="flex-1 flex flex-col p-6 overflow-y-auto">
-                  {/* Product */}
-                  <div className="flex items-center gap-4 p-5 bg-neutral-50 rounded-2xl mb-6">
-                    {V0_UNIVERSITY.thumbnail && (
-                      <div className="w-20 h-20 rounded-xl overflow-hidden bg-neutral-200 flex-shrink-0">
-                        <img 
-                          src={V0_UNIVERSITY.thumbnail} 
-                          alt={V0_UNIVERSITY.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    )}
-                    <div className="flex-1">
-                      <p className="font-semibold text-neutral-900 text-lg">{V0_UNIVERSITY.name}</p>
-                      <p className="text-3xl font-bold text-neutral-900">${price}</p>
-                      <p className="text-sm text-neutral-500">One-time payment</p>
-                    </div>
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto p-6">
+                {/* Product */}
+                <div className="flex items-start gap-4 mb-6">
+                  <div className="w-20 h-14 rounded-lg overflow-hidden bg-neutral-100 flex-shrink-0">
+                    <Image
+                      src={V0_UNIVERSITY.images[0]}
+                      alt={V0_UNIVERSITY.name}
+                      width={80}
+                      height={56}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-
-                  {/* Benefits */}
-                  <div className="mb-6">
-                    <h3 className="font-medium text-neutral-900 mb-4">What's included:</h3>
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-3">
-                        <div className="w-5 h-5 rounded-full bg-neutral-900 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-neutral-900">57-second video lesson</p>
-                          <p className="text-xs text-neutral-500">Learn the core technique fast</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <div className="w-5 h-5 rounded-full bg-neutral-900 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-neutral-900">Smart templates included</p>
-                          <p className="text-xs text-neutral-500">Skip the setup, start building</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <div className="w-5 h-5 rounded-full bg-neutral-900 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-neutral-900">Lifetime access</p>
-                          <p className="text-xs text-neutral-500">All future updates included</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* v0 Referral - branded with actual logo */}
-                  <a 
-                    href="https://v0.link/jon"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 mb-6 p-4 bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors group"
-                  >
-                    <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center flex-shrink-0 overflow-hidden">
-                      <Image 
-                        src="/v0-logo-light.png" 
-                        alt="v0" 
-                        width={28} 
-                        height={28}
-                        className="object-contain"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm text-white font-medium">Get $10 free credits on v0</p>
-                      <p className="text-xs text-neutral-400">Use this link when you sign up</p>
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-neutral-500 group-hover:text-neutral-300 transition-colors flex-shrink-0" />
-                  </a>
-
-                  <div className="mt-auto">
-                    {/* CTA */}
-                    <button
-                      onClick={handleProceed}
-                      className="w-full py-4 bg-neutral-900 text-white font-semibold rounded-xl flex items-center justify-center gap-2 hover:bg-neutral-800 transition-colors text-lg"
-                    >
-                      Continue to Payment
-                      <ArrowRight className="w-5 h-5" />
-                    </button>
-
-                    <p className="text-xs text-neutral-400 text-center mt-4">
-                      Secure checkout powered by Stripe
-                    </p>
+                  <div>
+                    <h3 className="font-semibold text-neutral-900">{V0_UNIVERSITY.name}</h3>
+                    <p className="text-sm text-neutral-500">{V0_UNIVERSITY.description}</p>
+                    <p className="text-2xl font-bold text-neutral-900 mt-1">${price}</p>
                   </div>
                 </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="checkout"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0 }}
-                className="h-full flex flex-col"
-              >
-                {/* Header */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
-                  <button
-                    onClick={() => setShowCheckout(false)}
-                    className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors"
-                  >
-                    Back
-                  </button>
-                  <p className="text-sm font-medium text-neutral-900">Secure Checkout</p>
-                  <button
-                    onClick={handleClose}
-                    className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-neutral-200 transition-colors"
-                  >
-                    <X className="w-4 h-4 text-neutral-500" />
-                  </button>
+
+                {/* Benefits */}
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {benefits.map((benefit, i) => (
+                    <div key={i} className="flex items-center gap-2 px-3 py-2 bg-neutral-100 rounded-lg">
+                      <benefit.icon className="w-4 h-4 text-neutral-600" />
+                      <span className="text-sm font-medium text-neutral-700">{benefit.text}</span>
+                    </div>
+                  ))}
                 </div>
 
-                {/* Embedded checkout */}
-                <div className="flex-1 overflow-y-auto p-6">
-                  <EmbeddedCheckoutProvider
-                    stripe={stripePromise}
-                    options={{ clientSecret: fetchClientSecret }}
-                  >
-                    <EmbeddedCheckout />
-                  </EmbeddedCheckoutProvider>
+                {/* Features */}
+                <div className="mb-6">
+                  <h4 className="text-sm font-semibold text-neutral-900 mb-3">What's included</h4>
+                  <div className="space-y-2">
+                    {features.map((feature, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-neutral-900" />
+                        <span className="text-sm text-neutral-600">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+
+                {/* v0 Referral */}
+                <a
+                  href="https://v0.link/jon"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 p-4 bg-neutral-900 rounded-xl mb-6 hover:bg-neutral-800 transition-colors"
+                >
+                  <div className="w-11 h-11 rounded-lg bg-white flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <Image src="/v0-logo-light.png" alt="v0" width={28} height={28} className="object-contain" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[15px] text-white font-medium">Get $10 free credits on v0</p>
+                    <p className="text-sm text-neutral-400">Sign up with this link to start building</p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-neutral-400" />
+                </a>
+              </div>
+
+              {/* Footer */}
+              <div className="p-6 border-t border-neutral-100">
+                {error && (
+                  <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-xl">
+                    {error}
+                  </div>
+                )}
+                <button
+                  onClick={handleCheckout}
+                  disabled={isLoading}
+                  className="w-full py-4 bg-neutral-900 text-white font-semibold rounded-xl flex items-center justify-center gap-2 hover:bg-neutral-800 disabled:opacity-50 transition-colors"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>Get Instant Access - ${price}</>
+                  )}
+                </button>
+                <p className="text-xs text-neutral-400 text-center mt-3">
+                  Secure checkout powered by Stripe
+                </p>
+              </div>
             </div>
           </motion.div>
         </>
