@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ExternalLink, Play, ChevronLeft, ChevronRight } from "lucide-react"
-import { portfolioData } from "@/lib/portfolio-data"
+import { PORTFOLIO_DATA } from "@/lib/portfolio-data"
 
 type ShowcaseMode = "idle" | "sites" | "video" | "site-focus"
 
@@ -14,7 +14,7 @@ interface DesktopShowcaseProps {
 
 export function DesktopShowcase({ mode, focusedSiteUrl }: DesktopShowcaseProps) {
   const [currentSiteIndex, setCurrentSiteIndex] = useState(0)
-  const sites = portfolioData.liveSites
+  const sites = PORTFOLIO_DATA.liveSites
 
   // Auto-rotate sites when in sites mode
   useEffect(() => {
