@@ -529,24 +529,6 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
             )}
           </AnimatePresence>
 
-          <AnimatePresence>
-            {bidSubmitted && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="p-4 rounded-xl border"
-                style={{
-                  backgroundColor: "rgba(37, 58, 46, 0.1)",
-                  borderColor: "rgba(37, 58, 46, 0.3)",
-                  color: "#253a2e",
-                }}
-              >
-                Request submitted. You'll hear back within 24 hours.
-              </motion.div>
-            )}
-          </AnimatePresence>
-
           <div className="h-4 flex-shrink-0" aria-hidden="true" />
           <div ref={messagesEndRef} />
         </div>

@@ -72,7 +72,6 @@ import { SiteAdminPanel } from "@/components/admin/site-admin-panel"
 import { AdminLoginModal } from "@/components/admin/admin-login-modal"
 import { InstantSiteCreator } from "@/components/admin/instant-site-creator"
 import { CheckoutDrawer } from "@/components/checkout-drawer"
-import { DesktopShowcase, useShowcaseMode } from "@/components/desktop-showcase"
 import { siteConfig } from "@/lib/site-config"
 import { SmsTrigger } from "@/components/sms-trigger"
 import { type AvailabilityStatus } from "@/lib/chat-config"
@@ -187,9 +186,6 @@ export default function Home() {
     },
   })
 
-  // Desktop showcase panel mode based on conversation
-  const { mode: showcaseMode, focusedSiteUrl } = useShowcaseMode(messages)
-
   const handleChatSubmit = useCallback((text: string) => {
     setChatError(null)
     if (!text.trim()) return
@@ -272,8 +268,8 @@ export default function Home() {
         <div className="absolute w-full h-full cursor-col-resize" />
       </div>
 
-      {/* Chat area - on desktop, constrained width with showcase panel on right */}
-      <div className="flex-1 min-w-0 flex flex-col relative bg-card md:rounded-2xl md:overflow-hidden md:border md:border-foreground/[0.12] md:max-w-[50%] md:flex-none">
+      {/* Chat area */}
+      <div className="flex-1 min-w-0 flex flex-col relative bg-card md:rounded-2xl md:overflow-hidden md:border md:border-foreground/[0.12]">
         {/* Background media */}
         {backgroundMedia && (
           <div className="absolute inset-0 z-0">
@@ -559,13 +555,6 @@ export default function Home() {
           })}
         </div>
 
-        </div>
-      </div>
-
-      {/* Desktop: Right showcase panel */}
-      <div className="hidden md:flex flex-1 min-w-0 ml-3">
-        <div className="flex-1 rounded-2xl overflow-hidden border border-foreground/[0.12]">
-          <DesktopShowcase mode={showcaseMode} focusedSiteUrl={focusedSiteUrl} />
         </div>
       </div>
 
