@@ -12,6 +12,7 @@ import {
   PricingCard,
   LiveSitesDisplay,
   VideoPreview,
+  V0ReferralCard,
   renderMessageWithSmsLinks,
 } from "./content-displays"
 import { PaymentOptions } from "./payment-options"
@@ -261,6 +262,9 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
     }
     if (!detected) return null
 
+    if (detected.type === "v0Referral") {
+      return <V0ReferralCard />
+    }
     if (detected.type === "liveSites") {
       return <LiveSitesDisplay />
     }

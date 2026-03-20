@@ -1,10 +1,21 @@
 export type DetectedContent = {
-  type: "videoPreview" | "liveSites" | "pricing" | "paymentOptions"
+  type: "videoPreview" | "liveSites" | "pricing" | "paymentOptions" | "v0Referral"
   data?: any
 }
 
 export function detectContentToShow(text: string): DetectedContent | null {
   const lower = text.toLowerCase()
+
+  // v0 Referral - show the lead magnet card
+  if (
+    lower.includes("v0.link/jon") ||
+    lower.includes("$10 free") ||
+    lower.includes("$10 credit") ||
+    lower.includes("free credits") ||
+    (lower.includes("sign up") && lower.includes("v0") && lower.includes("link"))
+  ) {
+    return { type: "v0Referral", data: null }
+  }
 
   // Video preview - show the 3-minute video thumbnail
   if (
