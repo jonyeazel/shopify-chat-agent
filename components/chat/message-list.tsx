@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState, useCallback, useMemo } from "react"
 import type { UIMessage } from "ai"
-import { ChevronDown, ExternalLink } from "lucide-react"
+import { ChevronDown, ExternalLink, Copy, Check, ThumbsUp } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { detectContentToShow } from "@/lib/content-detection"
 import { SmsTrigger } from "@/components/sms-trigger"
@@ -38,6 +38,36 @@ function formatRelativeTime(date: Date | undefined): string {
   if (minutes < 60) return `${minutes}m`
   if (hours < 24) return `${hours}h`
   return date.toLocaleDateString(undefined, { month: "short", day: "numeric" })
+}
+
+// Message action button component
+function MessageAction({ 
+  onClick, 
+  icon: Icon, 
+  activeIcon: ActiveIcon,
+  label,
+  isActive 
+}: { 
+  onClick: () => void
+  icon: React.ComponentType<{ className?: string }>
+  activeIcon?: React.ComponentType<{ className?: string }>
+  label: string
+  isActive?: boolean
+}) {
+  const DisplayIcon = isActive && ActiveIcon ? ActiveIcon : Icon
+  return (
+    <button
+      onClick={onClick}
+      className={`p-1.5 rounded-lg transition-all duration-150 ${
+        isActive 
+          ? "text-neutral-900 bg-neutral-100" 
+          : "text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100"
+      }`}
+      title={label}
+    >
+      <DisplayIcon className="w-3.5 h-3.5" />
+    </button>
+  )
 }
 
 // Text Jon CTA: context-aware based on conversation phase
@@ -193,7 +223,25 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [isNearBottom, setIsNearBottom] = useState(true)
   const [showNewMessage, setShowNewMessage] = useState(false)
+  const [copiedId, setCopiedId] = useState<string | null>(null)
+  const [likedIds, setLikedIds] = useState<Set<string>>(new Set())
+  const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null)
   const lastMessageCount = useRef(messages.length)
+  
+  const copyMessage = useCallback((text: string, id: string) => {
+    navigator.clipboard.writeText(text)
+    setCopiedId(id)
+    setTimeout(() => setCopiedId(null), 2000)
+  }, [])
+  
+  const toggleLike = useCallback((id: string) => {
+    setLikedIds(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }, [])
 
   // Cache detected content to prevent re-detection on every render
   const detectedContentCache = useRef<Map<string, ReturnType<typeof detectContentToShow>>>(new Map())
@@ -391,7 +439,11 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
                   </div>
                 </div>
               ) : (
-                <div className="w-full">
+                <div 
+                  className="w-full group/message"
+                  onMouseEnter={() => setHoveredMessageId(message.id)}
+                  onMouseLeave={() => setHoveredMessageId(null)}
+                >
                   {!continuation && (
                     <div className="flex items-center gap-1.5 mb-1">
                       <img
@@ -404,7 +456,7 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
                       )}
                     </div>
                   )}
-                  <div>
+                  <div className="relative">
                     {message.parts?.map((part, i) => {
                       if (part.type === "text") {
                         return (
@@ -416,6 +468,35 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
                               )}
                             </p>
                             {!isCurrentlyStreaming && renderSmartContent(part.text, message.id)}
+                            
+                            {/* Message actions - show on hover */}
+                            {!isCurrentlyStreaming && (
+                              <AnimatePresence>
+                                {hoveredMessageId === message.id && (
+                                  <motion.div
+                                    initial={{ opacity: 0, y: 4 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: 4 }}
+                                    transition={{ duration: 0.15 }}
+                                    className="flex items-center gap-0.5 mt-2"
+                                  >
+                                    <MessageAction
+                                      onClick={() => copyMessage(part.text, message.id)}
+                                      icon={Copy}
+                                      activeIcon={Check}
+                                      label={copiedId === message.id ? "Copied!" : "Copy"}
+                                      isActive={copiedId === message.id}
+                                    />
+                                    <MessageAction
+                                      onClick={() => toggleLike(message.id)}
+                                      icon={ThumbsUp}
+                                      label={likedIds.has(message.id) ? "Liked" : "Helpful"}
+                                      isActive={likedIds.has(message.id)}
+                                    />
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            )}
                           </div>
                         )
                       }
@@ -457,16 +538,25 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
                 transition={{ type: "spring", stiffness: 400, damping: 32 }}
                 className="mt-5"
               >
-                <div className="flex items-center gap-1.5 mb-1">
+                <div className="flex items-center gap-1.5 mb-1.5">
                   <img src={avatarUrl || "/placeholder.svg"} alt="" className="w-6 h-6 rounded-full object-cover" />
+                  <span className="text-[10px] text-muted-foreground">typing</span>
                 </div>
-                <div className="flex items-center gap-[5px]">
+                <div className="flex items-center gap-1 px-3 py-2 bg-neutral-100 rounded-2xl w-fit">
                   {[0, 1, 2].map((i) => (
                     <motion.span
                       key={i}
-                      className="w-[5px] h-[5px] rounded-full bg-foreground/25"
-                      animate={{ opacity: [0.15, 0.55, 0.15], scale: [0.8, 1, 0.8] }}
-                      transition={{ duration: 1.4, repeat: Number.POSITIVE_INFINITY, delay: i * 0.15, ease: "easeInOut" }}
+                      className="w-[6px] h-[6px] rounded-full bg-neutral-400"
+                      animate={{ 
+                        y: [0, -4, 0],
+                        opacity: [0.4, 1, 0.4] 
+                      }}
+                      transition={{ 
+                        duration: 0.8, 
+                        repeat: Number.POSITIVE_INFINITY, 
+                        delay: i * 0.12, 
+                        ease: "easeInOut" 
+                      }}
                     />
                   ))}
                 </div>
@@ -518,11 +608,12 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
                           type: "spring",
                           stiffness: 400,
                           damping: 32,
-                          delay: 0.1 + i * 0.02,
+                          delay: 0.1 + i * 0.025,
                         }}
+                        whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.97 }}
                         onClick={() => onQuickReply(reply)}
-                        className="flex-shrink-0 py-2 px-4 rounded-full text-[13px] font-medium bg-neutral-100 text-neutral-700 hover:bg-neutral-200 active:bg-neutral-300 transition-colors duration-150 shadow-sm"
+                        className="flex-shrink-0 py-2.5 px-4 rounded-full text-[13px] font-medium border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50 active:bg-neutral-100 transition-all duration-150"
                       >
                         {reply}
                       </motion.button>
