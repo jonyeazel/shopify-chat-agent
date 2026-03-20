@@ -315,26 +315,7 @@ export default function Home() {
           )}
         </AnimatePresence>
 
-        {/* Drag overlay */}
-        <AnimatePresence>
-          {isDragging && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.15 }}
-              className="absolute inset-0 z-50 bg-card/90 flex items-center justify-center pointer-events-none"
-            >
-              <div className="text-center">
-                <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
-                  <FileText className="w-8 h-8 text-foreground" />
-                </div>
-                <p className="text-lg font-medium text-foreground">Drop files here</p>
-                <p className="text-sm text-muted-foreground mt-1">CSVs or images</p>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+
 
         {/* Mobile header */}
         <header className="flex-shrink-0 relative z-40 md:hidden">
