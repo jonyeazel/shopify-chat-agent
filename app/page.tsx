@@ -32,55 +32,84 @@ function IconWork({ className, strokeWidth = 1.5 }: { className?: string; stroke
   )
 }
 
-// Video - Play button icon
+// VIDEO - Browser window with play button inside (watch the lesson)
 function IconVideo({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <polygon points="5 3 19 12 5 21 5 3" fill="currentColor" stroke="none" />
+      {/* Browser frame */}
+      <rect x="2" y="3" width="20" height="18" rx="2" />
+      {/* Browser dots */}
+      <circle cx="5.5" cy="6" r="0.75" fill="currentColor" stroke="none" />
+      <circle cx="8" cy="6" r="0.75" fill="currentColor" stroke="none" />
+      <circle cx="10.5" cy="6" r="0.75" fill="currentColor" stroke="none" />
+      {/* Divider line */}
+      <path d="M2 8.5h20" />
+      {/* Play triangle centered */}
+      <polygon points="10 11 10 17 15 14" fill="currentColor" stroke="none" />
     </svg>
   )
 }
 
-// Examples - Grid icon
+// EXAMPLES - Stacked browser windows (see what's possible)
 function IconExamples({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <rect x="3" y="3" width="7" height="7" rx="1" />
-      <rect x="14" y="3" width="7" height="7" rx="1" />
-      <rect x="3" y="14" width="7" height="7" rx="1" />
-      <rect x="14" y="14" width="7" height="7" rx="1" />
+      {/* Back window */}
+      <rect x="5" y="2" width="16" height="13" rx="2" />
+      <circle cx="8" cy="4.5" r="0.5" fill="currentColor" stroke="none" />
+      <circle cx="10" cy="4.5" r="0.5" fill="currentColor" stroke="none" />
+      <path d="M5 6.5h16" />
+      {/* Front window */}
+      <rect x="3" y="9" width="16" height="13" rx="2" />
+      <circle cx="6" cy="11.5" r="0.5" fill="currentColor" stroke="none" />
+      <circle cx="8" cy="11.5" r="0.5" fill="currentColor" stroke="none" />
+      <path d="M3 13.5h16" />
     </svg>
   )
 }
 
-// Info - Circle with i
+// INFO - Lightbulb with AI sparkle (learn how it works)
 function IconInfo({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <circle cx="12" cy="12" r="10" />
-      <path d="M12 16v-4" />
-      <path d="M12 8h.01" />
+      {/* Lightbulb */}
+      <path d="M9 18h6" />
+      <path d="M10 22h4" />
+      <path d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2z" />
+      {/* AI sparkle */}
+      <path d="M20 5l-1 1" />
+      <path d="M21 8h-1.5" />
+      <circle cx="20" cy="5" r="0.5" fill="currentColor" stroke="none" />
     </svg>
   )
 }
 
-// FAQ - Question mark
+// FAQ - Chat bubble with three dots (common questions)
 function IconFAQ({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <circle cx="12" cy="12" r="10" />
-      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-      <path d="M12 17h.01" />
+      {/* Speech bubble */}
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+      {/* Three question dots */}
+      <circle cx="8.5" cy="11.5" r="1" fill="currentColor" stroke="none" />
+      <circle cx="12" cy="11.5" r="1" fill="currentColor" stroke="none" />
+      <circle cx="15.5" cy="11.5" r="1" fill="currentColor" stroke="none" />
     </svg>
   )
 }
 
-// Buy - Credit card icon
+// BUY - Key with sparkle (unlock access)
 function IconBuy({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <rect x="1" y="4" width="22" height="16" rx="2" />
-      <path d="M1 10h22" />
+      {/* Key */}
+      <circle cx="8" cy="15" r="5" />
+      <circle cx="8" cy="15" r="2" />
+      <path d="M11.5 11.5L21 2" />
+      <path d="M18 5l3-3" />
+      <path d="M21 2l-1.5 1.5" />
+      {/* Sparkle */}
+      <path d="M17 8l1-2 1 2-1 2-1-2z" fill="currentColor" stroke="none" />
     </svg>
   )
 }
