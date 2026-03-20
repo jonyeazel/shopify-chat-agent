@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, Zap, Clock, Shield, ArrowRight, Check, Loader2 } from "lucide-react"
 import { V0_UNIVERSITY } from "@/lib/products"
@@ -12,6 +12,9 @@ interface CheckoutDrawerProps {
   onClose: () => void
   onSuccess?: () => void
 }
+
+// Use thumbnail as the image source with fallback
+const PRODUCT_IMAGE = "https://img.youtube.com/vi/i9na_W31rLg/maxresdefault.jpg"
 
 export function CheckoutDrawer({ isOpen, onClose }: CheckoutDrawerProps) {
   const [isLoading, setIsLoading] = useState(false)
@@ -31,7 +34,6 @@ export function CheckoutDrawer({ isOpen, onClose }: CheckoutDrawerProps) {
       }
     } catch (err) {
       setError("Something went wrong. Please try again.")
-      console.error("[v0] Checkout error:", err)
     } finally {
       setIsLoading(false)
     }
@@ -44,7 +46,7 @@ export function CheckoutDrawer({ isOpen, onClose }: CheckoutDrawerProps) {
 
   const benefits = [
     { icon: Zap, text: "Instant access" },
-    { icon: Clock, text: "57 second lesson" },
+    { icon: Clock, text: "57 sec lesson" },
     { icon: Shield, text: "Lifetime access" },
   ]
 
@@ -61,7 +63,7 @@ export function CheckoutDrawer({ isOpen, onClose }: CheckoutDrawerProps) {
         <>
           {/* Backdrop */}
           <motion.div
-            key="backdrop"
+            key="checkout-backdrop"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -72,7 +74,7 @@ export function CheckoutDrawer({ isOpen, onClose }: CheckoutDrawerProps) {
 
           {/* Mobile: Bottom sheet */}
           <motion.div
-            key="mobile-drawer"
+            key="checkout-mobile"
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
@@ -90,7 +92,7 @@ export function CheckoutDrawer({ isOpen, onClose }: CheckoutDrawerProps) {
                 <div className="flex items-center gap-3">
                   <div className="w-16 h-12 rounded-lg overflow-hidden bg-neutral-100 flex-shrink-0">
                     <Image
-                      src={V0_UNIVERSITY.images[0]}
+                      src={PRODUCT_IMAGE}
                       alt={V0_UNIVERSITY.name}
                       width={64}
                       height={48}
@@ -171,7 +173,7 @@ export function CheckoutDrawer({ isOpen, onClose }: CheckoutDrawerProps) {
 
           {/* Desktop: Side panel */}
           <motion.div
-            key="desktop-drawer"
+            key="checkout-desktop"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
@@ -196,7 +198,7 @@ export function CheckoutDrawer({ isOpen, onClose }: CheckoutDrawerProps) {
                 <div className="flex items-start gap-4 mb-6">
                   <div className="w-20 h-14 rounded-lg overflow-hidden bg-neutral-100 flex-shrink-0">
                     <Image
-                      src={V0_UNIVERSITY.images[0]}
+                      src={PRODUCT_IMAGE}
                       alt={V0_UNIVERSITY.name}
                       width={80}
                       height={56}
@@ -222,7 +224,7 @@ export function CheckoutDrawer({ isOpen, onClose }: CheckoutDrawerProps) {
 
                 {/* Features */}
                 <div className="mb-6">
-                  <h4 className="text-sm font-semibold text-neutral-900 mb-3">What's included</h4>
+                  <h4 className="text-sm font-semibold text-neutral-900 mb-3">What&apos;s included</h4>
                   <div className="space-y-2">
                     {features.map((feature, i) => (
                       <div key={i} className="flex items-center gap-2">

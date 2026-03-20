@@ -4,6 +4,7 @@ export interface Product {
   description: string
   priceInCents: number
   thumbnail?: string
+  images?: string[]
 }
 
 // v0 University product catalog
@@ -14,6 +15,7 @@ export const PRODUCTS: Product[] = [
     description: "57-second video lesson + smart templates. Build your first website with AI.",
     priceInCents: 29700, // $297
     thumbnail: "https://img.youtube.com/vi/i9na_W31rLg/maxresdefault.jpg",
+    images: ["https://img.youtube.com/vi/i9na_W31rLg/maxresdefault.jpg"],
   },
 ]
 
