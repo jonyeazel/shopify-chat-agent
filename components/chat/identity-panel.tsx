@@ -13,19 +13,21 @@ interface IdentityPanelProps {
   setInput: (value: string) => void
   onSubmit: (text: string) => void
   onBuyClick: () => void
+  onVideoClick?: () => void
+  onExamplesClick?: () => void
   chatDisabled: boolean
   style?: React.CSSProperties
 }
 
-export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, onBuyClick, chatDisabled, style }: IdentityPanelProps) {
+export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, onBuyClick, onVideoClick, onExamplesClick, chatDisabled, style }: IdentityPanelProps) {
   const { brand } = siteConfig
   const [showGallery, setShowGallery] = useState(false)
   const openGallery = useCallback(() => setShowGallery(true), [])
   const closeGallery = useCallback(() => setShowGallery(false), [])
 
   const actionButtons = [
-    { icon: Play, label: "The Video", action: () => onSubmit("Show me the video") },
-    { icon: LayoutGrid, label: "Examples", action: () => onSubmit("Show me examples of sites people have built") },
+    { icon: Play, label: "The Video", action: onVideoClick || (() => onSubmit("Show me the video")) },
+    { icon: LayoutGrid, label: "Examples", action: onExamplesClick || (() => onSubmit("Show me examples of sites people have built")) },
     { icon: Info, label: "More Info", action: () => onSubmit("Tell me more about v0 University") },
     { icon: HelpCircle, label: "FAQ's", action: () => onSubmit("What are the most common questions about v0 University?") },
     { icon: CreditCard, label: "Buy It", action: onBuyClick },
