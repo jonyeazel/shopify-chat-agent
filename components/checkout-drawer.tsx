@@ -19,25 +19,40 @@ interface CheckoutDrawerProps {
 export function CheckoutDrawer({ isOpen, onClose, onSuccess }: CheckoutDrawerProps) {
   const [status, setStatus] = useState<"loading" | "checkout" | "success" | "error">("loading")
   const [error, setError] = useState<string | null>(null)
+  const [clientSecret, setClientSecret] = useState<string | null>(null)
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !clientSecret) {
+      setStatus("loading")
+      setError(null)
+      // Fetch client secret when drawer opens
+      startCheckout(V0_UNIVERSITY.id)
+        .then((secret) => {
+          if (secret) {
+            setClientSecret(secret)
+            setStatus("checkout")
+          } else {
+            setError("Failed to initialize checkout.")
+            setStatus("error")
+          }
+        })
+        .catch((err) => {
+          console.error("[v0] Checkout error:", err)
+          setError("Failed to initialize checkout. Please try again.")
+          setStatus("error")
+        })
+    }
+    if (!isOpen) {
+      // Reset state when drawer closes
+      setClientSecret(null)
       setStatus("loading")
       setError(null)
     }
-  }, [isOpen])
+  }, [isOpen, clientSecret])
 
   const fetchClientSecret = useCallback(async () => {
-    try {
-      const clientSecret = await startCheckout(V0_UNIVERSITY.id)
-      setStatus("checkout")
-      return clientSecret
-    } catch (err) {
-      setError("Failed to initialize checkout. Please try again.")
-      setStatus("error")
-      throw err
-    }
-  }, [])
+    return clientSecret
+  }, [clientSecret])
 
   const handleComplete = () => {
     setStatus("success")
@@ -105,7 +120,7 @@ export function CheckoutDrawer({ isOpen, onClose, onSuccess }: CheckoutDrawerPro
                   error={error}
                   fetchClientSecret={fetchClientSecret}
                   handleComplete={handleComplete}
-                  onRetry={() => { setStatus("loading"); setError(null) }}
+                  onRetry={() => { setClientSecret(null); setStatus("loading"); setError(null) }}
                 />
               </div>
             </div>
@@ -148,7 +163,7 @@ export function CheckoutDrawer({ isOpen, onClose, onSuccess }: CheckoutDrawerPro
                   error={error}
                   fetchClientSecret={fetchClientSecret}
                   handleComplete={handleComplete}
-                  onRetry={() => { setStatus("loading"); setError(null) }}
+                  onRetry={() => { setClientSecret(null); setStatus("loading"); setError(null) }}
                 />
               </div>
             </div>
