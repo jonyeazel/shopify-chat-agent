@@ -19,6 +19,11 @@ export const siteConfig = {
     calendlySupportUrl: "https://calendly.com/v0university/support",
   },
 
+  links: {
+    referral: "https://v0.link/jon",
+    video: "https://youtu.be/i9na_W31rLg",
+  },
+
   // Removed stats - they lacked context and felt salesy
   // The conversation will reveal value naturally
 
@@ -31,24 +36,25 @@ export const siteConfig = {
   },
 
   meta: {
-    title: "v0 University | Learn to Build Websites with AI",
+    title: "v0 University | Build Websites with AI in 57 Seconds",
     description:
-      "Learn how to build real websites using AI. No code required. No design experience needed.",
+      "A 57-second video that teaches you how to build real websites with AI. No code. No design skills. Just describe what you want.",
     keywords: [
       "v0",
       "v0 tutorial",
       "AI website builder",
       "no-code",
-      "Shopify design",
+      "build websites with AI",
       "AI design",
       "Vercel v0",
-      "build websites with AI",
+      "website AI",
+      "v0 university",
     ],
-    ogTitle: "v0 University | Learn to Build Websites with AI",
+    ogTitle: "Build Websites with AI in 57 Seconds",
     ogDescription:
-      "Learn how to build real websites using AI. No code required.",
+      "A 57-second video that teaches you how to build real websites with AI. No experience needed.",
     twitterDescription:
-      "Learn to build real websites with AI. No code required.",
+      "Build your first real website with AI. 57-second lesson. No experience needed.",
   },
 } as const
 

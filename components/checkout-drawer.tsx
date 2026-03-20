@@ -153,7 +153,7 @@ export function CheckoutDrawer({ isOpen, onClose }: CheckoutDrawerProps) {
           <div className="flex-1 flex flex-col items-center justify-center p-8">
             <div className="w-full max-w-sm">
               {/* What you get */}
-              <div className="mb-8">
+              <div className="mb-6">
                 <h3 className="font-medium text-neutral-900 mb-3">What you get:</h3>
                 <ul className="space-y-2 text-sm text-neutral-600">
                   <li className="flex items-start gap-2">
@@ -170,6 +170,21 @@ export function CheckoutDrawer({ isOpen, onClose }: CheckoutDrawerProps) {
                   </li>
                 </ul>
               </div>
+
+              {/* Free credits callout */}
+              <a 
+                href="https://v0.link/jon"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block mb-6 p-3 bg-emerald-50 border border-emerald-100 rounded-xl hover:bg-emerald-100 transition-colors"
+              >
+                <p className="text-sm text-emerald-800 font-medium">
+                  Get $10 free to start building
+                </p>
+                <p className="text-xs text-emerald-600 mt-0.5">
+                  Use this link when you sign up for v0 →
+                </p>
+              </a>
 
               {/* Error message */}
               {error && (
