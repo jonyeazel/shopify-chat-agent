@@ -80,9 +80,9 @@ const SITE_ID = 1
 const TEMP_ADMIN_BYPASS = true
 
 const QUICK_ACTIONS = [
-  { label: "How does this work?", message: "How does v0 University work?" },
-  { label: "Show me examples", message: "Show me sites people have built" },
-  { label: "I have a Shopify store", message: "I run a Shopify store and want to stop paying for design work" },
+  { label: "Watch the video", message: "Show me the video" },
+  { label: "See examples", message: "Show me examples of sites people have built" },
+  { label: "How much is it?", message: "How much does v0 University cost?" },
   { label: "Text Jon", message: null, sms: true },
 ]
 
@@ -530,11 +530,11 @@ export default function Home() {
         {/* Mobile: Vertical icon rail */}
         <div className="md:hidden flex flex-col items-center justify-end gap-2 flex-shrink-0 pr-[16px] pl-[6px] pb-[max(env(safe-area-inset-bottom),16px)]">
           {([
-            { icon: IconAudit, label: "How", action: () => handleChatSubmit("How does this work?") },
-            { icon: IconWork, label: "Sites", action: () => handleChatSubmit("Show me sites people have built") },
-            { icon: IconPrice, label: "Info", action: () => handleChatSubmit("Tell me more about v0 University") },
-            { icon: IconText, label: "Text", sms: true as const },
-            { icon: IconGallery, label: "Watch", action: () => handleChatSubmit("Can I see what I'm getting?") },
+            { icon: IconGallery, label: "Video", action: () => handleChatSubmit("Show me the video") },
+            { icon: IconWork, label: "Examples", action: () => handleChatSubmit("Show me examples of sites people have built") },
+            { icon: IconAudit, label: "Info", action: () => handleChatSubmit("Tell me more about v0 University") },
+            { icon: IconPrice, label: "FAQ", action: () => handleChatSubmit("What are the most common questions about v0 University?") },
+            { icon: IconText, label: "Buy", action: () => setShowCheckout(true) },
           ] as const).map(({ icon: Icon, label, ...rest }) => {
             const btn = (
               <button
@@ -548,9 +548,6 @@ export default function Home() {
                 <span className="text-[11px] text-muted-foreground leading-tight font-medium">{label}</span>
               </button>
             )
-            if ("sms" in rest) {
-              return <SmsTrigger key={label} context="general">{btn}</SmsTrigger>
-            }
             return btn
           })}
         </div>
