@@ -5,8 +5,8 @@ import { motion, AnimatePresence } from "framer-motion"
 import { X, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react"
 import { PORTFOLIO_DATA } from "@/lib/portfolio-data"
 
-// Sites to display in the showcase
-const portfolioSites = PORTFOLIO_DATA.liveSites
+// Get live sites from portfolio data
+const sites = PORTFOLIO_DATA.liveSites
 
 interface ShowcaseDrawerProps {
   isOpen: boolean
@@ -18,7 +18,7 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
   const [isLoaded, setIsLoaded] = useState(false)
   const [touchStart, setTouchStart] = useState<number | null>(null)
 
-  const currentSite = portfolioSites[currentIndex]
+  const currentSite = sites[currentIndex]
 
   useEffect(() => {
     if (isOpen) {
@@ -34,7 +34,6 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
     if (!touchStart) return
     const touchEnd = e.changedTouches[0].clientX
     const diff = touchStart - touchEnd
-
     if (Math.abs(diff) > 50) {
       if (diff > 0) goNext()
       else goPrev()
@@ -42,13 +41,8 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
     setTouchStart(null)
   }
 
-  const goNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % portfolioSites.length)
-  }
-
-  const goPrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + portfolioSites.length) % portfolioSites.length)
-  }
+  const goNext = () => setCurrentIndex((prev) => (prev + 1) % sites.length)
+  const goPrev = () => setCurrentIndex((prev) => (prev - 1 + sites.length) % sites.length)
 
   if (!isOpen) return null
 
@@ -72,14 +66,11 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
           >
-            {/* Drag handle */}
             <div className="flex justify-center py-2">
               <div className="w-10 h-1 bg-white/30 rounded-full" />
             </div>
 
-            {/* Main content */}
             <div className="flex-1 bg-neutral-900 rounded-t-2xl shadow-2xl overflow-hidden flex flex-col">
-              {/* Header */}
               <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -93,7 +84,6 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
                 </button>
               </div>
 
-              {/* Browser chrome */}
               <div className="bg-neutral-800 px-3 py-2 flex items-center gap-2">
                 <div className="flex gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
@@ -114,7 +104,6 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
                 </div>
               </div>
 
-              {/* Iframe */}
               <div className="flex-1 relative bg-white">
                 {!isLoaded && (
                   <div className="absolute inset-0 flex items-center justify-center bg-neutral-100">
@@ -129,7 +118,6 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
                 />
               </div>
 
-              {/* Footer with navigation */}
               <div className="bg-neutral-800 px-4 py-3 flex items-center justify-between">
                 <button
                   onClick={goPrev}
@@ -141,7 +129,7 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
                 <div className="text-center">
                   <p className="text-sm font-medium text-white">{currentSite.name}</p>
                   <div className="flex items-center justify-center gap-1.5 mt-1.5">
-                    {portfolioSites.map((_, i) => (
+                    {sites.map((_, i) => (
                       <button
                         key={i}
                         onClick={() => setCurrentIndex(i)}
