@@ -14,6 +14,7 @@ export type GalleryItem = {
   category: GalleryCategory
 }
 
+// Sites Jon built with AI - showing what's possible
 export const GALLERY_ITEMS: GalleryItem[] = [
   { url: "https://v0-stadics.vercel.app/", label: "Stadics", aspect: "9:16", category: "landing" },
   { url: "https://www.stadics.com", label: "Stadics Live", aspect: "9:16", category: "landing" },
@@ -40,7 +41,7 @@ export function getGalleryByCategory(category: GalleryCategory): GalleryItem[] {
   return GALLERY_ITEMS.filter((item) => item.category === category)
 }
 
-// Live sites for chat display
+// Sites for chat display - what Jon built with AI
 export const PORTFOLIO_DATA = {
   liveSites: [
     { name: "Stadics", url: "https://v0-stadics.vercel.app/" },
