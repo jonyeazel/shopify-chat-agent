@@ -86,6 +86,21 @@ export function CheckoutDrawer({ isOpen, onClose }: CheckoutDrawerProps) {
               </button>
             </div>
 
+            {/* Free credits callout */}
+            <a 
+              href="https://v0.link/jon"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block mb-4 p-3 bg-emerald-50 border border-emerald-100 rounded-xl active:bg-emerald-100 transition-colors"
+            >
+              <p className="text-sm text-emerald-800 font-medium">
+                Get $10 free to start building
+              </p>
+              <p className="text-xs text-emerald-600 mt-0.5">
+                Use this link when you sign up for v0 →
+              </p>
+            </a>
+
             {/* Error message */}
             {error && (
               <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg">
