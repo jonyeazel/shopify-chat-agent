@@ -21,7 +21,6 @@ export async function startCheckout(productId: string = V0_UNIVERSITY.id) {
           product_data: {
             name: product.name,
             description: product.description,
-            images: product.thumbnail ? [product.thumbnail] : undefined,
           },
           unit_amount: product.priceInCents,
         },
