@@ -3,10 +3,9 @@ import {
   PlayCircle,
   MessageCircle,
   Layers,
-  Gift,
-  Lightbulb,
-  GraduationCap,
-  Store,
+  HelpCircle,
+  DollarSign,
+  ShoppingCart,
 } from "lucide-react"
 import { siteConfig } from "./site-config"
 import { getSmsHref } from "./sms"
@@ -36,66 +35,62 @@ export function getMenuItems(
   backgroundInputRef: React.RefObject<HTMLInputElement | null>,
   setShowSiteCreator?: (show: boolean) => void,
   openDrawer?: (type: DrawerType) => void,
+  openCheckout?: () => void,
 ) {
   return [
     {
       icon: PlayCircle,
-      label: "Watch Preview",
-      description: "See what you'll build",
+      label: "The Video",
+      description: "57 seconds",
       action: () => {
         setShowMenu(false)
-        sendMessage({ text: "Show me what I'll be able to build after this course" })
+        sendMessage({ text: "Show me the video" })
       },
     },
     {
       icon: Layers,
-      label: "Student Sites",
-      description: "Built by beginners",
+      label: "Examples",
+      description: "Sites built with AI",
       action: () => {
         setShowMenu(false)
-        sendMessage({ text: "Show me sites built by students with zero experience" })
+        sendMessage({ text: "Show me examples" })
       },
     },
     {
-      icon: Store,
-      label: "For Shopify Founders",
-      description: "Never hire again",
+      icon: HelpCircle,
+      label: "More Info",
+      description: "How it works",
       action: () => {
         setShowMenu(false)
-        sendMessage({ text: "How does this help me as a Shopify store owner?" })
+        sendMessage({ text: "Tell me more about v0 University" })
       },
     },
     {
-      icon: GraduationCap,
-      label: "What's Included",
-      description: "Full curriculum",
+      icon: DollarSign,
+      label: "FAQ",
+      description: "Common questions",
       action: () => {
         setShowMenu(false)
-        openDrawer?.("pricing")
+        sendMessage({ text: "What are the most common questions?" })
       },
     },
     {
-      icon: Lightbulb,
-      label: "Free Sample",
-      description: "Try before you buy",
+      icon: ShoppingCart,
+      label: "Buy It",
+      description: "$297 lifetime",
       action: () => {
         setShowMenu(false)
-        sendMessage({ text: "Can I see a free sample of the course?" })
-      },
-    },
-    {
-      icon: Gift,
-      label: "Free Prompt Pack",
-      description: "10 prompts that work",
-      action: () => {
-        setShowMenu(false)
-        sendMessage({ text: "I want the free prompt pack" })
+        if (openCheckout) {
+          openCheckout()
+        } else {
+          sendMessage({ text: "I want to buy" })
+        }
       },
     },
     {
       icon: MessageCircle,
       label: "Text Jon",
-      description: "Opens your messages",
+      description: "Direct message",
       action: () => {
         setShowMenu(false)
         window.location.href = getSmsHref()
@@ -112,7 +107,6 @@ export function determineConversationPhase(messages: any[]): ConversationPhase {
     .join(" ")
     .toLowerCase()
 
-  // Check for objection signals
   if (
     allText.includes("too expensive") ||
     allText.includes("can't afford") ||
@@ -123,7 +117,6 @@ export function determineConversationPhase(messages: any[]): ConversationPhase {
     return "objection"
   }
 
-  // Check for buying signals
   if (
     allText.includes("how do i buy") ||
     allText.includes("ready to start") ||
@@ -135,7 +128,6 @@ export function determineConversationPhase(messages: any[]): ConversationPhase {
     return "ready_to_buy"
   }
 
-  // Check for interest signals
   if (
     allText.includes("what's included") ||
     allText.includes("curriculum") ||
