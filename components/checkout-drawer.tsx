@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion"
 import { X, Zap, Clock, Shield, ArrowRight, Check, Loader2 } from "lucide-react"
 import { V0_UNIVERSITY } from "@/lib/products"
 import { startCheckout } from "@/app/actions/stripe"
-import Image from "next/image"
 
 interface CheckoutDrawerProps {
   isOpen: boolean
@@ -129,7 +128,7 @@ export function CheckoutDrawer({ isOpen, onClose }: CheckoutDrawerProps) {
                   className="flex items-center gap-3 p-3 bg-neutral-900 rounded-xl"
                 >
                   <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center flex-shrink-0 overflow-hidden">
-                    <Image src="/v0-logo-light.png" alt="v0" width={24} height={24} className="object-contain" />
+                    <img src="/v0-logo-light.png" alt="v0" className="w-6 h-6 object-contain" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-white font-medium">Get $10 free on v0</p>
@@ -239,7 +238,7 @@ export function CheckoutDrawer({ isOpen, onClose }: CheckoutDrawerProps) {
                   className="flex items-center gap-3 p-4 bg-neutral-900 rounded-xl mb-6 hover:bg-neutral-800 transition-colors"
                 >
                   <div className="w-11 h-11 rounded-lg bg-white flex items-center justify-center flex-shrink-0 overflow-hidden">
-                    <Image src="/v0-logo-light.png" alt="v0" width={28} height={28} className="object-contain" />
+                    <img src="/v0-logo-light.png" alt="v0" className="w-7 h-7 object-contain" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-[15px] text-white font-medium">Get $10 free credits on v0</p>
