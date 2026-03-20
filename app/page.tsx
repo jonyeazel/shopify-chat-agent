@@ -73,6 +73,8 @@ import { AdminLoginModal } from "@/components/admin/admin-login-modal"
 import { InstantSiteCreator } from "@/components/admin/instant-site-creator"
 import { CheckoutDrawer } from "@/components/checkout-drawer"
 import { LiveShowcase } from "@/components/live-showcase"
+import { ShowcaseDrawer } from "@/components/showcase-drawer"
+import { ShowcaseDrawer } from "@/components/showcase-drawer"
 import { siteConfig } from "@/lib/site-config"
 import { SmsTrigger } from "@/components/sms-trigger"
 import { type AvailabilityStatus } from "@/lib/chat-config"
@@ -104,6 +106,7 @@ export default function Home() {
   const [showAdminPanel, setShowAdminPanel] = useState(false)
   const [showSiteCreator, setShowSiteCreator] = useState(false)
   const [showCheckout, setShowCheckout] = useState(false)
+  const [showShowcase, setShowShowcase] = useState(false)
   const [adminLongPressTimer, setAdminLongPressTimer] = useState<NodeJS.Timeout | null>(null)
 
   // Panel resize
@@ -488,7 +491,7 @@ export default function Home() {
         <div className="md:hidden flex flex-col items-center justify-end gap-2 flex-shrink-0 pr-[16px] pl-[6px] pb-[max(env(safe-area-inset-bottom),16px)]">
           {([
             { icon: IconGallery, label: "Video", action: () => handleChatSubmit("Show me the video") },
-            { icon: IconWork, label: "Examples", action: () => handleChatSubmit("Show me examples of sites people have built") },
+            { icon: IconWork, label: "Examples", action: () => setShowShowcase(true) },
             { icon: IconAudit, label: "Info", action: () => handleChatSubmit("Tell me more about v0 University") },
             { icon: IconPrice, label: "FAQ", action: () => handleChatSubmit("What are the most common questions about v0 University?") },
             { icon: IconText, label: "Buy", action: () => setShowCheckout(true) },
@@ -517,6 +520,12 @@ export default function Home() {
         isOpen={showCheckout}
         onClose={() => setShowCheckout(false)}
         onSuccess={() => handleChatSubmit("I just enrolled")}
+      />
+
+      {/* Mobile showcase drawer */}
+      <ShowcaseDrawer
+        isOpen={showShowcase}
+        onClose={() => setShowShowcase(false)}
       />
     </main>
   )
