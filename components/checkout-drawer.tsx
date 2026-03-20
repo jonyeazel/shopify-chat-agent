@@ -91,11 +91,9 @@ export function CheckoutDrawer({ isOpen, onClose }: CheckoutDrawerProps) {
               <div className="flex items-start justify-between px-5 pb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-16 h-12 rounded-lg overflow-hidden bg-neutral-100 flex-shrink-0">
-                    <Image
+                    <img
                       src={PRODUCT_IMAGE}
                       alt={V0_UNIVERSITY.name}
-                      width={64}
-                      height={48}
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -197,11 +195,9 @@ export function CheckoutDrawer({ isOpen, onClose }: CheckoutDrawerProps) {
                 {/* Product */}
                 <div className="flex items-start gap-4 mb-6">
                   <div className="w-20 h-14 rounded-lg overflow-hidden bg-neutral-100 flex-shrink-0">
-                    <Image
+                    <img
                       src={PRODUCT_IMAGE}
                       alt={V0_UNIVERSITY.name}
-                      width={80}
-                      height={56}
                       className="w-full h-full object-cover"
                     />
                   </div>

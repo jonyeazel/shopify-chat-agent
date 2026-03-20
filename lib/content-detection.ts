@@ -1,10 +1,23 @@
 export type DetectedContent = {
-  type: "videoPreview" | "liveSites" | "pricing" | "paymentOptions" | "v0Referral"
+  type: "videoPreview" | "liveSites" | "pricing" | "paymentOptions" | "v0Referral" | "faq"
   data?: any
 }
 
 export function detectContentToShow(text: string): DetectedContent | null {
   const lower = text.toLowerCase()
+
+  // FAQ - show accordion when answering common questions
+  if (
+    (lower.includes("how does this") && lower.includes("work")) ||
+    (lower.includes("is this for") && lower.includes("non-technical")) ||
+    (lower.includes("why") && lower.includes("$297")) ||
+    lower.includes("common questions") ||
+    lower.includes("people usually ask") ||
+    lower.includes("frequently asked") ||
+    (lower.includes("three main") && lower.includes("things"))
+  ) {
+    return { type: "faq", data: null }
+  }
 
   // v0 Referral - show the lead magnet card
   if (

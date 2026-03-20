@@ -9,6 +9,72 @@ import { VibeFrame } from "@/components/ui/vibe-frame"
 import { SmsTrigger } from "@/components/sms-trigger"
 import { useIsMobile } from "@/hooks/use-mobile"
 
+// FAQ Accordion - Beautiful expandable Q&A
+const FAQ_ITEMS = [
+  {
+    question: "How does this actually work?",
+    answer: "You describe what you want in plain English, and AI builds it. The video shows the exact prompts that get professional results instead of generic output."
+  },
+  {
+    question: "Is this for non-technical people?",
+    answer: "Yes. Zero code needed. You just describe your vision and AI handles everything technical. Perfect for entrepreneurs, creators, and anyone with ideas."
+  },
+  {
+    question: "Why $297?",
+    answer: "One freelancer project costs $2-5k. One website builder subscription is $200+/year. This is a one-time payment for lifetime access to templates and the video."
+  },
+  {
+    question: "What do I get exactly?",
+    answer: "A 57-second video showing exactly how to prompt v0, plus smart templates you can customize. Everything you need to build professional sites."
+  },
+  {
+    question: "Do I need v0 Pro?",
+    answer: "No. The free tier works great for learning. You can upgrade later if you want more generations per day."
+  }
+]
+
+export function FAQAccordion() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null)
+
+  return (
+    <div className="my-4 space-y-2">
+      {FAQ_ITEMS.map((item, index) => (
+        <div 
+          key={index}
+          className="border border-neutral-200 rounded-xl overflow-hidden bg-white"
+        >
+          <button
+            onClick={() => setOpenIndex(openIndex === index ? null : index)}
+            className="w-full px-4 py-3.5 flex items-center justify-between text-left hover:bg-neutral-50 transition-colors"
+          >
+            <span className="text-[15px] font-medium text-neutral-900 pr-4">{item.question}</span>
+            <ChevronRight 
+              className={`w-5 h-5 text-neutral-400 flex-shrink-0 transition-transform duration-200 ${
+                openIndex === index ? 'rotate-90' : ''
+              }`}
+            />
+          </button>
+          <AnimatePresence>
+            {openIndex === index && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="overflow-hidden"
+              >
+                <div className="px-4 pb-4 text-[14px] text-neutral-600 leading-relaxed">
+                  {item.answer}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 // v0 Referral Card - Lead magnet for free credits
 export function V0ReferralCard() {
   return (

@@ -21,7 +21,8 @@ const BODY_TEMPLATES: Record<SmsContext, (opts: SmsOptions) => string> = {
 
 export function getSmsBody(options: SmsOptions = {}): string {
   const { context = "general" } = options
-  return BODY_TEMPLATES[context](options)
+  const template = BODY_TEMPLATES[context] || BODY_TEMPLATES.general
+  return template(options)
 }
 
 export function getSmsHref(options: SmsOptions = {}): string {

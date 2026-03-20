@@ -13,6 +13,7 @@ import {
   LiveSitesDisplay,
   VideoPreview,
   V0ReferralCard,
+  FAQAccordion,
   renderMessageWithSmsLinks,
 } from "./content-displays"
 import { PaymentOptions } from "./payment-options"
@@ -262,6 +263,9 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
     }
     if (!detected) return null
 
+    if (detected.type === "faq") {
+      return <FAQAccordion />
+    }
     if (detected.type === "v0Referral") {
       return <V0ReferralCard />
     }

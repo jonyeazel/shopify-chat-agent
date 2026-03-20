@@ -1,15 +1,17 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, ChevronLeft, ChevronRight, MessageCircle } from "lucide-react"
 
-// All data is defined locally - no external imports for gallery data
+// All gallery data is self-contained - no external imports
 const GALLERY_DATA = [
-  { category: "landing", label: "AI Landing", url: "/gallery/ai-landing.jpg" },
-  { category: "ecommerce", label: "Store Front", url: "/gallery/store.jpg" },
-  { category: "saas", label: "Dashboard", url: "/gallery/dashboard.jpg" },
-  { category: "landing", label: "Portfolio", url: "/gallery/portfolio.jpg" },
+  { category: "landing", label: "Stadics", url: "https://www.stadics.com" },
+  { category: "saas", label: "AI Blocks", url: "https://v0-aiblocks.vercel.app" },
+  { category: "saas", label: "Design Blocks", url: "https://v0-designblocks.vercel.app" },
+  { category: "ecommerce", label: "Shopify Store", url: "https://v0-shopifystorefront.vercel.app" },
+  { category: "landing", label: "Vibe Code", url: "https://vibecode-black.vercel.app" },
+  { category: "ecommerce", label: "MudWater", url: "https://v0-mudwater.vercel.app" },
 ]
 
 const CATEGORY_OPTIONS = [
@@ -22,41 +24,48 @@ const CATEGORY_OPTIONS = [
 interface MediaGalleryProps {
   isOpen: boolean
   onClose: () => void
-  onStartChat?: () => void
+  onAskAbout?: (item: string) => void
 }
 
-export function MediaGallery({ isOpen, onClose, onStartChat }: MediaGalleryProps) {
+export function MediaGallery({ isOpen, onClose, onAskAbout }: MediaGalleryProps) {
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
 
-  const filteredItems = selectedCategory === "all"
-    ? GALLERY_DATA
-    : GALLERY_DATA.filter((item) => item.category === selectedCategory)
+  const filteredItems = selectedCategory === "all" 
+    ? GALLERY_DATA 
+    : GALLERY_DATA.filter(item => item.category === selectedCategory)
 
-  const handlePrevious = () => {
+  const handlePrev = useCallback(() => {
     if (selectedIndex !== null && selectedIndex > 0) {
       setSelectedIndex(selectedIndex - 1)
     }
-  }
+  }, [selectedIndex])
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (selectedIndex !== null && selectedIndex < filteredItems.length - 1) {
       setSelectedIndex(selectedIndex + 1)
     }
+  }, [selectedIndex, filteredItems.length])
+
+  const handleClose = () => {
+    setSelectedIndex(null)
+    onClose()
   }
 
   return (
     <AnimatePresence>
       {isOpen && (
         <>
+          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm"
+            onClick={handleClose}
+            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
           />
 
+          {/* Gallery Panel */}
           <motion.div
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
@@ -64,32 +73,27 @@ export function MediaGallery({ isOpen, onClose, onStartChat }: MediaGalleryProps
             transition={{ type: "spring", damping: 30, stiffness: 350 }}
             className="fixed inset-x-0 bottom-0 z-50 bg-white rounded-t-3xl max-h-[90vh] overflow-hidden"
           >
-            <div className="flex justify-center pt-3 pb-2">
-              <div className="w-10 h-1 bg-neutral-200 rounded-full" />
-            </div>
-
-            <div className="flex items-center justify-between px-5 pb-4">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-neutral-100">
               <h2 className="text-lg font-semibold text-neutral-900">Gallery</h2>
               <button
-                onClick={onClose}
+                onClick={handleClose}
                 className="w-8 h-8 flex items-center justify-center rounded-full bg-neutral-100"
               >
                 <X className="w-4 h-4 text-neutral-600" />
               </button>
             </div>
 
-            <div className="flex gap-2 px-5 pb-4 overflow-x-auto">
+            {/* Category Filter */}
+            <div className="flex gap-2 p-4 overflow-x-auto">
               {CATEGORY_OPTIONS.map((cat) => (
                 <button
                   key={cat.value}
-                  onClick={() => {
-                    setSelectedCategory(cat.value)
-                    setSelectedIndex(null)
-                  }}
+                  onClick={() => setSelectedCategory(cat.value)}
                   className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
                     selectedCategory === cat.value
                       ? "bg-neutral-900 text-white"
-                      : "bg-neutral-100 text-neutral-600"
+                      : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                   }`}
                 >
                   {cat.label}
@@ -97,78 +101,68 @@ export function MediaGallery({ isOpen, onClose, onStartChat }: MediaGalleryProps
               ))}
             </div>
 
-            <div className="px-5 pb-6 grid grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto">
-              {filteredItems.map((item, index) => (
-                <button
-                  key={index}
-                  onClick={() => setSelectedIndex(index)}
-                  className="aspect-video bg-neutral-100 rounded-xl overflow-hidden relative group"
-                >
-                  <div className="absolute inset-0 flex items-center justify-center text-neutral-400 text-sm">
-                    {item.label}
-                  </div>
-                </button>
-              ))}
-            </div>
-
-            {onStartChat && (
-              <div className="px-5 pb-6">
-                <button
-                  onClick={onStartChat}
-                  className="w-full py-3 bg-neutral-900 text-white rounded-xl flex items-center justify-center gap-2"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  Start a conversation
-                </button>
-              </div>
-            )}
-
-            <AnimatePresence>
-              {selectedIndex !== null && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="absolute inset-0 bg-white flex flex-col"
-                >
-                  <div className="flex items-center justify-between p-4">
-                    <button
-                      onClick={() => setSelectedIndex(null)}
-                      className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-100"
-                    >
-                      <X className="w-5 h-5" />
-                    </button>
-                    <span className="text-sm text-neutral-500">
-                      {selectedIndex + 1} / {filteredItems.length}
-                    </span>
-                    <div className="w-10" />
-                  </div>
-
-                  <div className="flex-1 flex items-center justify-center p-4">
-                    <div className="w-full aspect-video bg-neutral-100 rounded-xl flex items-center justify-center text-neutral-400">
-                      {filteredItems[selectedIndex]?.label}
+            {/* Grid or Detail View */}
+            {selectedIndex === null ? (
+              <div className="grid grid-cols-2 gap-3 p-4 overflow-y-auto max-h-[60vh]">
+                {filteredItems.map((item, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedIndex(index)}
+                    className="aspect-video rounded-xl overflow-hidden bg-neutral-100 relative group"
+                  >
+                    <iframe
+                      src={item.url}
+                      title={item.label}
+                      className="w-full h-full border-0 pointer-events-none scale-[0.5] origin-top-left"
+                      style={{ width: "200%", height: "200%" }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-2">
+                      <span className="text-white text-xs font-medium">{item.label}</span>
                     </div>
-                  </div>
-
-                  <div className="flex justify-center gap-4 p-4">
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm font-medium text-neutral-900">
+                    {filteredItems[selectedIndex]?.label}
+                  </span>
+                  <div className="flex items-center gap-2">
                     <button
-                      onClick={handlePrevious}
+                      onClick={handlePrev}
                       disabled={selectedIndex === 0}
-                      className="w-12 h-12 flex items-center justify-center rounded-full bg-neutral-100 disabled:opacity-30"
+                      className="w-8 h-8 flex items-center justify-center rounded-full bg-neutral-100 disabled:opacity-50"
                     >
-                      <ChevronLeft className="w-6 h-6" />
+                      <ChevronLeft className="w-4 h-4" />
                     </button>
                     <button
                       onClick={handleNext}
                       disabled={selectedIndex === filteredItems.length - 1}
-                      className="w-12 h-12 flex items-center justify-center rounded-full bg-neutral-100 disabled:opacity-30"
+                      className="w-8 h-8 flex items-center justify-center rounded-full bg-neutral-100 disabled:opacity-50"
                     >
-                      <ChevronRight className="w-6 h-6" />
+                      <ChevronRight className="w-4 h-4" />
                     </button>
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                </div>
+                <div className="aspect-video rounded-xl overflow-hidden bg-neutral-100">
+                  <iframe
+                    src={filteredItems[selectedIndex]?.url}
+                    title={filteredItems[selectedIndex]?.label}
+                    className="w-full h-full border-0"
+                  />
+                </div>
+                {onAskAbout && (
+                  <button
+                    onClick={() => onAskAbout(filteredItems[selectedIndex]?.label || "")}
+                    className="mt-3 w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-neutral-900 text-white font-medium"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    Ask about this
+                  </button>
+                )}
+              </div>
+            )}
           </motion.div>
         </>
       )}
