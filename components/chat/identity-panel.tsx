@@ -43,21 +43,13 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, c
           />
         </div>
 
-        {/* Name */}
-        <h1 className="text-[22px] font-semibold text-foreground leading-none tracking-[-0.02em]">
-          {brand.name}
+        {/* Tagline - the hook */}
+        <h1 className="text-[24px] font-semibold text-foreground leading-tight tracking-[-0.02em] text-center">
+          {brand.tagline}
         </h1>
 
-        {/* Tagline - the hook */}
-        <p className="text-[14px] text-muted-foreground mt-2 text-center max-w-[240px] leading-relaxed">
-          {brand.tagline}
-        </p>
-
-        {/* Divider */}
-        <div className="w-8 h-px bg-foreground/10 my-6" />
-
-        {/* Subtitle - the question that opens curiosity */}
-        <p className="text-[15px] text-foreground leading-relaxed text-center max-w-[220px]">
+        {/* Subtitle - simple and direct */}
+        <p className="text-[15px] text-muted-foreground mt-3 text-center max-w-[260px] leading-relaxed">
           {brand.subtitle}
         </p>
       </div>
