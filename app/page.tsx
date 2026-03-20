@@ -71,6 +71,8 @@ import { StaticAvatar, HeaderAvatar } from "@/components/flip-avatar"
 import { SiteAdminPanel } from "@/components/admin/site-admin-panel"
 import { AdminLoginModal } from "@/components/admin/admin-login-modal"
 import { InstantSiteCreator } from "@/components/admin/instant-site-creator"
+import { CheckoutDrawer } from "@/components/checkout-drawer"
+import { DesktopShowcase, useShowcaseMode } from "@/components/desktop-showcase"
 import { siteConfig } from "@/lib/site-config"
 import { SmsTrigger } from "@/components/sms-trigger"
 import { type AvailabilityStatus } from "@/lib/chat-config"
@@ -101,6 +103,7 @@ export default function Home() {
   const [showAdminLogin, setShowAdminLogin] = useState(false)
   const [showAdminPanel, setShowAdminPanel] = useState(false)
   const [showSiteCreator, setShowSiteCreator] = useState(false)
+  const [showCheckout, setShowCheckout] = useState(false)
   const [adminLongPressTimer, setAdminLongPressTimer] = useState<NodeJS.Timeout | null>(null)
 
   // Panel resize
@@ -184,6 +187,9 @@ export default function Home() {
     },
   })
 
+  // Desktop showcase panel mode based on conversation
+  const { mode: showcaseMode, focusedSiteUrl } = useShowcaseMode(messages)
+
   const handleChatSubmit = useCallback((text: string) => {
     setChatError(null)
     if (!text.trim()) return
@@ -266,8 +272,8 @@ export default function Home() {
         <div className="absolute w-full h-full cursor-col-resize" />
       </div>
 
-      {/* Chat area */}
-      <div className="flex-1 min-w-0 flex flex-col relative bg-card md:rounded-2xl md:overflow-hidden md:border md:border-foreground/[0.12]">
+      {/* Chat area - on desktop, constrained width with showcase panel on right */}
+      <div className="flex-1 min-w-0 flex flex-col relative bg-card md:rounded-2xl md:overflow-hidden md:border md:border-foreground/[0.12] md:max-w-[50%] md:flex-none">
         {/* Background media */}
         {backgroundMedia && (
           <div className="absolute inset-0 z-0">
@@ -466,7 +472,7 @@ export default function Home() {
                   transition={{ duration: 0.15 }}
                   className="w-full md:max-w-2xl md:mx-auto"
                 >
-                  <MessageList messages={messages} status={status} avatarUrl={siteConfig.brand.avatarUrl} onQuickReply={handleChatSubmit} onAuditSubmit={handleAuditSubmit} onLabelUpload={handleLabelUpload} />
+                  <MessageList messages={messages} status={status} avatarUrl={siteConfig.brand.avatarUrl} onQuickReply={handleChatSubmit} onCheckout={() => setShowCheckout(true)} />
                   {chatError && (
                     <div className="px-4 py-2">
                       <div className="p-3 rounded-xl bg-[#fef2f2] border border-[#fecaca] text-sm">
@@ -555,6 +561,20 @@ export default function Home() {
 
         </div>
       </div>
+
+      {/* Desktop: Right showcase panel */}
+      <div className="hidden md:flex flex-1 min-w-0 ml-3">
+        <div className="flex-1 rounded-2xl overflow-hidden border border-foreground/[0.12]">
+          <DesktopShowcase mode={showcaseMode} focusedSiteUrl={focusedSiteUrl} />
+        </div>
+      </div>
+
+      {/* Checkout drawer */}
+      <CheckoutDrawer
+        isOpen={showCheckout}
+        onClose={() => setShowCheckout(false)}
+        onSuccess={() => handleChatSubmit("I just enrolled")}
+      />
     </main>
   )
 }

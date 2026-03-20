@@ -21,6 +21,7 @@ interface MessageListProps {
   status: string
   avatarUrl: string
   onQuickReply?: (text: string) => void
+  onCheckout?: () => void
 }
 
 function formatRelativeTime(date: Date | undefined): string {
@@ -185,7 +186,7 @@ function isContinuation(current: UIMessage, previous: UIMessage | undefined): bo
   return gap < 120_000
 }
 
-export function MessageList({ messages, status, avatarUrl, onQuickReply }: MessageListProps) {
+export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheckout }: MessageListProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [isNearBottom, setIsNearBottom] = useState(true)
@@ -272,7 +273,7 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply }: Messa
     if (detected.type === "paymentOptions") {
       return (
         <PaymentOptions
-          onPaid={() => onQuickReply?.("I just enrolled")}
+          onCheckout={onCheckout}
         />
       )
     }

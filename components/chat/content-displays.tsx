@@ -3,8 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback, memo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ChevronRight, Loader2, ArrowRight, Upload, X, Play } from "lucide-react"
-import type { PricingItem } from "@/lib/portfolio-data"
-import type { PORTFOLIO_DATA } from "@/lib/portfolio-data"
+// Portfolio data is now defined locally for chat displays
 import { VibeFrame } from "@/components/ui/vibe-frame"
 import { SmsTrigger } from "@/components/sms-trigger"
 import { useIsMobile } from "@/hooks/use-mobile"
