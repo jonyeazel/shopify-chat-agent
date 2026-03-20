@@ -42,18 +42,15 @@ function IconVideo({ className, strokeWidth = 1.5 }: { className?: string; strok
   )
 }
 
-// EXAMPLES - Four websites grid
+// EXAMPLES - Browser window
 function IconExamples({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <rect x="3" y="3" width="8" height="8" rx="1.5" />
-      <rect x="13" y="3" width="8" height="8" rx="1.5" />
-      <rect x="3" y="13" width="8" height="8" rx="1.5" />
-      <rect x="13" y="13" width="8" height="8" rx="1.5" />
-      <path d="M5 5h2" strokeWidth="1" />
-      <path d="M15 5h2" strokeWidth="1" />
-      <path d="M5 15h2" strokeWidth="1" />
-      <path d="M15 15h2" strokeWidth="1" />
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <path d="M3 9h18" />
+      <circle cx="6.5" cy="6" r="0.75" fill="currentColor" stroke="none" />
+      <circle cx="9.5" cy="6" r="0.75" fill="currentColor" stroke="none" />
+      <circle cx="12.5" cy="6" r="0.75" fill="currentColor" stroke="none" />
     </svg>
   )
 }
@@ -68,23 +65,22 @@ function IconInfo({ className, strokeWidth = 1.5 }: { className?: string; stroke
   )
 }
 
-// FAQ - Chat bubbles (conversation)
+// FAQ - Clean speech bubble (no dots)
 function IconFAQ({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
       <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
-      <path d="M8 10h.01" />
-      <path d="M12 10h.01" />
-      <path d="M16 10h.01" />
+      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+      <circle cx="12" cy="17" r="0.5" fill="currentColor" stroke="none" />
     </svg>
   )
 }
 
-// BUY - Sparkle/star (premium access)
+// BUY - Lightning bolt (instant access)
 function IconBuy({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
     </svg>
   )
 }
@@ -98,7 +94,7 @@ import { AdminLoginModal } from "@/components/admin/admin-login-modal"
 import { InstantSiteCreator } from "@/components/admin/instant-site-creator"
 import { CheckoutDrawer } from "@/components/checkout-drawer"
 import { LiveShowcase } from "@/components/live-showcase"
-import { ShowcaseDrawer } from "@/components/showcase-drawer"
+import { ShowcaseDrawer } from "@/components/showcase-drawer" // swipeable examples
 import { VideoDrawer } from "@/components/video-drawer"
 import { siteConfig } from "@/lib/site-config"
 import { SmsTrigger } from "@/components/sms-trigger"
