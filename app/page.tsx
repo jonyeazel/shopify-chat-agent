@@ -32,34 +32,59 @@ function IconWork({ className, strokeWidth = 1.5 }: { className?: string; stroke
   )
 }
 
-function IconPrice({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
+// VIDEO - Clean play button in rounded rectangle
+function IconVideo({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M6 3h12v16l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5-2 1.5V3z" />
-      <path d="M9.5 8h5" />
-      <path d="M9.5 11.5h3" />
+      <rect x="3" y="5" width="18" height="14" rx="3" />
+      <polygon points="10 8.5 10 15.5 16 12" fill="currentColor" stroke="none" />
     </svg>
   )
 }
 
-function IconText({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
+// EXAMPLES - Four websites grid
+function IconExamples({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H8l-4 4V6z" />
-      <circle cx="9" cy="10" r=".75" fill="currentColor" stroke="none" />
-      <circle cx="12" cy="10" r=".75" fill="currentColor" stroke="none" />
-      <circle cx="15" cy="10" r=".75" fill="currentColor" stroke="none" />
+      <rect x="3" y="3" width="8" height="8" rx="1.5" />
+      <rect x="13" y="3" width="8" height="8" rx="1.5" />
+      <rect x="3" y="13" width="8" height="8" rx="1.5" />
+      <rect x="13" y="13" width="8" height="8" rx="1.5" />
+      <path d="M5 5h2" strokeWidth="1" />
+      <path d="M15 5h2" strokeWidth="1" />
+      <path d="M5 15h2" strokeWidth="1" />
+      <path d="M15 15h2" strokeWidth="1" />
     </svg>
   )
 }
 
-function IconGallery({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
+// INFO - Open book with pages
+function IconInfo({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M4 8V5a1 1 0 0 1 1-1h3" />
-      <path d="M16 4h3a1 1 0 0 1 1 1v3" />
-      <path d="M20 16v3a1 1 0 0 1-1 1h-3" />
-      <path d="M8 20H5a1 1 0 0 1-1-1v-3" />
+      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+    </svg>
+  )
+}
+
+// FAQ - Chat bubbles (conversation)
+function IconFAQ({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+      <path d="M8 10h.01" />
+      <path d="M12 10h.01" />
+      <path d="M16 10h.01" />
+    </svg>
+  )
+}
+
+// BUY - Sparkle/star (premium access)
+function IconBuy({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
     </svg>
   )
 }
@@ -73,7 +98,7 @@ import { AdminLoginModal } from "@/components/admin/admin-login-modal"
 import { InstantSiteCreator } from "@/components/admin/instant-site-creator"
 import { CheckoutDrawer } from "@/components/checkout-drawer"
 import { LiveShowcase } from "@/components/live-showcase"
-import { ShowcaseDrawer } from "@/components/showcase-drawer" // Mobile examples drawer
+import { ShowcaseDrawer } from "@/components/showcase-drawer"
 import { VideoDrawer } from "@/components/video-drawer"
 import { siteConfig } from "@/lib/site-config"
 import { SmsTrigger } from "@/components/sms-trigger"
@@ -493,11 +518,11 @@ export default function Home() {
         {/* Mobile: Vertical icon rail */}
         <div className="md:hidden flex flex-col items-center justify-end gap-2 flex-shrink-0 pr-[16px] pl-[6px] pb-[max(env(safe-area-inset-bottom),16px)]">
           {([
-            { icon: IconGallery, label: "Video", action: () => setShowVideo(true) },
-            { icon: IconWork, label: "Examples", action: () => setShowShowcase(true) },
-            { icon: IconAudit, label: "Info", action: () => handleChatSubmit("Tell me more about v0 University") },
-            { icon: IconPrice, label: "FAQ", action: () => handleChatSubmit("What are the most common questions about v0 University?") },
-            { icon: IconText, label: "Buy", action: () => setShowCheckout(true) },
+            { icon: IconVideo, label: "Video", action: () => setShowVideo(true) },
+            { icon: IconExamples, label: "Examples", action: () => setShowShowcase(true) },
+            { icon: IconInfo, label: "Info", action: () => handleChatSubmit("Tell me more about v0 University") },
+            { icon: IconFAQ, label: "FAQ", action: () => handleChatSubmit("What are the most common questions about v0 University?") },
+            { icon: IconBuy, label: "Buy", action: () => setShowCheckout(true) },
           ] as const).map(({ icon: Icon, label, ...rest }) => {
             const btn = (
               <button
