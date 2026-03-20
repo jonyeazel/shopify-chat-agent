@@ -212,11 +212,12 @@ export function FaqDisplay({
   )
 }
 
+// Real sites built with v0 - no fake client names
 const PORTFOLIO_SITES = [
-  { name: "Goli", url: "https://v0-vcommercepdp-three.vercel.app" },
-  { name: "BREZ", url: "https://v0-brez-product-page.vercel.app" },
-  { name: "Seed", url: "https://v0-vcommercepdp.vercel.app" },
-  { name: "MUD", url: "https://v0-mudwater.vercel.app" },
+  { name: "Stadics", url: "https://v0-stadics.vercel.app/" },
+  { name: "Neon", url: "https://v0-neon-v0-templates.vercel.app/" },
+  { name: "AI Blocks", url: "https://v0-aiblocks.vercel.app/" },
+  { name: "ViberrPro", url: "https://v0-viberrpro.vercel.app/" },
 ]
 
 export const LiveSitesDisplay = memo(function LiveSitesDisplay() {
