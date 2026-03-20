@@ -72,6 +72,9 @@ import { SiteAdminPanel } from "@/components/admin/site-admin-panel"
 import { AdminLoginModal } from "@/components/admin/admin-login-modal"
 import { InstantSiteCreator } from "@/components/admin/instant-site-creator"
 import { CheckoutDrawer } from "@/components/checkout-drawer"
+import { LiveShowcase } from "@/components/live-showcase"
+import { ShowcaseDrawer } from "@/components/showcase-drawer" // Mobile examples drawer
+import { VideoDrawer } from "@/components/video-drawer"
 import { siteConfig } from "@/lib/site-config"
 import { SmsTrigger } from "@/components/sms-trigger"
 import { type AvailabilityStatus } from "@/lib/chat-config"
@@ -103,6 +106,8 @@ export default function Home() {
   const [showAdminPanel, setShowAdminPanel] = useState(false)
   const [showSiteCreator, setShowSiteCreator] = useState(false)
   const [showCheckout, setShowCheckout] = useState(false)
+  const [showShowcase, setShowShowcase] = useState(false)
+  const [showVideo, setShowVideo] = useState(false)
   const [adminLongPressTimer, setAdminLongPressTimer] = useState<NodeJS.Timeout | null>(null)
 
   // Panel resize
@@ -254,6 +259,9 @@ export default function Home() {
         input={input}
         setInput={setInput}
         onSubmit={handleChatSubmit}
+        onBuyClick={() => setShowCheckout(true)}
+        onVideoClick={() => setShowVideo(true)}
+        onExamplesClick={() => setShowShowcase(true)}
         chatDisabled={status !== "ready"}
         style={{ width: `${panelWidth}%` }}
       />
@@ -313,26 +321,7 @@ export default function Home() {
           )}
         </AnimatePresence>
 
-        {/* Drag overlay */}
-        <AnimatePresence>
-          {isDragging && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.15 }}
-              className="absolute inset-0 z-50 bg-card/90 flex items-center justify-center pointer-events-none"
-            >
-              <div className="text-center">
-                <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
-                  <FileText className="w-8 h-8 text-foreground" />
-                </div>
-                <p className="text-lg font-medium text-foreground">Drop files here</p>
-                <p className="text-sm text-muted-foreground mt-1">CSVs or images</p>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+
 
         {/* Mobile header */}
         <header className="flex-shrink-0 relative z-40 md:hidden">
@@ -447,17 +436,16 @@ export default function Home() {
                     </div>
                   </motion.div>
 
-                  {/* Desktop empty state */}
+                  {/* Desktop: Live site showcase */}
                   <motion.div
                     key="landing-desktop"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="h-full hidden md:flex flex-col items-center justify-center px-4"
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    transition={{ duration: 0.3 }}
+                    className="h-full hidden md:flex p-4"
                   >
-                    <p className="text-sm text-muted-foreground">
-                      Ask me anything about building websites with v0.
-                    </p>
+                    <LiveShowcase />
                   </motion.div>
                 </>
               ) : (
@@ -486,32 +474,7 @@ export default function Home() {
             </AnimatePresence>
           </div>
 
-          {/* Desktop: Starter prompts footer */}
-          <div className="flex-shrink-0 relative bg-card hidden md:block">
-            <div className="flex items-center justify-center gap-2 px-4 py-3">
-              {QUICK_ACTIONS.map((action, i) => {
-                const btn = (
-                  <button
-                    key={i}
-                    onClick={action.sms ? undefined : () => {
-                      if (action.message) handleChatSubmit(action.message)
-                    }}
-                    className={`py-1.5 px-3 rounded-full text-[12px] transition-colors duration-150 whitespace-nowrap ${
-                      action.sms
-                        ? "bg-foreground text-background hover:opacity-90 cursor-pointer"
-                        : "border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30"
-                    }`}
-                  >
-                    {action.label}
-                  </button>
-                )
-                if (action.sms) {
-                  return <SmsTrigger key={i}>{btn}</SmsTrigger>
-                }
-                return btn
-              })}
-            </div>
-          </div>
+
           {/* Mobile: Fade above input */}
           <div className="flex-shrink-0 md:hidden h-10 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent, var(--card))" }} />
           {/* Mobile: Chat input */}
@@ -530,8 +493,8 @@ export default function Home() {
         {/* Mobile: Vertical icon rail */}
         <div className="md:hidden flex flex-col items-center justify-end gap-2 flex-shrink-0 pr-[16px] pl-[6px] pb-[max(env(safe-area-inset-bottom),16px)]">
           {([
-            { icon: IconGallery, label: "Video", action: () => handleChatSubmit("Show me the video") },
-            { icon: IconWork, label: "Examples", action: () => handleChatSubmit("Show me examples of sites people have built") },
+            { icon: IconGallery, label: "Video", action: () => setShowVideo(true) },
+            { icon: IconWork, label: "Examples", action: () => setShowShowcase(true) },
             { icon: IconAudit, label: "Info", action: () => handleChatSubmit("Tell me more about v0 University") },
             { icon: IconPrice, label: "FAQ", action: () => handleChatSubmit("What are the most common questions about v0 University?") },
             { icon: IconText, label: "Buy", action: () => setShowCheckout(true) },
@@ -560,6 +523,18 @@ export default function Home() {
         isOpen={showCheckout}
         onClose={() => setShowCheckout(false)}
         onSuccess={() => handleChatSubmit("I just enrolled")}
+      />
+
+      {/* Mobile showcase drawer */}
+      <ShowcaseDrawer
+        isOpen={showShowcase}
+        onClose={() => setShowShowcase(false)}
+      />
+
+      {/* Video drawer */}
+      <VideoDrawer
+        isOpen={showVideo}
+        onClose={() => setShowVideo(false)}
       />
     </main>
   )

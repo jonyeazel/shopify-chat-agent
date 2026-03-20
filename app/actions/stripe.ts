@@ -9,9 +9,11 @@ export async function startCheckout(productId: string = V0_UNIVERSITY.id) {
     throw new Error("Product not found")
   }
 
+  const baseUrl = process.env.NEXT_PUBLIC_URL || process.env.VERCEL_URL 
+    ? `https://${process.env.VERCEL_URL}` 
+    : "http://localhost:3000"
+
   const session = await stripe.checkout.sessions.create({
-    ui_mode: "embedded",
-    redirect_on_completion: "never",
     line_items: [
       {
         price_data: {
@@ -26,11 +28,13 @@ export async function startCheckout(productId: string = V0_UNIVERSITY.id) {
       },
     ],
     mode: "payment",
+    success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${baseUrl}?canceled=true`,
     metadata: {
       productId: product.id,
       source: "v0-university",
     },
   })
 
-  return session.client_secret
+  return session.url
 }

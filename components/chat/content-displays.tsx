@@ -8,20 +8,31 @@ import { VibeFrame } from "@/components/ui/vibe-frame"
 import { SmsTrigger } from "@/components/sms-trigger"
 import { useIsMobile } from "@/hooks/use-mobile"
 
-// Video Preview Card — shows the 3-minute video thumbnail with play button
+// Video Preview Card — shows the video thumbnail with play button
 export function VideoPreview({ 
   onPlay 
 }: { 
   onPlay?: () => void 
 }) {
+  const videoUrl = "https://youtu.be/i9na_W31rLg"
+  const thumbnailUrl = "https://img.youtube.com/vi/i9na_W31rLg/maxresdefault.jpg"
+  
+  const handleClick = () => {
+    if (onPlay) {
+      onPlay()
+    } else {
+      window.open(videoUrl, "_blank")
+    }
+  }
+  
   return (
     <div className="my-4">
       <div 
         className="relative rounded-2xl overflow-hidden bg-neutral-100 cursor-pointer group"
-        onClick={onPlay}
+        onClick={handleClick}
       >
         <img
-          src="/images/video-thumbnail.jpg"
+          src={thumbnailUrl}
           alt="v0 University Video"
           className="w-full aspect-video object-cover"
         />
@@ -35,16 +46,16 @@ export function VideoPreview({
         
         {/* Duration badge */}
         <div className="absolute bottom-3 right-3 px-2 py-1 rounded-md bg-black/70 text-white text-xs font-medium">
-          2:47
+          0:57
         </div>
       </div>
       
       <div className="mt-3 px-1">
         <p className="text-[15px] font-medium text-foreground">
-          Build a website in 3 minutes
+          Build your first website with AI
         </p>
         <p className="text-[13px] text-muted-foreground mt-0.5">
-          No code. No design skills. No fluff.
+          57 seconds. No experience needed.
         </p>
       </div>
     </div>
@@ -211,12 +222,12 @@ export function FaqDisplay({
   )
 }
 
-// Real sites built with v0 - no fake client names
+// Real sites built with v0 - showing what's possible
 const PORTFOLIO_SITES = [
   { name: "Stadics", url: "https://v0-stadics.vercel.app/" },
-  { name: "Neon", url: "https://v0-neon-v0-templates.vercel.app/" },
+  { name: "MUD WTR", url: "https://v0-mudwater.vercel.app" },
   { name: "AI Blocks", url: "https://v0-aiblocks.vercel.app/" },
-  { name: "ViberrPro", url: "https://v0-viberrpro.vercel.app/" },
+  { name: "vCommerce", url: "https://v0-vcommercepdp-three.vercel.app" },
 ]
 
 export const LiveSitesDisplay = memo(function LiveSitesDisplay() {
