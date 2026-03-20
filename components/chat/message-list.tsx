@@ -4,40 +4,24 @@ import { useRef, useEffect, useState, useCallback, useMemo } from "react"
 import type { UIMessage } from "ai"
 import { ChevronDown, ExternalLink } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
-import { BidSelector } from "@/components/bid-selector"
-import { submitBid } from "@/app/actions/bids"
-import type { Service } from "@/lib/services"
 import { detectContentToShow } from "@/lib/content-detection"
 import { SmsTrigger } from "@/components/sms-trigger"
 import type { SmsContext } from "@/lib/sms"
 import { determineConversationPhase } from "@/lib/chat-config"
 import {
-  ImageGallery,
   PricingCard,
-  ServiceCatalog,
-  FaqDisplay,
   LiveSitesDisplay,
-  AllPricingDisplay,
-  SiteAuditInput,
-  LabelUpload,
-  EmailCapture,
   VideoPreview,
   renderMessageWithSmsLinks,
 } from "./content-displays"
-import { RevenueLeakCalculator } from "./revenue-leak-calculator"
-import { BeforeAfterTimeline } from "./before-after-timeline"
-import { SpecificityTestimonials } from "./specificity-testimonials"
-import { SpeedCommitmentSelector } from "./speed-commitment-selector"
-import { ProcessPreviewStack } from "./process-preview-stack"
-import { PaymentOptions, MicroConsultation } from "./payment-options"
+import { PaymentOptions } from "./payment-options"
 
 interface MessageListProps {
   messages: UIMessage[]
   status: string
   avatarUrl: string
   onQuickReply?: (text: string) => void
-  onAuditSubmit?: (url: string) => void
-  onLabelUpload?: (dataUrl: string, fileName: string) => void
+  onCheckout?: () => void
 }
 
 function formatRelativeTime(date: Date | undefined): string {
@@ -54,7 +38,7 @@ function formatRelativeTime(date: Date | undefined): string {
   return date.toLocaleDateString(undefined, { month: "short", day: "numeric" })
 }
 
-// Text Jon CTA — context-aware based on conversation phase
+// Text Jon CTA: context-aware based on conversation phase
 function getSmsCta(messages: UIMessage[]): { label: string; context: SmsContext; show: boolean } {
   const phase = determineConversationPhase(messages)
   const msgCount = messages.length
@@ -64,12 +48,12 @@ function getSmsCta(messages: UIMessage[]): { label: string; context: SmsContext;
   
   // Show SMS CTA after meaningful engagement
   const isEngaged = msgCount >= 8
-  const hasShownInterest = allText.includes("enroll") || allText.includes("coaching") || allText.includes("$297") || allText.includes("$1,497") || allText.includes("$3,497")
+  const hasShownInterest = allText.includes("enroll") || allText.includes("$297")
   
   const shouldShow = isEngaged || hasShownInterest || phase === "ready_to_buy"
 
   if (phase === "ready_to_buy") {
-    return { label: "I'm ready — text Jon", context: "ready-to-start", show: true }
+    return { label: "I'm ready, text Jon", context: "ready-to-start", show: true }
   }
 
   if (hasShownInterest) {
@@ -177,12 +161,7 @@ function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[])
     return ["That's faster than I expected", "What would I build first?", "What's the cost?"]
   }
 
-  // COACHING MENTION — higher tier products
-  if (lower.includes("coaching") || lower.includes("1:1") || lower.includes("jon") || lower.includes("direct help")) {
-    return ["Tell me about coaching", "The course is enough", "What's the difference?"]
-  }
-
-  // DEFAULT — based on conversation state
+  // DEFAULT: based on conversation state
   if (!hasSharedGoal) {
     return ["I have a Shopify store", "I want to build websites", "I'm just exploring", "What is v0?"]
   }
@@ -192,10 +171,10 @@ function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[])
   }
 
   if (!hasAskedPrice) {
-    return ["What's the course cost?", "Show me what students built", "Is this right for me?"]
+    return ["What's it cost?", "Show me sites people built", "Is this right for me?"]
   }
 
-  return ["Show me student sites", "What's included?", "How do I get started?"]
+  return ["Show me examples", "What's included?", "I'm ready"]
 }
 
 // Check if two messages are from the same sender and close in time (within 2min)
@@ -207,16 +186,13 @@ function isContinuation(current: UIMessage, previous: UIMessage | undefined): bo
   return gap < 120_000
 }
 
-export function MessageList({ messages, status, avatarUrl, onQuickReply, onAuditSubmit, onLabelUpload }: MessageListProps) {
+export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheckout }: MessageListProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [isNearBottom, setIsNearBottom] = useState(true)
   const [showNewMessage, setShowNewMessage] = useState(false)
   const lastMessageCount = useRef(messages.length)
 
-  const [bidService, setBidService] = useState<Service | null>(null)
-  const [bidSubmitted, setBidSubmitted] = useState(false)
-  
   // Cache detected content to prevent re-detection on every render
   const detectedContentCache = useRef<Map<string, ReturnType<typeof detectContentToShow>>>(new Map())
 
@@ -274,23 +250,6 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
     setShowNewMessage(false)
   }
 
-  const handleBidSubmit = async (tier: any, email: string, description: string) => {
-    if (!bidService) return
-
-    await submitBid({
-      email,
-      serviceCategory: bidService.category,
-      serviceId: bidService.id,
-      projectDescription: description || `Interested in ${bidService.name}`,
-      selectedTier: tier.name,
-      bidAmount: tier.price,
-    })
-
-    setBidSubmitted(true)
-    setBidService(null)
-    setTimeout(() => setBidSubmitted(false), 3000)
-  }
-
   const renderSmartContent = (text: string, messageId: string) => {
     // Check cache first to prevent re-detection during re-renders
     let detected = detectedContentCache.current.get(messageId)
@@ -302,9 +261,6 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
     }
     if (!detected) return null
 
-    if (detected.type === "gallery") {
-      return <ImageGallery images={detected.data.images} serviceName={detected.data.name} price={detected.data.price} />
-    }
     if (detected.type === "liveSites") {
       return <LiveSitesDisplay />
     }
@@ -314,55 +270,10 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
     if (detected.type === "pricing") {
       return <PricingCard name={detected.data.name} price={detected.data.price} description={detected.data.description} />
     }
-    if (detected.type === "allPricing") {
-      return <AllPricingDisplay pricing={detected.data} onSelectService={onQuickReply} />
-    }
-    
-    if (detected.type === "siteAudit" && onAuditSubmit) {
-      return <SiteAuditInput onSubmitUrl={onAuditSubmit} />
-    }
-
-    if (detected.type === "labelUpload" && onLabelUpload) {
-      return <LabelUpload onSubmitLabel={onLabelUpload} />
-    }
-
-    if (detected.type === "emailCapture") {
-      return <EmailCapture context={detected.data?.context || "tips"} />
-    }
-
-    if (detected.type === "revenueLeak") {
-      return <RevenueLeakCalculator onCTA={() => onQuickReply?.("Let me fix this")} />
-    }
-
-    if (detected.type === "beforeAfterTimeline" && detected.data) {
-      return <BeforeAfterTimeline caseStudy={detected.data} />
-    }
-
-    if (detected.type === "testimonials" && detected.data) {
-      return <SpecificityTestimonials testimonials={detected.data} />
-    }
-
-    if (detected.type === "speedCommitment") {
-      return <SpeedCommitmentSelector onSelect={(opt) => onQuickReply?.(`I want the ${opt.title} option`)} />
-    }
-
-    if (detected.type === "processPreviewStack" && detected.data) {
-      return <ProcessPreviewStack deliverables={detected.data} />
-    }
-
     if (detected.type === "paymentOptions") {
       return (
         <PaymentOptions
-          serviceName={detected.data?.serviceName || undefined}
-          onPaid={() => onQuickReply?.("I just enrolled")}
-        />
-      )
-    }
-
-    if (detected.type === "microConsultation") {
-      return (
-        <MicroConsultation
-          onSelect={() => onQuickReply?.("I have a question for Jon")}
+          onCheckout={onCheckout}
         />
       )
     }
@@ -373,63 +284,8 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
   const renderToolResult = (toolResult: any) => {
     if (!toolResult?.display) return null
 
-    if (toolResult.type === "service_catalog") {
-      return (
-        <ServiceCatalog
-          services={toolResult.services}
-          category={toolResult.category}
-          onSelectService={(id) => {
-            const service = toolResult.services.find((s: any) => s.id === id)
-            if (service) setBidService(service as Service)
-          }}
-        />
-      )
-    }
-
-    if (toolResult.type === "bid_selector") {
-      return (
-        <button
-          onClick={() => setBidService(toolResult.service)}
-          className="my-3 w-full p-4 rounded-xl bg-foreground text-background flex items-center justify-between hover:opacity-90 active:scale-[0.98] transition-all"
-        >
-          <div className="text-left">
-            <p className="font-medium">{toolResult.service.name}</p>
-            <p className="text-sm opacity-70">Tap to see pricing options</p>
-          </div>
-          <span className="font-semibold">${toolResult.service.tiers[0]?.price.toLocaleString()}+</span>
-        </button>
-      )
-    }
-
-    if (toolResult.type === "faqs") {
-      return <FaqDisplay serviceName={toolResult.serviceName} faqs={toolResult.faqs} />
-    }
-
-    if (toolResult.type === "portfolio_gallery") {
-      return <ImageGallery images={toolResult.images} serviceName={toolResult.serviceName} price={toolResult.price} />
-    }
-
     if (toolResult.type === "live_sites") {
       return <LiveSitesDisplay />
-    }
-
-    if (toolResult.type === "iframe") {
-      return (
-        <div className="my-3 rounded-xl overflow-hidden border border-border sm:hidden">
-          <div className="bg-muted/50 px-3 py-2 flex items-center justify-between">
-            <span className="text-xs text-muted-foreground truncate">{toolResult.caption}</span>
-            <a
-              href={toolResult.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
-            >
-              Open <ExternalLink className="w-3 h-3" />
-            </a>
-          </div>
-          <iframe src={toolResult.url} className="w-full h-full bg-white" sandbox="allow-scripts allow-same-origin" />
-        </div>
-      )
     }
 
     if (toolResult.type === "image") {
@@ -673,24 +529,6 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
             )}
           </AnimatePresence>
 
-          <AnimatePresence>
-            {bidSubmitted && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="p-4 rounded-xl border"
-                style={{
-                  backgroundColor: "rgba(37, 58, 46, 0.1)",
-                  borderColor: "rgba(37, 58, 46, 0.3)",
-                  color: "#253a2e",
-                }}
-              >
-                Request submitted. You'll hear back within 24 hours.
-              </motion.div>
-            )}
-          </AnimatePresence>
-
           <div className="h-4 flex-shrink-0" aria-hidden="true" />
           <div ref={messagesEndRef} />
         </div>
@@ -708,12 +546,6 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onAudit
             <ChevronDown className="w-4 h-4" />
             New message
           </motion.button>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {bidService && (
-          <BidSelector service={bidService} onClose={() => setBidService(null)} onSubmit={handleBidSubmit} />
         )}
       </AnimatePresence>
     </div>

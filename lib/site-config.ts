@@ -1,8 +1,8 @@
 export const siteConfig = {
   brand: {
     name: "v0 University",
-    tagline: "Build websites with AI.",
-    subtitle: "3 minutes. No code.",
+    tagline: "Learn how to build websites with AI.",
+    subtitle: "What would you build if you knew how?",
     avatarUrl: "/images/jon-profile.png",
     headerLogoUrl: "/images/v0-university-logo.png",
     logoUrl: "/images/v0-university-logo.png",
@@ -18,11 +18,8 @@ export const siteConfig = {
     calendlySupportUrl: "https://calendly.com/v0university/support",
   },
 
-  stats: [
-    { value: "3min", label: "video" },
-    { value: "$297", label: "once" },
-    { value: "20", label: "spots" },
-  ],
+  // Removed stats - they lacked context and felt salesy
+  // The conversation will reveal value naturally
 
   pricing: {
     video: {
@@ -33,9 +30,9 @@ export const siteConfig = {
   },
 
   meta: {
-    title: "v0 University | Build Websites in 3 Minutes",
+    title: "v0 University | Learn to Build Websites with AI",
     description:
-      "A 3-minute video that teaches you how to build a website. No code. No fluff. No 40-hour course.",
+      "Learn how to build real websites using AI. No code required. No design experience needed.",
     keywords: [
       "v0",
       "v0 tutorial",
@@ -46,11 +43,11 @@ export const siteConfig = {
       "Vercel v0",
       "build websites with AI",
     ],
-    ogTitle: "v0 University | 3 Minutes to Build Websites",
+    ogTitle: "v0 University | Learn to Build Websites with AI",
     ogDescription:
-      "One video. Under 3 minutes. You watch it, you can build websites.",
+      "Learn how to build real websites using AI. No code required.",
     twitterDescription:
-      "A 3-minute video that teaches you to build websites. No code. No fluff.",
+      "Learn to build real websites with AI. No code required.",
   },
 } as const
 

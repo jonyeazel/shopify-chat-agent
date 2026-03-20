@@ -5,33 +5,20 @@ import { motion, AnimatePresence } from "framer-motion"
 import { X, Check, Loader2 } from "lucide-react"
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from "@stripe/react-stripe-js"
 import { loadStripe } from "@stripe/stripe-js"
-import { startChatCheckout } from "@/app/actions/stripe"
-import { useDrawerGesture, springClose } from "@/hooks/use-drawer-gesture"
+import { startCheckout } from "@/app/actions/stripe"
+import { V0_UNIVERSITY } from "@/lib/products"
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
 interface CheckoutDrawerProps {
   isOpen: boolean
   onClose: () => void
-  productId: string
-  productName: string
-  amount: number
-  recurring?: boolean
-  customerEmail?: string
+  onSuccess?: () => void
 }
 
-export function CheckoutDrawer({
-  isOpen,
-  onClose,
-  productId,
-  productName,
-  amount,
-  recurring = false,
-  customerEmail,
-}: CheckoutDrawerProps) {
+export function CheckoutDrawer({ isOpen, onClose, onSuccess }: CheckoutDrawerProps) {
   const [status, setStatus] = useState<"loading" | "checkout" | "success" | "error">("loading")
   const [error, setError] = useState<string | null>(null)
-  const { controls, dragControls, handleDragEnd, close, isClosing, startDrag } = useDrawerGesture(onClose, isOpen)
 
   useEffect(() => {
     if (isOpen) {
@@ -42,116 +29,188 @@ export function CheckoutDrawer({
 
   const fetchClientSecret = useCallback(async () => {
     try {
-      const result = await startChatCheckout(productId, customerEmail)
+      const clientSecret = await startCheckout(V0_UNIVERSITY.id)
       setStatus("checkout")
-      return result.clientSecret
+      return clientSecret
     } catch (err) {
       setError("Failed to initialize checkout. Please try again.")
       setStatus("error")
       throw err
     }
-  }, [productId, customerEmail])
+  }, [])
 
   const handleComplete = () => {
     setStatus("success")
+    onSuccess?.()
     setTimeout(() => {
       onClose()
     }, 3000)
   }
 
+  const price = (V0_UNIVERSITY.priceInCents / 100).toFixed(0)
+
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 0 } }}
-          transition={{ duration: 0.25 }}
-          className="absolute inset-0 z-50"
-        >
-          <div
-            className={`absolute inset-0 bg-black/70 transition-opacity duration-300 ease-out ${isClosing ? "opacity-0" : ""}`}
-            onClick={close}
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-black/60 z-50"
+            onClick={onClose}
           />
 
+          {/* Mobile: slide up from bottom */}
           <motion.div
             initial={{ y: "100%" }}
-            animate={controls}
+            animate={{ y: 0 }}
             exit={{ y: "100%" }}
-            transition={springClose}
-            drag="y"
-            dragControls={dragControls}
-            dragListener={false}
-            dragConstraints={{ top: 0, bottom: 0 }}
-            dragElastic={{ top: 0.04, bottom: 0.6 }}
-            onDragEnd={handleDragEnd}
-            className="absolute bottom-[2px] left-[2px] right-[2px] bg-card rounded-[20px] overflow-hidden flex flex-col"
-            style={{ height: "85vh", maxHeight: "100%" }}
-            onClick={(e) => e.stopPropagation()}
+            transition={{ type: "spring", damping: 30, stiffness: 300 }}
+            className="fixed inset-x-0 bottom-0 z-50 md:hidden"
           >
-            {/* Drag handle */}
-            <div
-              onPointerDown={startDrag}
-              className="flex justify-center pt-3 pb-2 flex-shrink-0 cursor-grab active:cursor-grabbing"
-              style={{ touchAction: "none" }}
-            >
-              <div className="w-10 h-1 bg-muted-foreground/30 rounded-full" />
-            </div>
+            <div className="bg-white rounded-t-2xl max-h-[90vh] overflow-hidden flex flex-col">
+              {/* Drag handle */}
+              <div className="flex justify-center pt-3 pb-1">
+                <div className="w-10 h-1 bg-neutral-300 rounded-full" />
+              </div>
 
-            <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide overscroll-contain">
+              {/* Header */}
+              <div className="flex items-center justify-between px-4 py-2 border-b border-neutral-100">
+                <div>
+                  <p className="font-medium text-neutral-900">{V0_UNIVERSITY.name}</p>
+                  <p className="text-sm text-neutral-500">${price}</p>
+                </div>
+                <button
+                  onClick={onClose}
+                  className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-neutral-200 active:bg-neutral-300 transition-colors"
+                >
+                  <X className="w-4 h-4 text-neutral-600" />
+                </button>
+              </div>
+
               {/* Content */}
-              <div className="p-4">
-                {status === "error" ? (
-                  <div className="flex flex-col items-center justify-center py-12 text-center">
-                    <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-4">
-                      <X className="w-8 h-8 text-red-600" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-foreground mb-2">Checkout Error</h3>
-                    <p className="text-muted-foreground mb-4">{error}</p>
-                    <button
-                      onClick={() => {
-                        setStatus("loading")
-                        setError(null)
-                      }}
-                      className="text-sm text-foreground underline underline-offset-4"
-                    >
-                      Try again
-                    </button>
-                  </div>
-                ) : status === "success" ? (
-                  <div className="flex flex-col items-center justify-center py-12">
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ type: "spring", stiffness: 200 }}
-                      className="w-16 h-16 rounded-full bg-foreground flex items-center justify-center mb-4"
-                    >
-                      <Check className="w-8 h-8 text-background" />
-                    </motion.div>
-                    <h3 className="text-xl font-semibold text-foreground mb-2">Payment Successful!</h3>
-                    <p className="text-muted-foreground text-center">I'll reach out within 24 hours to get started.</p>
-                  </div>
-                ) : status === "loading" ? (
-                  <div className="flex flex-col items-center justify-center py-12">
-                    <Loader2 className="w-8 h-8 animate-spin text-muted-foreground mb-4" />
-                    <p className="text-sm text-muted-foreground">Loading checkout...</p>
-                  </div>
-                ) : (
-                  <EmbeddedCheckoutProvider
-                    stripe={stripePromise}
-                    options={{
-                      fetchClientSecret,
-                      onComplete: handleComplete,
-                    }}
-                  >
-                    <EmbeddedCheckout />
-                  </EmbeddedCheckoutProvider>
-                )}
+              <div className="flex-1 overflow-y-auto p-4" style={{ maxHeight: "75vh" }}>
+                <CheckoutContent
+                  status={status}
+                  error={error}
+                  fetchClientSecret={fetchClientSecret}
+                  handleComplete={handleComplete}
+                  onRetry={() => { setStatus("loading"); setError(null) }}
+                />
               </div>
             </div>
           </motion.div>
-        </motion.div>
+
+          {/* Desktop: slide in from right */}
+          <motion.div
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 30, stiffness: 300 }}
+            className="fixed top-0 right-0 bottom-0 w-[480px] z-50 hidden md:block"
+          >
+            <div className="h-full bg-white shadow-2xl flex flex-col">
+              {/* Header */}
+              <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-100">
+                <div>
+                  <p className="font-medium text-neutral-900">{V0_UNIVERSITY.name}</p>
+                  <p className="text-sm text-neutral-500">${price}</p>
+                </div>
+                <button
+                  onClick={onClose}
+                  className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-neutral-200 active:bg-neutral-300 transition-colors"
+                >
+                  <X className="w-4 h-4 text-neutral-600" />
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto p-6">
+                <CheckoutContent
+                  status={status}
+                  error={error}
+                  fetchClientSecret={fetchClientSecret}
+                  handleComplete={handleComplete}
+                  onRetry={() => { setStatus("loading"); setError(null) }}
+                />
+              </div>
+            </div>
+          </motion.div>
+        </>
       )}
     </AnimatePresence>
+  )
+}
+
+function CheckoutContent({
+  status,
+  error,
+  fetchClientSecret,
+  handleComplete,
+  onRetry,
+}: {
+  status: "loading" | "checkout" | "success" | "error"
+  error: string | null
+  fetchClientSecret: () => Promise<string | null>
+  handleComplete: () => void
+  onRetry: () => void
+}) {
+  if (status === "error") {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-4">
+          <X className="w-8 h-8 text-red-600" />
+        </div>
+        <h3 className="text-lg font-semibold text-neutral-900 mb-2">Something went wrong</h3>
+        <p className="text-neutral-500 mb-4">{error}</p>
+        <button
+          onClick={onRetry}
+          className="px-4 py-2 rounded-full bg-neutral-900 text-white text-sm font-medium hover:bg-neutral-800 transition-colors"
+        >
+          Try again
+        </button>
+      </div>
+    )
+  }
+
+  if (status === "success") {
+    return (
+      <div className="flex flex-col items-center justify-center py-12">
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", stiffness: 200 }}
+          className="w-16 h-16 rounded-full bg-neutral-900 flex items-center justify-center mb-4"
+        >
+          <Check className="w-8 h-8 text-white" />
+        </motion.div>
+        <h3 className="text-xl font-semibold text-neutral-900 mb-2">You're in!</h3>
+        <p className="text-neutral-500 text-center">Check your email for access to the video and templates.</p>
+      </div>
+    )
+  }
+
+  if (status === "loading") {
+    return (
+      <div className="flex flex-col items-center justify-center py-12">
+        <Loader2 className="w-8 h-8 animate-spin text-neutral-400 mb-4" />
+        <p className="text-sm text-neutral-500">Loading checkout...</p>
+      </div>
+    )
+  }
+
+  return (
+    <EmbeddedCheckoutProvider
+      stripe={stripePromise}
+      options={{
+        fetchClientSecret,
+        onComplete: handleComplete,
+      }}
+    >
+      <EmbeddedCheckout />
+    </EmbeddedCheckoutProvider>
   )
 }

@@ -71,6 +71,7 @@ import { StaticAvatar, HeaderAvatar } from "@/components/flip-avatar"
 import { SiteAdminPanel } from "@/components/admin/site-admin-panel"
 import { AdminLoginModal } from "@/components/admin/admin-login-modal"
 import { InstantSiteCreator } from "@/components/admin/instant-site-creator"
+import { CheckoutDrawer } from "@/components/checkout-drawer"
 import { siteConfig } from "@/lib/site-config"
 import { SmsTrigger } from "@/components/sms-trigger"
 import { type AvailabilityStatus } from "@/lib/chat-config"
@@ -79,9 +80,9 @@ const SITE_ID = 1
 const TEMP_ADMIN_BYPASS = true
 
 const QUICK_ACTIONS = [
-  { label: "What will I learn?", message: "What will I learn in the v0 Masterclass?" },
-  { label: "Show me student sites", message: "Show me sites built by students with zero experience" },
-  { label: "What's it cost?", message: "How much is the course?" },
+  { label: "How does this work?", message: "How does v0 University work?" },
+  { label: "Show me examples", message: "Show me sites people have built" },
+  { label: "I have a Shopify store", message: "I run a Shopify store and want to stop paying for design work" },
   { label: "Text Jon", message: null, sms: true },
 ]
 
@@ -101,6 +102,7 @@ export default function Home() {
   const [showAdminLogin, setShowAdminLogin] = useState(false)
   const [showAdminPanel, setShowAdminPanel] = useState(false)
   const [showSiteCreator, setShowSiteCreator] = useState(false)
+  const [showCheckout, setShowCheckout] = useState(false)
   const [adminLongPressTimer, setAdminLongPressTimer] = useState<NodeJS.Timeout | null>(null)
 
   // Panel resize
@@ -466,7 +468,7 @@ export default function Home() {
                   transition={{ duration: 0.15 }}
                   className="w-full md:max-w-2xl md:mx-auto"
                 >
-                  <MessageList messages={messages} status={status} avatarUrl={siteConfig.brand.avatarUrl} onQuickReply={handleChatSubmit} onAuditSubmit={handleAuditSubmit} onLabelUpload={handleLabelUpload} />
+                  <MessageList messages={messages} status={status} avatarUrl={siteConfig.brand.avatarUrl} onQuickReply={handleChatSubmit} onCheckout={() => setShowCheckout(true)} />
                   {chatError && (
                     <div className="px-4 py-2">
                       <div className="p-3 rounded-xl bg-[#fef2f2] border border-[#fecaca] text-sm">
@@ -528,11 +530,11 @@ export default function Home() {
         {/* Mobile: Vertical icon rail */}
         <div className="md:hidden flex flex-col items-center justify-end gap-1.5 flex-shrink-0 pr-[14px] pl-[5px] pb-[max(env(safe-area-inset-bottom),12px)]">
           {([
-            { icon: IconAudit, label: "Learn", action: () => handleChatSubmit("What will I learn in this course?") },
-            { icon: IconWork, label: "Sites", action: () => handleChatSubmit("Show me sites built by students") },
-            { icon: IconPrice, label: "Cost", action: () => handleChatSubmit("What's the course cost?") },
+            { icon: IconAudit, label: "How", action: () => handleChatSubmit("How does this work?") },
+            { icon: IconWork, label: "Sites", action: () => handleChatSubmit("Show me sites people have built") },
+            { icon: IconPrice, label: "Info", action: () => handleChatSubmit("Tell me more about v0 University") },
             { icon: IconText, label: "Text", sms: true as const },
-            { icon: IconGallery, label: "Preview", action: () => handleChatSubmit("Can I see a preview of the course?") },
+            { icon: IconGallery, label: "Watch", action: () => handleChatSubmit("Can I see what I'm getting?") },
           ] as const).map(({ icon: Icon, label, ...rest }) => {
             const btn = (
               <button
@@ -555,6 +557,13 @@ export default function Home() {
 
         </div>
       </div>
+
+      {/* Checkout drawer */}
+      <CheckoutDrawer
+        isOpen={showCheckout}
+        onClose={() => setShowCheckout(false)}
+        onSuccess={() => handleChatSubmit("I just enrolled")}
+      />
     </main>
   )
 }

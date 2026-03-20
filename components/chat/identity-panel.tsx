@@ -15,14 +15,8 @@ interface IdentityPanelProps {
   style?: React.CSSProperties
 }
 
-const STATUS_COLOR: Record<string, string> = {
-  online: "var(--forest-500)",
-  away: "#d4a017",
-  offline: "#888",
-}
-
 export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, chatDisabled, style }: IdentityPanelProps) {
-  const { brand, stats } = siteConfig
+  const { brand } = siteConfig
   const [showGallery, setShowGallery] = useState(false)
   const openGallery = useCallback(() => setShowGallery(true), [])
   const closeGallery = useCallback(() => setShowGallery(false), [])
@@ -50,41 +44,22 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, c
         </div>
 
         {/* Name */}
-        <h1
-          className="text-[22px] font-semibold text-foreground leading-none tracking-[-0.02em]"
-        >
+        <h1 className="text-[22px] font-semibold text-foreground leading-none tracking-[-0.02em]">
           {brand.name}
         </h1>
 
-        {/* Subtitle */}
-        <p className="text-[13px] text-muted-foreground mt-1.5">
-          {brand.subtitle}
+        {/* Tagline - the hook */}
+        <p className="text-[14px] text-muted-foreground mt-2 text-center max-w-[240px] leading-relaxed">
+          {brand.tagline}
         </p>
 
         {/* Divider */}
         <div className="w-8 h-px bg-foreground/10 my-6" />
 
-        {/* Tagline */}
+        {/* Subtitle - the question that opens curiosity */}
         <p className="text-[15px] text-foreground leading-relaxed text-center max-w-[220px]">
-          {brand.tagline}
+          {brand.subtitle}
         </p>
-
-        {/* Stats */}
-        <div className="flex items-center gap-2 mt-6">
-          {stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="px-3 py-1.5 rounded-full border border-foreground/10 text-center"
-            >
-              <span className="text-[13px] font-semibold text-foreground leading-none">
-                {stat.value}
-              </span>
-              <span className="text-[10px] text-muted-foreground ml-1 uppercase tracking-[0.05em]">
-                {stat.label}
-              </span>
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* Chat input */}
@@ -94,7 +69,7 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, c
           setInput={setInput}
           onSubmit={onSubmit}
           disabled={chatDisabled}
-          placeholder="Ask me anything..."
+          placeholder="Tell me what you'd build..."
         />
       </div>
     </aside>
