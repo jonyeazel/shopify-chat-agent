@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { X, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react"
 import { PORTFOLIO_DATA } from "@/lib/portfolio-data"
 
+// Sites to display in the showcase
 const portfolioSites = PORTFOLIO_DATA.liveSites
 
 interface ShowcaseDrawerProps {
