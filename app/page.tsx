@@ -468,32 +468,7 @@ export default function Home() {
             </AnimatePresence>
           </div>
 
-          {/* Desktop: Starter prompts footer */}
-          <div className="flex-shrink-0 relative bg-card hidden md:block">
-            <div className="flex items-center justify-center gap-2 px-4 py-3">
-              {QUICK_ACTIONS.map((action, i) => {
-                const btn = (
-                  <button
-                    key={i}
-                    onClick={action.sms ? undefined : () => {
-                      if (action.message) handleChatSubmit(action.message)
-                    }}
-                    className={`py-1.5 px-3 rounded-full text-[12px] transition-colors duration-150 whitespace-nowrap ${
-                      action.sms
-                        ? "bg-foreground text-background hover:opacity-90 cursor-pointer"
-                        : "border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30"
-                    }`}
-                  >
-                    {action.label}
-                  </button>
-                )
-                if (action.sms) {
-                  return <SmsTrigger key={i}>{btn}</SmsTrigger>
-                }
-                return btn
-              })}
-            </div>
-          </div>
+
           {/* Mobile: Fade above input */}
           <div className="flex-shrink-0 md:hidden h-10 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent, var(--card))" }} />
           {/* Mobile: Chat input */}
