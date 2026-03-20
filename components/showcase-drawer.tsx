@@ -1,8 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { motion, AnimatePresence, PanInfo } from "framer-motion"
-import { X, ExternalLink } from "lucide-react"
+import { motion, AnimatePresence, type PanInfo } from "framer-motion"
+import { X } from "lucide-react"
 import { PORTFOLIO_DATA } from "@/lib/portfolio-data"
 
 const sites = PORTFOLIO_DATA.liveSites
@@ -65,16 +65,10 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
             className="absolute bottom-0 left-0 right-0 h-[95vh] bg-background rounded-t-2xl overflow-hidden flex flex-col"
           >
             {/* Minimal header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-              <a
-                href={currentSite.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-sm font-medium text-foreground hover:text-foreground/80"
-              >
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-sm font-medium text-foreground">
                 {currentSite.name}
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
+              </span>
               <button
                 onClick={onClose}
                 className="p-1.5 rounded-full hover:bg-muted transition-colors"
@@ -83,8 +77,8 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
               </button>
             </div>
 
-            {/* Swipeable iframe area */}
-            <div className="flex-1 relative overflow-hidden">
+            {/* Swipeable iframe with 12px padding */}
+            <div className="flex-1 relative overflow-hidden p-3">
               <motion.div
                 key={currentIndex}
                 initial={{ x: direction * 300, opacity: 0 }}
@@ -95,26 +89,24 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.2}
                 onDragEnd={handleDragEnd}
-                className="absolute inset-0 cursor-grab active:cursor-grabbing"
+                className="absolute inset-3 cursor-grab active:cursor-grabbing rounded-xl overflow-hidden border border-border shadow-sm"
               >
-                {/* Loading state */}
                 {!isLoaded && (
                   <div className="absolute inset-0 flex items-center justify-center bg-muted">
                     <div className="w-6 h-6 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" />
                   </div>
                 )}
-                
                 <iframe
                   src={currentSite.url}
                   title={currentSite.name}
-                  className="w-full h-full border-0 pointer-events-none"
+                  className="w-full h-full border-0 pointer-events-none bg-white"
                   onLoad={() => setIsLoaded(true)}
                 />
               </motion.div>
             </div>
 
-            {/* Pagination dots */}
-            <div className="flex items-center justify-center gap-2 py-4 border-t border-border">
+            {/* Instagram-style blue pagination dots */}
+            <div className="flex items-center justify-center gap-1.5 py-3">
               {sites.map((_, i) => (
                 <button
                   key={i}
@@ -122,10 +114,10 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
                     setDirection(i > currentIndex ? 1 : -1)
                     setCurrentIndex(i)
                   }}
-                  className={`w-2 h-2 rounded-full transition-all ${
+                  className={`rounded-full transition-all ${
                     i === currentIndex
-                      ? "bg-foreground w-6"
-                      : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                      ? "w-1.5 h-1.5 bg-[#0095F6]"
+                      : "w-1.5 h-1.5 bg-[#0095F6]/30 hover:bg-[#0095F6]/50"
                   }`}
                 />
               ))}
