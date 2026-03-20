@@ -32,7 +32,7 @@ export function getGalleryByCategory(category: GalleryCategory): GalleryItem[] {
 }
 
 // Live sites for the desktop showcase panel
-export const portfolioData = {
+export const PORTFOLIO_DATA = {
   liveSites: [
     { name: "Stadics", url: "https://v0-stadics.vercel.app/" },
     { name: "Neon Templates", url: "https://v0-neon-v0-templates.vercel.app/" },

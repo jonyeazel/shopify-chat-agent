@@ -1,5 +1,3 @@
-import { PORTFOLIO_DATA } from "./portfolio-data"
-
 export type DetectedContent = {
   type: "videoPreview" | "liveSites" | "pricing" | "paymentOptions"
   data?: any
@@ -34,7 +32,7 @@ export function detectContentToShow(text: string): DetectedContent | null {
     lower.includes("take a look") ||
     lower.includes("here's what people have built")
   ) {
-    return { type: "liveSites", data: PORTFOLIO_DATA.liveSites }
+    return { type: "liveSites", data: null }
   }
 
   // Pricing - show simple $297 card
