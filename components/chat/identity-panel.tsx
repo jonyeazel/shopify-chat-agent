@@ -53,14 +53,16 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, o
           />
         </div>
 
-        {/* Tagline - the hook */}
-        <h1 className="text-[24px] font-semibold text-foreground leading-tight tracking-[-0.02em] text-center">
-          {brand.tagline}
+        {/* Tagline - fixed line breaks */}
+        <h1 className="text-[24px] font-semibold text-foreground leading-tight tracking-[-0.02em] text-center max-w-[280px]">
+          <span className="block">Build your first real</span>
+          <span className="block">website with AI.</span>
         </h1>
 
-        {/* Subtitle - simple and direct */}
-        <p className="text-[15px] text-muted-foreground mt-3 text-center max-w-[260px] leading-relaxed">
-          {brand.subtitle}
+        {/* Subtitle - fixed line breaks */}
+        <p className="text-[15px] text-muted-foreground mt-3 text-center max-w-[280px] leading-relaxed">
+          <span className="block">A 57-second lesson showing you</span>
+          <span className="block">exactly how. No experience needed.</span>
         </p>
 
         {/* Action buttons - horizontal row */}
