@@ -1,5 +1,5 @@
 "use client"
-
+// v0 University - Main Page
 import type React from "react"
 import { useState, useRef, useCallback, useEffect, type MouseEvent as ReactMouseEvent } from "react"
 import { useChat } from "@ai-sdk/react"
