@@ -74,7 +74,7 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
             </button>
           </div>
 
-          {/* Swipeable iframe area with padding */}
+          {/* Swipeable iframe area with 12px padding */}
           <div className="flex-1 p-3 overflow-hidden">
             <motion.div
               key={currentIndex}
@@ -88,7 +88,6 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
               onDragEnd={handleDragEnd}
               className="w-full h-full rounded-xl overflow-hidden border border-border bg-white relative"
             >
-              {/* Loading state */}
               {!isLoaded && (
                 <div className="absolute inset-0 flex items-center justify-center bg-muted">
                   <div className="w-6 h-6 border-2 border-muted-foreground/30 border-t-foreground rounded-full animate-spin" />
@@ -104,7 +103,7 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
             </motion.div>
           </div>
 
-          {/* Instagram-style pagination dots */}
+          {/* Instagram-style blue pagination dots */}
           <div className="flex justify-center gap-1.5 pb-6 pt-2">
             {sites.map((_, idx) => (
               <button

@@ -60,3 +60,6 @@ export const PORTFOLIO_DATA = {
 }
 
 export type LiveSite = { name: string; url: string }
+
+// Alias for backwards compatibility
+export const portfolioSites = PORTFOLIO_DATA.liveSites
