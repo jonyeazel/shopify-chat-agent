@@ -35,27 +35,30 @@ export function CheckoutDrawer({ isOpen, onClose }: CheckoutDrawerProps) {
     onClose()
   }
 
-  if (!isOpen) return null
-
   return (
-    <>
-      {/* Backdrop */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={handleClose}
-        className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
-      />
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            key="backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={handleClose}
+            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+          />
 
-      {/* Mobile: Bottom sheet */}
-      <motion.div
-        initial={{ y: "100%" }}
-        animate={{ y: 0 }}
-        exit={{ y: "100%" }}
-        transition={{ type: "spring", damping: 28, stiffness: 300 }}
-        className="fixed inset-x-0 bottom-0 z-50 md:hidden max-h-[95vh] overflow-hidden"
-      >
+          {/* Mobile: Bottom sheet */}
+          <motion.div
+            key="mobile-drawer"
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 30, stiffness: 350 }}
+            className="fixed inset-x-0 bottom-0 z-50 md:hidden max-h-[95vh] overflow-hidden"
+          >
         <div className="bg-white rounded-t-[20px] shadow-2xl overflow-hidden flex flex-col max-h-[95vh]">
           {/* Drag handle */}
           <div className="flex justify-center pt-2 pb-1 flex-shrink-0">
@@ -207,13 +210,14 @@ export function CheckoutDrawer({ isOpen, onClose }: CheckoutDrawerProps) {
       </motion.div>
 
       {/* Desktop: Side panel */}
-      <motion.div
-        initial={{ x: "100%" }}
-        animate={{ x: 0 }}
-        exit={{ x: "100%" }}
-        transition={{ type: "spring", damping: 28, stiffness: 300 }}
-        className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-md hidden md:block"
-      >
+          <motion.div
+            key="desktop-drawer"
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 30, stiffness: 350 }}
+            className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-md hidden md:block"
+          >
         <div className="h-full bg-white shadow-2xl flex flex-col">
           <AnimatePresence mode="wait">
             {!showCheckout ? (
@@ -365,8 +369,10 @@ export function CheckoutDrawer({ isOpen, onClose }: CheckoutDrawerProps) {
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
-      </motion.div>
-    </>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   )
 }

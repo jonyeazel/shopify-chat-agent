@@ -4,6 +4,7 @@ import { useState, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, ChevronLeft, ChevronRight, MessageCircle } from "lucide-react"
 import { PORTFOLIO_DATA } from "@/lib/portfolio-data"
+import { useDrawerGesture, springClose } from "@/hooks/use-drawer-gesture"
 
 // Derive gallery data from PORTFOLIO_DATA
 type GalleryItem = {
@@ -24,7 +25,6 @@ const GALLERY_CATEGORIES = [
   { value: "ecommerce", label: "E-Commerce" },
   { value: "saas", label: "SaaS" },
 ]
-import { useDrawerGesture, springClose } from "@/hooks/use-drawer-gesture"
 
 interface MediaGalleryProps {
   isOpen: boolean

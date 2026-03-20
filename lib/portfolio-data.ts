@@ -1,70 +1,31 @@
-// Portfolio data - ALL exports defined first for tree-shaking compatibility
+// Portfolio data for v0 University
+// All exports are defined at the top level for build compatibility
 
-export type GalleryItem = {
-  category: string
-  label: string
-  url: string
+export const PORTFOLIO_DATA = {
+  liveSites: [
+    { name: "AI Landing Page", url: "https://ai-landing-page-v0.vercel.app" },
+    { name: "SaaS Dashboard", url: "https://saas-dashboard-v0.vercel.app" },
+    { name: "E-commerce Store", url: "https://ecommerce-store-v0.vercel.app" },
+    { name: "Portfolio Site", url: "https://portfolio-site-v0.vercel.app" },
+    { name: "Blog Platform", url: "https://blog-platform-v0.vercel.app" },
+  ],
+  galleryItems: [
+    { name: "Modern Landing", category: "landing", thumbnail: "/gallery/landing-1.jpg" },
+    { name: "Product Page", category: "ecommerce", thumbnail: "/gallery/ecommerce-1.jpg" },
+    { name: "Dashboard UI", category: "saas", thumbnail: "/gallery/saas-1.jpg" },
+    { name: "Hero Section", category: "landing", thumbnail: "/gallery/landing-2.jpg" },
+    { name: "Checkout Flow", category: "ecommerce", thumbnail: "/gallery/ecommerce-2.jpg" },
+    { name: "Analytics View", category: "saas", thumbnail: "/gallery/saas-2.jpg" },
+  ],
 }
 
 export type LiveSite = { name: string; url: string }
 
-// Gallery categories for filtering
-export const GALLERY_CATEGORIES = [
-  { value: "all", label: "All" },
-  { value: "landing", label: "Landing Pages" },
-  { value: "ecommerce", label: "E-Commerce" },
-  { value: "saas", label: "SaaS" },
-]
-
-// Main portfolio data object
-export const PORTFOLIO_DATA = {
-  liveSites: [
-    { name: "Stadics", url: "https://v0-stadics.vercel.app/" },
-    { name: "MUD WTR", url: "https://v0-mudwater.vercel.app" },
-    { name: "AI Blocks", url: "https://v0-aiblocks.vercel.app/" },
-    { name: "vCommerce", url: "https://v0-vcommercepdp-three.vercel.app" },
-  ],
-  galleryItems: [
-    { name: "Stadics Landing", category: "landing", thumbnail: "/portfolio/stadics.jpg" },
-    { name: "MUD WTR Store", category: "ecommerce", thumbnail: "/portfolio/mudwtr.jpg" },
-    { name: "AI Blocks", category: "saas", thumbnail: "/portfolio/aiblocks.jpg" },
-    { name: "vCommerce PDP", category: "ecommerce", thumbnail: "/portfolio/vcommerce.jpg" },
-  ],
-  pricing: {
-    video: {
-      name: "v0 University",
-      price: "$297",
-      description: "57-second video + templates",
-      popular: true,
-      chatPrompt: "Tell me about the video course",
-    },
-    audit: {
-      name: "Site Audit",
-      price: "$47",
-      description: "Quick CRO analysis",
-      chatPrompt: "Tell me about the site audit",
-    },
-    done: {
-      name: "Done For You",
-      price: "$1,497+",
-      description: "Full site build",
-      chatPrompt: "Tell me about done for you",
-    },
-  },
-}
-
-// Gallery items in the format expected by media-gallery
-export const GALLERY_ITEMS: GalleryItem[] = PORTFOLIO_DATA.galleryItems.map((item) => ({
-  category: item.category,
-  label: item.name,
-  url: item.thumbnail,
-}))
-
-// Backwards compatible exports
+// Backwards compatible export
 export const portfolioSites = PORTFOLIO_DATA.liveSites
 
-// Helper function for filtering
-export function getGalleryByCategory(category: string): GalleryItem[] {
-  if (category === "all") return GALLERY_ITEMS
-  return GALLERY_ITEMS.filter((item) => item.category === category)
+// Helper function
+export function getGalleryByCategory(category: string) {
+  if (category === "all") return PORTFOLIO_DATA.galleryItems
+  return PORTFOLIO_DATA.galleryItems.filter((item) => item.category === category)
 }
