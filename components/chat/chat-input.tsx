@@ -6,10 +6,10 @@ import { ArrowUp, Plus, Mic, MicOff, X, FileText } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 const PLACEHOLDER_TEXTS = [
-  "What would you build...",
-  "A landing page, portfolio, store...",
-  "Tell me what you'd create...",
-  "What's the first thing you'd make...",
+  "Ask me anything...",
+  "How does this work?",
+  "Show me examples...",
+  "I want to build a...",
 ]
 
 const MAX_RECORDING_MS = 120_000

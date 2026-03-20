@@ -347,8 +347,8 @@ export default function Home() {
             >
               <HeaderAvatar avatarUrl={siteConfig.brand.headerLogoUrl} />
               <div className="flex flex-col">
-                <span className="font-medium text-foreground text-[14px] leading-none tracking-[-0.01em]">{siteConfig.brand.name}</span>
-                <span className="text-[10px] text-muted-foreground leading-none mt-1">{siteConfig.brand.subtitle}</span>
+                <span className="font-semibold text-foreground text-[16px] leading-none tracking-[-0.01em]">{siteConfig.brand.name}</span>
+                <span className="text-[12px] text-muted-foreground leading-none mt-1.5 max-w-[200px] truncate">{siteConfig.brand.subtitle}</span>
               </div>
             </div>
           </div>
@@ -413,7 +413,7 @@ export default function Home() {
                       </motion.div>
 
                       <motion.h1
-                        className="font-semibold text-foreground text-[18px] tracking-[-0.01em]"
+                        className="font-semibold text-foreground text-[22px] tracking-[-0.02em] leading-tight"
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.12 }}
@@ -422,7 +422,7 @@ export default function Home() {
                       </motion.h1>
 
                       <motion.p
-                        className="text-[12px] text-muted-foreground mt-1"
+                        className="text-[15px] text-muted-foreground mt-2 max-w-[280px] leading-relaxed"
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.17 }}
@@ -528,7 +528,7 @@ export default function Home() {
         </div>
 
         {/* Mobile: Vertical icon rail */}
-        <div className="md:hidden flex flex-col items-center justify-end gap-1.5 flex-shrink-0 pr-[14px] pl-[5px] pb-[max(env(safe-area-inset-bottom),12px)]">
+        <div className="md:hidden flex flex-col items-center justify-end gap-2 flex-shrink-0 pr-[16px] pl-[6px] pb-[max(env(safe-area-inset-bottom),16px)]">
           {([
             { icon: IconAudit, label: "How", action: () => handleChatSubmit("How does this work?") },
             { icon: IconWork, label: "Sites", action: () => handleChatSubmit("Show me sites people have built") },
@@ -540,12 +540,12 @@ export default function Home() {
               <button
                 key={label}
                 onClick={"action" in rest ? rest.action : undefined}
-                className="flex flex-col items-center gap-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+                className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
               >
-                <div className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-foreground rubber-button ring-1 ring-white/[0.06]">
-                  <Icon className="w-6 h-6 text-background" strokeWidth={1.5} />
+                <div className="w-[56px] h-[56px] rounded-full flex items-center justify-center bg-foreground rubber-button ring-1 ring-white/[0.06]">
+                  <Icon className="w-7 h-7 text-background" strokeWidth={1.5} />
                 </div>
-                <span className="text-[10px] text-muted-foreground leading-tight">{label}</span>
+                <span className="text-[11px] text-muted-foreground leading-tight font-medium">{label}</span>
               </button>
             )
             if ("sms" in rest) {

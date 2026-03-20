@@ -1,8 +1,8 @@
 export const siteConfig = {
   brand: {
     name: "v0 University",
-    tagline: "Learn how to build websites with AI.",
-    subtitle: "What would you build if you knew how?",
+    tagline: "Build websites with AI.",
+    subtitle: "No code. No design skills. Just describe what you want.",
     avatarUrl: "/images/jon-profile.png",
     headerLogoUrl: "/images/v0-university-logo.png",
     logoUrl: "/images/v0-university-logo.png",
