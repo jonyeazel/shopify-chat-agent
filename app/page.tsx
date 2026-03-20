@@ -80,9 +80,9 @@ const SITE_ID = 1
 const TEMP_ADMIN_BYPASS = true
 
 const QUICK_ACTIONS = [
-  { label: "What will I learn?", message: "What will I learn in the v0 Masterclass?" },
-  { label: "Show me student sites", message: "Show me sites built by students with zero experience" },
-  { label: "What's it cost?", message: "How much is the course?" },
+  { label: "How does this work?", message: "How does v0 University work?" },
+  { label: "Show me examples", message: "Show me sites people have built" },
+  { label: "I have a Shopify store", message: "I run a Shopify store and want to stop paying for design work" },
   { label: "Text Jon", message: null, sms: true },
 ]
 
@@ -530,11 +530,11 @@ export default function Home() {
         {/* Mobile: Vertical icon rail */}
         <div className="md:hidden flex flex-col items-center justify-end gap-1.5 flex-shrink-0 pr-[14px] pl-[5px] pb-[max(env(safe-area-inset-bottom),12px)]">
           {([
-            { icon: IconAudit, label: "Learn", action: () => handleChatSubmit("What will I learn in this course?") },
-            { icon: IconWork, label: "Sites", action: () => handleChatSubmit("Show me sites built by students") },
-            { icon: IconPrice, label: "Cost", action: () => handleChatSubmit("What's the course cost?") },
+            { icon: IconAudit, label: "How", action: () => handleChatSubmit("How does this work?") },
+            { icon: IconWork, label: "Sites", action: () => handleChatSubmit("Show me sites people have built") },
+            { icon: IconPrice, label: "Info", action: () => handleChatSubmit("Tell me more about v0 University") },
             { icon: IconText, label: "Text", sms: true as const },
-            { icon: IconGallery, label: "Preview", action: () => handleChatSubmit("Can I see a preview of the course?") },
+            { icon: IconGallery, label: "Watch", action: () => handleChatSubmit("Can I see what I'm getting?") },
           ] as const).map(({ icon: Icon, label, ...rest }) => {
             const btn = (
               <button
