@@ -1,4 +1,5 @@
 import type React from "react"
+// v0 University Layout
 import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
