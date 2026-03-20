@@ -1,5 +1,22 @@
 // Portfolio data for v0 University showcase
+// Types
+export type LiveSite = { name: string; url: string }
 
+export type GalleryItem = {
+  category: string
+  label: string
+  url: string
+}
+
+// Gallery categories for filtering
+export const GALLERY_CATEGORIES = [
+  { value: "all", label: "All" },
+  { value: "landing", label: "Landing Pages" },
+  { value: "ecommerce", label: "E-Commerce" },
+  { value: "saas", label: "SaaS" },
+]
+
+// Main portfolio data
 export const PORTFOLIO_DATA = {
   liveSites: [
     { name: "Stadics", url: "https://v0-stadics.vercel.app/" },
@@ -51,12 +68,18 @@ export const PORTFOLIO_DATA = {
   ],
 }
 
+// Gallery items formatted for MediaGallery component
+export const GALLERY_ITEMS: GalleryItem[] = PORTFOLIO_DATA.galleryItems.map((item) => ({
+  category: item.category,
+  label: item.name,
+  url: item.thumbnail,
+}))
+
+// Helper function
 export function getGalleryByCategory(category: string) {
   if (category === "all") return PORTFOLIO_DATA.galleryItems
   return PORTFOLIO_DATA.galleryItems.filter((item) => item.category === category)
 }
 
-export type LiveSite = { name: string; url: string }
-
-// Backwards compatible export - both import styles work
+// Backwards compatible exports
 export const portfolioSites = PORTFOLIO_DATA.liveSites
