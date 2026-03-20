@@ -6,7 +6,7 @@ import { X, ChevronLeft, ChevronRight, MessageCircle } from "lucide-react"
 import { PORTFOLIO_DATA } from "@/lib/portfolio-data"
 import { useDrawerGesture, springClose } from "@/hooks/use-drawer-gesture"
 
-// Derive gallery data from PORTFOLIO_DATA
+// Define types and derive gallery data locally from PORTFOLIO_DATA
 type GalleryItem = {
   category: string
   label: string
@@ -29,234 +29,175 @@ const GALLERY_CATEGORIES = [
 interface MediaGalleryProps {
   isOpen: boolean
   onClose: () => void
-  onAskAbout?: (prompt: string) => void
+  onChatClick?: () => void
 }
 
-export function MediaGallery({ isOpen, onClose, onAskAbout }: MediaGalleryProps) {
+export function MediaGallery({ isOpen, onClose, onChatClick }: MediaGalleryProps) {
+  const [selectedCategory, setSelectedCategory] = useState("all")
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
 
-  const filtered = GALLERY_ITEMS
+  const filteredItems =
+    selectedCategory === "all"
+      ? GALLERY_ITEMS
+      : GALLERY_ITEMS.filter((item) => item.category === selectedCategory)
 
-  const handleSelect = useCallback((index: number) => {
-    setSelectedIndex(index)
-  }, [])
-
-  const handlePrev = useCallback(() => {
-    setSelectedIndex((prev) =>
-      prev === null ? null : prev === 0 ? filtered.length - 1 : prev - 1
-    )
-  }, [filtered.length])
+  const handlePrevious = useCallback(() => {
+    if (selectedIndex !== null && selectedIndex > 0) {
+      setSelectedIndex(selectedIndex - 1)
+    }
+  }, [selectedIndex])
 
   const handleNext = useCallback(() => {
-    setSelectedIndex((prev) =>
-      prev === null ? null : prev === filtered.length - 1 ? 0 : prev + 1
-    )
-  }, [filtered.length])
+    if (selectedIndex !== null && selectedIndex < filteredItems.length - 1) {
+      setSelectedIndex(selectedIndex + 1)
+    }
+  }, [selectedIndex, filteredItems.length])
 
-  const handleBack = useCallback(() => {
-    setSelectedIndex(null)
-  }, [])
-
-  const { controls, dragControls, handleDragEnd, close, isClosing, startDrag } = useDrawerGesture(onClose, isOpen)
-
-  const handleClose = useCallback(() => {
-    setSelectedIndex(null)
-    close()
-  }, [close])
-
-  const handleAskAbout = useCallback((item: GalleryItem) => {
-    const categoryLabel = GALLERY_CATEGORIES.find((c) => c.value === item.category)?.label || "this"
-    const prompt = `Tell me about your ${categoryLabel.toLowerCase()} work — like "${item.label}"`
-    onAskAbout?.(prompt)
-    handleClose()
-  }, [onAskAbout, handleClose])
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === "Escape") {
-        if (selectedIndex !== null) {
-          setSelectedIndex(null)
-        } else {
-          handleClose()
-        }
-      }
-      if (selectedIndex !== null) {
-        if (e.key === "ArrowLeft") handlePrev()
-        if (e.key === "ArrowRight") handleNext()
-      }
-    },
-    [selectedIndex, handleClose, handlePrev, handleNext]
-  )
-
-  const selected = selectedIndex !== null ? filtered[selectedIndex] : null
+  const { dragY, handleDragEnd } = useDrawerGesture({ onClose })
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 0 } }}
-          transition={{ duration: 0.25 }}
-          className="absolute inset-0 z-[100]"
-          onKeyDown={handleKeyDown}
-          tabIndex={0}
-          autoFocus
-        >
+        <>
           {/* Backdrop */}
-          <div
-            className={`absolute inset-0 bg-black/70 transition-opacity duration-300 ease-out ${isClosing ? "opacity-0" : ""}`}
-            onClick={selectedIndex !== null ? handleBack : handleClose}
+          <motion.div
+            key="gallery-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={onClose}
+            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
           />
 
-          <AnimatePresence mode="wait">
-            {selected ? (
-              /* Lightbox view */
-              <motion.div
-                key="lightbox"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15 }}
-                className="absolute inset-0 z-10 flex flex-col md:flex-row items-center justify-center gap-4 p-4"
-              >
+          {/* Drawer */}
+          <motion.div
+            key="gallery-drawer"
+            style={{ y: dragY }}
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{ top: 0, bottom: 0.5 }}
+            onDragEnd={handleDragEnd}
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={springClose}
+            className="fixed inset-x-0 bottom-0 z-50 h-[85vh] bg-white rounded-t-3xl overflow-hidden"
+          >
+            {/* Handle */}
+            <div className="flex justify-center pt-3 pb-2">
+              <div className="w-10 h-1 bg-neutral-300 rounded-full" />
+            </div>
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 pb-4">
+              <h2 className="text-lg font-semibold text-neutral-900">Gallery</h2>
+              <div className="flex items-center gap-2">
+                {onChatClick && (
+                  <button
+                    onClick={onChatClick}
+                    className="p-2 rounded-full hover:bg-neutral-100 transition-colors"
+                    aria-label="Open chat"
+                  >
+                    <MessageCircle className="w-5 h-5 text-neutral-600" />
+                  </button>
+                )}
                 <button
-                  onClick={handlePrev}
-                  className="hidden md:flex flex-shrink-0 w-10 h-10 rounded-full bg-card border border-border items-center justify-center hover:bg-muted transition-colors duration-150"
+                  onClick={onClose}
+                  className="p-2 rounded-full hover:bg-neutral-100 transition-colors"
+                  aria-label="Close gallery"
                 >
-                  <ChevronLeft className="w-5 h-5 text-foreground" />
+                  <X className="w-5 h-5 text-neutral-600" />
                 </button>
+              </div>
+            </div>
 
-                <div className="relative bg-card rounded-xl overflow-hidden shadow-lg border border-border max-w-[90%] md:max-w-[65vw]">
-                  <img
-                    src={selected.url}
-                    alt={selected.label}
-                    className="max-h-[55vh] md:max-h-[65vh] w-auto object-contain"
-                  />
-                  <div className="flex items-center justify-between px-4 py-3 border-t border-border">
-                    <div>
-                      <p className="text-[14px] text-foreground">{selected.label}</p>
-                      <p className="text-[12px] text-muted-foreground mt-0.5">
-                        {GALLERY_CATEGORIES.find((c) => c.value === selected.category)?.label}
-                      </p>
-                    </div>
-                    {onAskAbout && (
-                      <button
-                        onClick={() => handleAskAbout(selected)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-foreground text-background text-[12px] hover:opacity-90 transition-opacity duration-150"
-                      >
-                        <MessageCircle className="w-3.5 h-3.5" />
-                        Ask about this
-                      </button>
-                    )}
-                  </div>
-                </div>
-
+            {/* Category filters */}
+            <div className="flex gap-2 px-5 pb-4 overflow-x-auto scrollbar-hide">
+              {GALLERY_CATEGORIES.map((cat) => (
                 <button
-                  onClick={handleNext}
-                  className="hidden md:flex flex-shrink-0 w-10 h-10 rounded-full bg-card border border-border items-center justify-center hover:bg-muted transition-colors duration-150"
+                  key={cat.value}
+                  onClick={() => {
+                    setSelectedCategory(cat.value)
+                    setSelectedIndex(null)
+                  }}
+                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    selectedCategory === cat.value
+                      ? "bg-neutral-900 text-white"
+                      : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                  }`}
                 >
-                  <ChevronRight className="w-5 h-5 text-foreground" />
+                  {cat.label}
                 </button>
+              ))}
+            </div>
 
-                {/* Mobile nav */}
-                <div className="flex md:hidden items-center gap-3">
+            {/* Gallery grid */}
+            <div className="flex-1 overflow-y-auto px-5 pb-20">
+              <div className="grid grid-cols-2 gap-3">
+                {filteredItems.map((item, index) => (
                   <button
-                    onClick={handlePrev}
-                    className="w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center"
+                    key={`${item.category}-${index}`}
+                    onClick={() => setSelectedIndex(index)}
+                    className="relative aspect-[4/3] rounded-xl overflow-hidden bg-neutral-100 group"
                   >
-                    <ChevronLeft className="w-5 h-5 text-foreground" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="absolute bottom-2 left-2 text-xs font-medium text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                      {item.label}
+                    </span>
                   </button>
-                  <button
-                    onClick={handleBack}
-                    className="px-4 py-2 rounded-full bg-card border border-border text-[12px] text-muted-foreground"
-                  >
-                    Back to grid
-                  </button>
-                  <button
-                    onClick={handleNext}
-                    className="w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center"
-                  >
-                    <ChevronRight className="w-5 h-5 text-foreground" />
-                  </button>
-                </div>
-              </motion.div>
-            ) : (
-              /* Grid view — bottom sheet */
-              <motion.div
-                key="grid"
-                initial={{ y: "100%" }}
-                animate={controls}
-                exit={{ y: "100%" }}
-                transition={springClose}
-                drag="y"
-                dragControls={dragControls}
-                dragListener={false}
-                dragConstraints={{ top: 0, bottom: 0 }}
-                dragElastic={{ top: 0.04, bottom: 0.6 }}
-                onDragEnd={handleDragEnd}
-                className="absolute bottom-[2px] left-[2px] right-[2px] z-10 bg-card rounded-[20px] overflow-hidden flex flex-col"
-                style={{ height: "85vh", maxHeight: "100%" }}
-              >
-                {/* Drag handle */}
-                <div
-                  onPointerDown={startDrag}
-                  className="flex justify-center pt-3 pb-2 flex-shrink-0 cursor-grab active:cursor-grabbing"
-                  style={{ touchAction: "none" }}
+                ))}
+              </div>
+            </div>
+
+            {/* Lightbox */}
+            <AnimatePresence>
+              {selectedIndex !== null && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 bg-black/90 flex items-center justify-center z-50"
                 >
-                  <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
-                </div>
+                  <button
+                    onClick={() => setSelectedIndex(null)}
+                    className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                    aria-label="Close lightbox"
+                  >
+                    <X className="w-5 h-5 text-white" />
+                  </button>
 
-                <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide overscroll-contain">
-                  {/* Grid */}
-                  <div className="p-3">
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {filtered.map((item, i) => (
-                        <GalleryThumbnail
-                          key={i}
-                          item={item}
-                          index={i}
-                          onClick={handleSelect}
-                        />
-                      ))}
-                    </div>
-                    {filtered.length === 0 && (
-                      <p className="text-center text-[13px] text-muted-foreground py-12">No images in this category.</p>
-                    )}
+                  {selectedIndex > 0 && (
+                    <button
+                      onClick={handlePrevious}
+                      className="absolute left-4 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                      aria-label="Previous image"
+                    >
+                      <ChevronLeft className="w-6 h-6 text-white" />
+                    </button>
+                  )}
+
+                  <div className="max-w-[90%] max-h-[80%] bg-neutral-800 rounded-xl flex items-center justify-center p-8">
+                    <span className="text-white text-lg">
+                      {filteredItems[selectedIndex]?.label}
+                    </span>
                   </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
+
+                  {selectedIndex < filteredItems.length - 1 && (
+                    <button
+                      onClick={handleNext}
+                      className="absolute right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                      aria-label="Next image"
+                    >
+                      <ChevronRight className="w-6 h-6 text-white" />
+                    </button>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        </>
       )}
     </AnimatePresence>
-  )
-}
-
-function GalleryThumbnail({
-  item,
-  index,
-  onClick,
-}: {
-  item: GalleryItem
-  index: number
-  onClick: (index: number) => void
-}) {
-  return (
-    <button
-      onClick={() => onClick(index)}
-      className="w-full aspect-square overflow-hidden rounded-xl group relative bg-muted/40"
-    >
-      <img
-        src={item.url}
-        alt={item.label}
-        className="w-full h-full object-cover transition-opacity duration-150 group-hover:opacity-90"
-        loading="lazy"
-      />
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#191919]/60 to-transparent px-3 pb-2.5 pt-8 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-        <p className="text-[13px] text-white">{item.label}</p>
-      </div>
-    </button>
   )
 }

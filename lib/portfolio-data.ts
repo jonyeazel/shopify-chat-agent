@@ -3,11 +3,11 @@
 
 export const PORTFOLIO_DATA = {
   liveSites: [
-    { name: "AI Landing Page", url: "https://ai-landing-page-v0.vercel.app" },
-    { name: "SaaS Dashboard", url: "https://saas-dashboard-v0.vercel.app" },
-    { name: "E-commerce Store", url: "https://ecommerce-store-v0.vercel.app" },
-    { name: "Portfolio Site", url: "https://portfolio-site-v0.vercel.app" },
-    { name: "Blog Platform", url: "https://blog-platform-v0.vercel.app" },
+    { name: "v0.dev", url: "https://v0.dev" },
+    { name: "Vercel", url: "https://vercel.com" },
+    { name: "Next.js", url: "https://nextjs.org" },
+    { name: "Turbo", url: "https://turbo.build" },
+    { name: "shadcn/ui", url: "https://ui.shadcn.com" },
   ],
   galleryItems: [
     { name: "Modern Landing", category: "landing", thumbnail: "/gallery/landing-1.jpg" },
