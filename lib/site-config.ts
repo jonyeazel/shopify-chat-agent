@@ -1,9 +1,9 @@
 export const siteConfig = {
   brand: {
     name: "v0 University",
-    headerSubtitle: "Build Websites With AI",
-    tagline: "Turn Your Words Into Websites.",
-    subtitle: "A :57sec video that teaches you how to make really good websites. No experience needed.",
+    headerSubtitle: "Build websites with AI",
+    tagline: "Build your first real website with AI.",
+    subtitle: "A 57-second lesson showing you exactly how. No experience needed.",
     avatarUrl: "/images/jon-profile.png",
     headerLogoUrl: "/images/v0-university-logo.png",
     logoUrl: "/images/v0-university-logo.png",
@@ -12,7 +12,7 @@ export const siteConfig = {
 
   contact: {
     phone: "+14078677201",
-    smsBody: "Hey Jon, I found you on v0university.com",
+    smsBody: "Hey Jon, I'm interested in v0 University",
     email: "support@v0university.com",
     adminEmail: "admin@v0university.com",
     calendlyUrl: "https://calendly.com/v0university/coaching",

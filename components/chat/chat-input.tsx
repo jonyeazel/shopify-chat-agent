@@ -7,9 +7,8 @@ import { motion, AnimatePresence } from "framer-motion"
 
 const PLACEHOLDER_TEXTS = [
   "Ask me anything...",
-  "How does this work?",
-  "Show me examples...",
-  "I want to build a...",
+  "What kind of site would you build?",
+  "Type or tap a button...",
 ]
 
 const MAX_RECORDING_MS = 120_000
@@ -436,7 +435,7 @@ export function ChatInput({
       case "processing":
         return "Transcribing..."
       case "error":
-        return "Couldn't transcribe — try again"
+        return "Couldn't transcribe ��� try again"
       case "empty":
         return "No speech detected — try again"
       case "denied":

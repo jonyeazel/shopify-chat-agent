@@ -2,13 +2,9 @@ import { siteConfig } from "./site-config"
 
 export type SmsContext =
   | "general"
-  | "post-audit"
-  | "post-pricing"
-  | "post-report"
-  | "error-fallback"
-  | "thank-you"
-  | "low-budget"
-  | "ready-to-start"
+  | "interested"
+  | "question"
+  | "ready-to-buy"
 
 export interface SmsOptions {
   context?: SmsContext
@@ -17,29 +13,10 @@ export interface SmsOptions {
 }
 
 const BODY_TEMPLATES: Record<SmsContext, (opts: SmsOptions) => string> = {
-  general: () => `Hey Jon, your AI diagnosed my store and I'm ready to talk next steps.`,
-  "post-audit": ({ storeDomain }) =>
-    storeDomain
-      ? `Hey Jon, your AI audited ${storeDomain}. I've added you to my store — ready to get started.`
-      : `Hey Jon, just got my audit results from your AI. Ready to move forward.`,
-  "post-pricing": ({ serviceName }) =>
-    serviceName
-      ? `Hey Jon, your AI recommended ${serviceName}. I've added you to my store — let's do it.`
-      : `Hey Jon, your AI walked me through pricing. Ready to talk details.`,
-  "post-report": ({ storeDomain }) =>
-    storeDomain
-      ? `Hey Jon, reviewed my CRO report for ${storeDomain}. I've added you to my store — ready for implementation.`
-      : `Hey Jon, just reviewed my report. Ready to discuss next steps.`,
-  "error-fallback": () =>
-    `Hey Jon, the chat on your site wasn't loading so I'm texting instead.`,
-  "thank-you": () =>
-    `Hey Jon, just purchased my audit. Quick question:`,
-  "low-budget": () =>
-    `Hey Jon, want to work together but need to figure out budget. Can we talk?`,
-  "ready-to-start": ({ serviceName }) =>
-    serviceName
-      ? `Hey Jon, your AI diagnosed my store and I'm ready to move forward with ${serviceName}. I've added you to my Shopify store.`
-      : `Hey Jon, your AI diagnosed my store and I'm ready to get started. I've added you to my Shopify store.`,
+  general: () => `Hey Jon, I'm interested in v0 University`,
+  interested: () => `Hey Jon, I saw your AI website builder course. Quick question:`,
+  question: () => `Hey Jon, I have a question about v0 University`,
+  "ready-to-buy": () => `Hey Jon, I'm ready to get started with v0 University`,
 }
 
 export function getSmsBody(options: SmsOptions = {}): string {
