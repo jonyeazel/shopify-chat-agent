@@ -3,11 +3,19 @@
 
 export const PORTFOLIO_DATA = {
   liveSites: [
-    { name: "v0.dev", url: "https://v0.dev" },
-    { name: "Vercel", url: "https://vercel.com" },
-    { name: "Next.js", url: "https://nextjs.org" },
-    { name: "Turbo", url: "https://turbo.build" },
-    { name: "shadcn/ui", url: "https://ui.shadcn.com" },
+    { name: "Stadics", url: "https://www.stadics.com" },
+    { name: "The Shopify Guy", url: "https://www.theshopifyguy.dev" },
+    { name: "Ilya Volgin", url: "https://www.ilyavolgin.com" },
+    { name: "Molar Digital", url: "https://www.molar.digital" },
+    { name: "AI Blocks", url: "https://v0-aiblocks.vercel.app" },
+    { name: "Design Blocks", url: "https://v0-designblocks.vercel.app" },
+    { name: "Vibe Code", url: "https://vibecode-black.vercel.app" },
+    { name: "Neon Templates", url: "https://v0-neon-v0-templates.vercel.app" },
+    { name: "MudWater", url: "https://v0-mudwater.vercel.app" },
+    { name: "Shopify Storefront", url: "https://v0-shopifystorefront.vercel.app" },
+    { name: "Commerce PDP", url: "https://v0-vcommercepdp.vercel.app" },
+    { name: "Brez Product", url: "https://v0-brez-product-page.vercel.app" },
+    { name: "Viberr Pro", url: "https://v0-viberrpro.vercel.app" },
   ],
   galleryItems: [
     { name: "Modern Landing", category: "landing", thumbnail: "/gallery/landing-1.jpg" },
