@@ -3,7 +3,9 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react"
-import { portfolioSites } from "@/lib/portfolio-data"
+import { PORTFOLIO_DATA } from "@/lib/portfolio-data"
+
+const portfolioSites = PORTFOLIO_DATA.liveSites
 
 interface ShowcaseDrawerProps {
   isOpen: boolean
@@ -13,6 +15,7 @@ interface ShowcaseDrawerProps {
 export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [touchStart, setTouchStart] = useState<number | null>(null)
 
   const currentSite = portfolioSites[currentIndex]
 
@@ -22,6 +25,23 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
       setIsLoaded(false)
     }
   }, [isOpen, currentIndex])
+
+  // Swipe handling
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX)
+  }
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!touchStart) return
+    const touchEnd = e.changedTouches[0].clientX
+    const diff = touchStart - touchEnd
+
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) goNext()
+      else goPrev()
+    }
+    setTouchStart(null)
+  }
 
   const goNext = () => {
     setIsLoaded(false)
@@ -54,7 +74,11 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
         transition={{ type: "spring", damping: 28, stiffness: 300 }}
         className="fixed inset-x-0 bottom-0 top-12 z-50 flex flex-col"
       >
-        <div className="flex-1 bg-neutral-900 rounded-t-2xl shadow-2xl overflow-hidden flex flex-col">
+        <div 
+          className="flex-1 bg-neutral-900 rounded-t-2xl shadow-2xl overflow-hidden flex flex-col"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
             <div className="flex items-center gap-2">
