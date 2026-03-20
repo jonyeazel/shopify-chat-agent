@@ -14,6 +14,8 @@ import {
   VideoPreview,
   V0ReferralCard,
   FAQAccordion,
+  CoursePreview,
+  SkillAssessment,
   renderMessageWithSmsLinks,
 } from "./content-displays"
 import { PaymentOptions } from "./payment-options"
@@ -311,6 +313,12 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
     }
     if (!detected) return null
 
+    if (detected.type === "skillAssessment") {
+      return <SkillAssessment />
+    }
+    if (detected.type === "coursePreview") {
+      return <CoursePreview />
+    }
     if (detected.type === "faq") {
       return <FAQAccordion />
     }

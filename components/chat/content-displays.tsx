@@ -97,6 +97,238 @@ export function V0ReferralCard() {
   )
 }
 
+// Course Preview - Bento grid showing what's included
+const COURSE_MODULES = [
+  { 
+    title: "The Prompting System",
+    subtitle: "57-second core lesson",
+    icon: "play",
+    highlight: true
+  },
+  { 
+    title: "Template Library",
+    subtitle: "Landing pages, portfolios, stores",
+    icon: "grid"
+  },
+  { 
+    title: "Real Examples",
+    subtitle: "13+ live site breakdowns",
+    icon: "browser"
+  },
+  { 
+    title: "Lifetime Updates",
+    subtitle: "New templates as AI evolves",
+    icon: "refresh"
+  },
+]
+
+export function CoursePreview() {
+  return (
+    <div className="my-4">
+      <div className="grid grid-cols-2 gap-2">
+        {COURSE_MODULES.map((module, index) => (
+          <motion.div
+            key={module.title}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.05 }}
+            className={`p-4 rounded-2xl border ${
+              module.highlight 
+                ? 'bg-neutral-900 text-white border-neutral-800 col-span-2' 
+                : 'bg-white border-neutral-200'
+            }`}
+          >
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2.5 ${
+              module.highlight ? 'bg-white/10' : 'bg-neutral-100'
+            }`}>
+              {module.icon === "play" && (
+                <Play className={`w-4 h-4 ${module.highlight ? 'text-white' : 'text-neutral-600'}`} fill="currentColor" />
+              )}
+              {module.icon === "grid" && (
+                <svg className={`w-4 h-4 ${module.highlight ? 'text-white' : 'text-neutral-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="3" width="7" height="7" rx="1" />
+                  <rect x="14" y="3" width="7" height="7" rx="1" />
+                  <rect x="3" y="14" width="7" height="7" rx="1" />
+                  <rect x="14" y="14" width="7" height="7" rx="1" />
+                </svg>
+              )}
+              {module.icon === "browser" && (
+                <svg className={`w-4 h-4 ${module.highlight ? 'text-white' : 'text-neutral-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <path d="M3 9h18" />
+                </svg>
+              )}
+              {module.icon === "refresh" && (
+                <svg className={`w-4 h-4 ${module.highlight ? 'text-white' : 'text-neutral-600'}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+                  <path d="M21 3v5h-5" />
+                </svg>
+              )}
+            </div>
+            <p className={`text-[14px] font-medium ${module.highlight ? 'text-white' : 'text-neutral-900'}`}>
+              {module.title}
+            </p>
+            <p className={`text-[12px] mt-0.5 ${module.highlight ? 'text-white/60' : 'text-neutral-500'}`}>
+              {module.subtitle}
+            </p>
+          </motion.div>
+        ))}
+      </div>
+      <p className="text-[12px] text-neutral-400 text-center mt-3">
+        $297 one-time. Instant access.
+      </p>
+    </div>
+  )
+}
+
+// Skill Assessment Quiz - Interactive multi-step assessment
+const ASSESSMENT_QUESTIONS = [
+  {
+    question: "Have you tried building with AI before?",
+    options: [
+      { label: "Never tried", value: "never" },
+      { label: "Tried v0 but got stuck", value: "stuck" },
+      { label: "Used other AI tools", value: "other" },
+      { label: "Built a few things", value: "experienced" }
+    ]
+  },
+  {
+    question: "What kind of site do you want to build?",
+    options: [
+      { label: "Landing page", value: "landing" },
+      { label: "Portfolio", value: "portfolio" },
+      { label: "E-commerce / Store", value: "ecommerce" },
+      { label: "Client work", value: "client" }
+    ]
+  },
+  {
+    question: "What's your biggest challenge?",
+    options: [
+      { label: "Don't know how to prompt", value: "prompting" },
+      { label: "Results look generic", value: "generic" },
+      { label: "Can't get code to work", value: "technical" },
+      { label: "Don't know where to start", value: "start" }
+    ]
+  }
+]
+
+const ASSESSMENT_RESULTS: Record<string, { title: string; message: string }> = {
+  never: { 
+    title: "Perfect starting point", 
+    message: "The video is designed for complete beginners. You'll go from zero to building in under an hour." 
+  },
+  stuck: { 
+    title: "This will unlock you", 
+    message: "Most people get stuck because of prompting syntax. The video shows the exact words that work." 
+  },
+  prompting: { 
+    title: "The core skill you need", 
+    message: "The 57-second video is literally about prompting. You'll learn the system that gets professional results." 
+  },
+  generic: { 
+    title: "You'll see the difference", 
+    message: "Generic output is a prompting problem. The video shows how to get polished, unique results every time." 
+  },
+  default: { 
+    title: "You're a good fit", 
+    message: "Based on your answers, v0 University will give you the skill to build exactly what you're imagining." 
+  }
+}
+
+export function SkillAssessment({ onComplete }: { onComplete?: (result: string) => void }) {
+  const [step, setStep] = useState(0)
+  const [answers, setAnswers] = useState<string[]>([])
+  const [showResult, setShowResult] = useState(false)
+
+  const handleSelect = (value: string) => {
+    const newAnswers = [...answers, value]
+    setAnswers(newAnswers)
+    
+    if (step < ASSESSMENT_QUESTIONS.length - 1) {
+      setStep(step + 1)
+    } else {
+      setShowResult(true)
+      onComplete?.(value)
+    }
+  }
+
+  const getResult = () => {
+    // Find the most relevant result based on answers
+    for (const answer of answers) {
+      if (ASSESSMENT_RESULTS[answer]) {
+        return ASSESSMENT_RESULTS[answer]
+      }
+    }
+    return ASSESSMENT_RESULTS.default
+  }
+
+  if (showResult) {
+    const result = getResult()
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="my-4 p-5 bg-neutral-900 rounded-2xl text-white"
+      >
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
+            <svg className="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+              <path d="M20 6L9 17l-5-5" />
+            </svg>
+          </div>
+          <span className="text-[15px] font-medium">{result.title}</span>
+        </div>
+        <p className="text-[14px] text-white/70 leading-relaxed">
+          {result.message}
+        </p>
+      </motion.div>
+    )
+  }
+
+  const currentQuestion = ASSESSMENT_QUESTIONS[step]
+
+  return (
+    <div className="my-4">
+      {/* Progress */}
+      <div className="flex gap-1 mb-4">
+        {ASSESSMENT_QUESTIONS.map((_, i) => (
+          <div 
+            key={i}
+            className={`h-1 flex-1 rounded-full transition-colors ${
+              i <= step ? 'bg-neutral-900' : 'bg-neutral-200'
+            }`}
+          />
+        ))}
+      </div>
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={step}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.2 }}
+        >
+          <p className="text-[15px] font-medium text-neutral-900 mb-3">
+            {currentQuestion.question}
+          </p>
+          <div className="space-y-2">
+            {currentQuestion.options.map((option) => (
+              <button
+                key={option.value}
+                onClick={() => handleSelect(option.value)}
+                className="w-full p-3.5 text-left text-[14px] bg-white border border-neutral-200 rounded-xl hover:border-neutral-300 hover:bg-neutral-50 active:bg-neutral-100 transition-colors"
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  )
+}
+
 // Video Preview Card — shows the video thumbnail with play button
 export function VideoPreview({ 
   onPlay 
