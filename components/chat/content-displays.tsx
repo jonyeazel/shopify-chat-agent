@@ -2,11 +2,41 @@
 
 import React, { useState, useEffect, useRef, useCallback, memo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronRight, Loader2, ArrowRight, Upload, X, Play } from "lucide-react"
+import { ChevronRight, Loader2, ArrowRight, Upload, X, Play, Gift } from "lucide-react"
+import Image from "next/image"
 // Portfolio data is now defined locally for chat displays
 import { VibeFrame } from "@/components/ui/vibe-frame"
 import { SmsTrigger } from "@/components/sms-trigger"
 import { useIsMobile } from "@/hooks/use-mobile"
+
+// v0 Referral Card - Lead magnet for free credits
+export function V0ReferralCard() {
+  return (
+    <a 
+      href="https://v0.link/jon"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="my-4 flex items-center gap-3 p-4 bg-neutral-900 rounded-2xl active:bg-neutral-800 hover:bg-neutral-800 transition-colors group"
+    >
+      <div className="w-11 h-11 rounded-xl bg-white flex items-center justify-center flex-shrink-0 overflow-hidden">
+        <Image 
+          src="/v0-logo-light.png" 
+          alt="v0" 
+          width={28} 
+          height={28}
+          className="object-contain"
+        />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-[15px] text-white font-medium">Get $10 free credits on v0</p>
+        <p className="text-[13px] text-neutral-400">Sign up with this link to start building</p>
+      </div>
+      <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 group-hover:bg-white/20 transition-colors">
+        <ArrowRight className="w-4 h-4 text-white" />
+      </div>
+    </a>
+  )
+}
 
 // Video Preview Card — shows the video thumbnail with play button
 export function VideoPreview({ 
@@ -444,7 +474,7 @@ export function LabelUpload({
     return (
       <div className="my-4 flex items-center gap-2.5 px-4 py-3 rounded-xl bg-[#ebebeb]">
         <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
-        <span className="text-[13px] text-muted-foreground">Label received — hang tight.</span>
+        <span className="text-[13px] text-muted-foreground">Label received �� hang tight.</span>
       </div>
     )
   }

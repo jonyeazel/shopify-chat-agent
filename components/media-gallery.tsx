@@ -3,7 +3,27 @@
 import { useState, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, ChevronLeft, ChevronRight, MessageCircle } from "lucide-react"
-import { GALLERY_ITEMS, GALLERY_CATEGORIES, type GalleryItem } from "@/lib/portfolio-data"
+import { PORTFOLIO_DATA } from "@/lib/portfolio-data"
+
+// Derive gallery data from PORTFOLIO_DATA
+type GalleryItem = {
+  category: string
+  label: string
+  url: string
+}
+
+const GALLERY_ITEMS: GalleryItem[] = PORTFOLIO_DATA.galleryItems.map((item) => ({
+  category: item.category,
+  label: item.name,
+  url: item.thumbnail,
+}))
+
+const GALLERY_CATEGORIES = [
+  { value: "all", label: "All" },
+  { value: "landing", label: "Landing Pages" },
+  { value: "ecommerce", label: "E-Commerce" },
+  { value: "saas", label: "SaaS" },
+]
 import { useDrawerGesture, springClose } from "@/hooks/use-drawer-gesture"
 
 interface MediaGalleryProps {
