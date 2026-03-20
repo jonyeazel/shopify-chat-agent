@@ -78,14 +78,21 @@ export function CheckoutDrawer({ isOpen, onClose, onSuccess }: CheckoutDrawerPro
               </div>
 
               {/* Header */}
-              <div className="flex items-center justify-between px-4 py-2 border-b border-neutral-100">
-                <div>
+              <div className="flex items-center gap-3 px-4 py-3 border-b border-neutral-100">
+                {V0_UNIVERSITY.thumbnail && (
+                  <img 
+                    src={V0_UNIVERSITY.thumbnail} 
+                    alt={V0_UNIVERSITY.name}
+                    className="w-16 h-10 object-cover rounded-md"
+                  />
+                )}
+                <div className="flex-1 min-w-0">
                   <p className="font-medium text-neutral-900">{V0_UNIVERSITY.name}</p>
-                  <p className="text-sm text-neutral-500">${price}</p>
+                  <p className="text-sm text-neutral-500">${price} · Instant access</p>
                 </div>
                 <button
                   onClick={onClose}
-                  className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-neutral-200 active:bg-neutral-300 transition-colors"
+                  className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-neutral-200 active:bg-neutral-300 transition-colors flex-shrink-0"
                 >
                   <X className="w-4 h-4 text-neutral-600" />
                 </button>
@@ -114,14 +121,21 @@ export function CheckoutDrawer({ isOpen, onClose, onSuccess }: CheckoutDrawerPro
           >
             <div className="h-full bg-white shadow-2xl flex flex-col">
               {/* Header */}
-              <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-100">
-                <div>
+              <div className="flex items-center gap-4 px-6 py-5 border-b border-neutral-100">
+                {V0_UNIVERSITY.thumbnail && (
+                  <img 
+                    src={V0_UNIVERSITY.thumbnail} 
+                    alt={V0_UNIVERSITY.name}
+                    className="w-20 h-12 object-cover rounded-lg"
+                  />
+                )}
+                <div className="flex-1 min-w-0">
                   <p className="font-medium text-neutral-900">{V0_UNIVERSITY.name}</p>
-                  <p className="text-sm text-neutral-500">${price}</p>
+                  <p className="text-sm text-neutral-500">${price} · Instant access</p>
                 </div>
                 <button
                   onClick={onClose}
-                  className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-neutral-200 active:bg-neutral-300 transition-colors"
+                  className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-neutral-200 active:bg-neutral-300 transition-colors flex-shrink-0"
                 >
                   <X className="w-4 h-4 text-neutral-600" />
                 </button>
