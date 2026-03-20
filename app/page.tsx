@@ -73,7 +73,7 @@ import { AdminLoginModal } from "@/components/admin/admin-login-modal"
 import { InstantSiteCreator } from "@/components/admin/instant-site-creator"
 import { CheckoutDrawer } from "@/components/checkout-drawer"
 import { LiveShowcase } from "@/components/live-showcase"
-import { ShowcaseDrawer } from "@/components/showcase-drawer"
+import { ShowcaseDrawer } from "@/components/showcase-drawer" // Mobile examples drawer
 import { VideoDrawer } from "@/components/video-drawer"
 import { siteConfig } from "@/lib/site-config"
 import { SmsTrigger } from "@/components/sms-trigger"
