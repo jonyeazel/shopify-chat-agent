@@ -254,6 +254,7 @@ export default function Home() {
         input={input}
         setInput={setInput}
         onSubmit={handleChatSubmit}
+        onBuyClick={() => setShowCheckout(true)}
         chatDisabled={status !== "ready"}
         style={{ width: `${panelWidth}%` }}
       />

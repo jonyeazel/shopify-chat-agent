@@ -5,21 +5,31 @@ import { useState, useCallback } from "react"
 import { siteConfig } from "@/lib/site-config"
 import { ChatInput } from "@/components/chat/chat-input"
 import { MediaGallery } from "@/components/media-gallery"
+import { Play, LayoutGrid, Info, HelpCircle, CreditCard } from "lucide-react"
 
 interface IdentityPanelProps {
   availabilityStatus: "online" | "away" | "offline"
   input: string
   setInput: (value: string) => void
   onSubmit: (text: string) => void
+  onBuyClick: () => void
   chatDisabled: boolean
   style?: React.CSSProperties
 }
 
-export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, chatDisabled, style }: IdentityPanelProps) {
+export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, onBuyClick, chatDisabled, style }: IdentityPanelProps) {
   const { brand } = siteConfig
   const [showGallery, setShowGallery] = useState(false)
   const openGallery = useCallback(() => setShowGallery(true), [])
   const closeGallery = useCallback(() => setShowGallery(false), [])
+
+  const actionButtons = [
+    { icon: Play, label: "The Video", action: () => onSubmit("Show me the video") },
+    { icon: LayoutGrid, label: "Examples", action: () => onSubmit("Show me examples of sites people have built") },
+    { icon: Info, label: "More Info", action: () => onSubmit("Tell me more about v0 University") },
+    { icon: HelpCircle, label: "FAQ's", action: () => onSubmit("What are the most common questions about v0 University?") },
+    { icon: CreditCard, label: "Buy It", action: onBuyClick },
+  ]
 
   return (
     <aside
@@ -52,6 +62,20 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, c
         <p className="text-[15px] text-muted-foreground mt-3 text-center max-w-[260px] leading-relaxed">
           {brand.subtitle}
         </p>
+
+        {/* Action buttons - horizontal row */}
+        <div className="flex flex-wrap justify-center gap-2 mt-6">
+          {actionButtons.map(({ icon: Icon, label, action }) => (
+            <button
+              key={label}
+              onClick={action}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-foreground text-background text-[13px] font-medium hover:opacity-90 active:opacity-80 transition-opacity"
+            >
+              <Icon className="w-4 h-4" strokeWidth={1.5} />
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Chat input */}
@@ -61,7 +85,7 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, c
           setInput={setInput}
           onSubmit={onSubmit}
           disabled={chatDisabled}
-          placeholder="Tell me what you'd build..."
+          placeholder="Ask me anything..."
         />
       </div>
     </aside>
