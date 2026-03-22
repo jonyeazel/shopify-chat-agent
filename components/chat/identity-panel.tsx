@@ -26,11 +26,11 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, o
   const closeGallery = useCallback(() => setShowGallery(false), [])
 
   const actionButtons = [
-    { icon: Play, label: "The Video", action: onVideoClick || (() => onSubmit("Show me the video")) },
-    { icon: LayoutGrid, label: "Examples", action: onExamplesClick || (() => onSubmit("Show me examples of sites people have built")) },
-    { icon: Info, label: "More Info", action: () => onSubmit("Tell me more about v0 University") },
-    { icon: HelpCircle, label: "FAQ's", action: () => onSubmit("What are the most common questions about v0 University?") },
-    { icon: CreditCard, label: "Buy It", action: onBuyClick },
+    { icon: Play, label: "Preview", action: onVideoClick || (() => onSubmit("Show me the video")) },
+    { icon: LayoutGrid, label: "Examples", action: onExamplesClick || (() => onSubmit("Show me examples")) },
+    { icon: Info, label: "How It Works", action: () => onSubmit("How does this work?") },
+    { icon: HelpCircle, label: "Pricing", action: () => onSubmit("What are the pricing options?") },
+    { icon: CreditCard, label: "Get Started", action: onBuyClick, highlight: true },
   ]
 
   return (
@@ -55,25 +55,28 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, o
           />
         </div>
 
-        {/* Tagline - fixed line breaks */}
+        {/* Tagline */}
         <h1 className="text-[24px] font-semibold text-foreground leading-tight tracking-[-0.02em] text-center max-w-[280px]">
-          <span className="block">Build your first real</span>
-          <span className="block">website with AI.</span>
+          <span className="block">Build sites with AI.</span>
+          <span className="block">No code. No designers.</span>
         </h1>
 
-        {/* Subtitle - fixed line breaks */}
+        {/* Subtitle */}
         <p className="text-[15px] text-muted-foreground mt-3 text-center max-w-[280px] leading-relaxed">
-          <span className="block">A 57-second lesson showing you</span>
-          <span className="block">exactly how. No experience needed.</span>
+          Learn the system in minutes. Build forever.
         </p>
 
         {/* Action buttons - horizontal row */}
         <div className="flex flex-wrap justify-center gap-2 mt-6">
-          {actionButtons.map(({ icon: Icon, label, action }) => (
+          {actionButtons.map(({ icon: Icon, label, action, highlight }) => (
             <button
               key={label}
               onClick={action}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-foreground text-background text-[13px] font-medium hover:opacity-90 active:opacity-80 transition-opacity"
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-[13px] font-medium transition-all ${
+                highlight 
+                  ? "bg-emerald-600 text-white hover:bg-emerald-700" 
+                  : "bg-foreground text-background hover:opacity-90"
+              }`}
             >
               <Icon className="w-4 h-4" strokeWidth={1.5} />
               {label}

@@ -1,9 +1,9 @@
 "use server"
 
 import { stripe } from "@/lib/stripe"
-import { PRODUCTS, V0_UNIVERSITY } from "@/lib/products"
+import { PRODUCTS, V0_PLAYBOOK } from "@/lib/products"
 
-export async function startCheckout(productId: string = V0_UNIVERSITY.id) {
+export async function startCheckout(productId: string = V0_PLAYBOOK.id) {
   const product = PRODUCTS.find((p) => p.id === productId)
   if (!product) {
     throw new Error("Product not found")
@@ -40,7 +40,7 @@ export async function startCheckout(productId: string = V0_UNIVERSITY.id) {
 }
 
 // Embedded checkout - returns client secret for inline Stripe form
-export async function startEmbeddedCheckout(productId: string = V0_UNIVERSITY.id): Promise<string> {
+export async function startEmbeddedCheckout(productId: string = V0_PLAYBOOK.id): Promise<string> {
   const product = PRODUCTS.find((p) => p.id === productId)
   if (!product) {
     throw new Error("Product not found")

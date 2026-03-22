@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState, useCallback, useMemo } from "react"
 import type { UIMessage } from "ai"
-import { ChevronDown, ExternalLink } from "lucide-react"
+import { ChevronDown, ExternalLink, Copy, Check, ThumbsUp } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { detectContentToShow } from "@/lib/content-detection"
 import { SmsTrigger } from "@/components/sms-trigger"
@@ -13,6 +13,9 @@ import {
   LiveSitesDisplay,
   VideoPreview,
   V0ReferralCard,
+  FAQAccordion,
+  CoursePreview,
+  SkillAssessment,
   renderMessageWithSmsLinks,
 } from "./content-displays"
 import { PaymentOptions } from "./payment-options"
@@ -37,6 +40,39 @@ function formatRelativeTime(date: Date | undefined): string {
   if (minutes < 60) return `${minutes}m`
   if (hours < 24) return `${hours}h`
   return date.toLocaleDateString(undefined, { month: "short", day: "numeric" })
+}
+
+// Message action button component - smooth, minimal
+function MessageAction({ 
+  onClick, 
+  icon: Icon, 
+  activeIcon: ActiveIcon,
+  label,
+  isActive 
+}: { 
+  onClick: () => void
+  icon: React.ComponentType<{ className?: string }>
+  activeIcon?: React.ComponentType<{ className?: string }>
+  label: string
+  isActive?: boolean
+}) {
+  const DisplayIcon = isActive && ActiveIcon ? ActiveIcon : Icon
+  return (
+    <button
+      onClick={(e) => {
+        e.stopPropagation()
+        onClick()
+      }}
+      className={`p-1.5 rounded-md transition-colors duration-200 ${
+        isActive 
+          ? "text-neutral-700" 
+          : "text-neutral-300 hover:text-neutral-500"
+      }`}
+      title={label}
+    >
+      <DisplayIcon className="w-3.5 h-3.5" />
+    </button>
+  )
 }
 
 // Text Jon CTA: context-aware based on conversation phase
@@ -192,7 +228,25 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [isNearBottom, setIsNearBottom] = useState(true)
   const [showNewMessage, setShowNewMessage] = useState(false)
+  const [copiedId, setCopiedId] = useState<string | null>(null)
+  const [likedIds, setLikedIds] = useState<Set<string>>(new Set())
+  const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null)
   const lastMessageCount = useRef(messages.length)
+  
+  const copyMessage = useCallback((text: string, id: string) => {
+    navigator.clipboard.writeText(text)
+    setCopiedId(id)
+    setTimeout(() => setCopiedId(null), 2000)
+  }, [])
+  
+  const toggleLike = useCallback((id: string) => {
+    setLikedIds(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }, [])
 
   // Cache detected content to prevent re-detection on every render
   const detectedContentCache = useRef<Map<string, ReturnType<typeof detectContentToShow>>>(new Map())
@@ -219,16 +273,21 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
   // Smooth auto-scroll during streaming — keeps content pinned to bottom
   useEffect(() => {
     if (status !== "streaming") return
-    let raf: number
-    const tick = () => {
-      if (containerRef.current && checkIfNearBottom()) {
-        const el = containerRef.current
-        el.scrollTop = el.scrollHeight - el.clientHeight
+    const el = containerRef.current
+    if (!el) return
+    
+    let lastScrollHeight = el.scrollHeight
+    const interval = setInterval(() => {
+      if (el.scrollHeight !== lastScrollHeight && checkIfNearBottom()) {
+        el.scrollTo({
+          top: el.scrollHeight - el.clientHeight,
+          behavior: "smooth"
+        })
+        lastScrollHeight = el.scrollHeight
       }
-      raf = requestAnimationFrame(tick)
-    }
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
+    }, 100)
+    
+    return () => clearInterval(interval)
   }, [status, checkIfNearBottom])
 
   // Scroll to bottom when streaming ends (chips appear)
@@ -236,7 +295,7 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
     if (status === "ready" && checkIfNearBottom()) {
       setTimeout(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-      }, 120)
+      }, 80)
     }
   }, [status, checkIfNearBottom])
 
@@ -262,6 +321,15 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
     }
     if (!detected) return null
 
+    if (detected.type === "skillAssessment") {
+      return <SkillAssessment />
+    }
+    if (detected.type === "coursePreview") {
+      return <CoursePreview />
+    }
+    if (detected.type === "faq") {
+      return <FAQAccordion />
+    }
     if (detected.type === "v0Referral") {
       return <V0ReferralCard />
     }
@@ -327,14 +395,14 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
             return (
             <motion.div
               key={message.id}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ 
-                type: "spring", 
-                stiffness: 400, 
-                damping: 32,
-                delay: isLastMessage ? 0.04 : 0 
+                duration: 0.2,
+                ease: [0.25, 0.1, 0.25, 1]
               }}
+              layout="position"
+              layoutId={`message-${message.id}`}
               className={continuation ? "mt-1" : index === 0 ? "" : "mt-5"}
             >
               {message.role === "user" ? (
@@ -360,17 +428,17 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
                     return null
                   })}
                   {!continuation && (
-                    <div className="flex items-center gap-2 mb-1.5">
+                    <div className="flex items-center justify-end gap-2 mb-1.5">
                       {message.createdAt && (
-                        <span className="text-[10px] text-muted-foreground">{formatRelativeTime(message.createdAt)}</span>
+                        <span className="text-[10px] text-muted-foreground opacity-60">{formatRelativeTime(message.createdAt)}</span>
                       )}
-                      <div className="w-6 h-6 rounded-full bg-foreground flex items-center justify-center">
-                        <span className="text-[9px] font-medium text-background">you</span>
+                      <div className="w-5 h-5 rounded-full bg-foreground flex items-center justify-center">
+                        <span className="text-[8px] font-medium text-background">you</span>
                       </div>
                     </div>
                   )}
-                  <div className="max-w-[88%] ml-auto">
-                    <p className="text-[14px] whitespace-pre-wrap leading-normal text-foreground text-right">
+                  <div className="max-w-[85%] ml-auto">
+                    <p className="text-[14px] whitespace-pre-wrap leading-relaxed text-foreground text-right">
                       {message.parts?.map((part) => {
                         if (part.type === "text") {
                           return (
@@ -387,7 +455,11 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
                   </div>
                 </div>
               ) : (
-                <div className="w-full">
+                <div 
+                  className="w-full group/message"
+                  onMouseEnter={() => setHoveredMessageId(message.id)}
+                  onMouseLeave={() => setHoveredMessageId(null)}
+                >
                   {!continuation && (
                     <div className="flex items-center gap-1.5 mb-1">
                       <img
@@ -400,7 +472,7 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
                       )}
                     </div>
                   )}
-                  <div>
+                  <div className="relative">
                     {message.parts?.map((part, i) => {
                       if (part.type === "text") {
                         return (
@@ -412,6 +484,31 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
                               )}
                             </p>
                             {!isCurrentlyStreaming && renderSmartContent(part.text, message.id)}
+                            
+                            {/* Message actions - always rendered, opacity controlled by CSS */}
+                            {!isCurrentlyStreaming && (
+                              <div 
+                                className={`flex items-center gap-0.5 mt-2 transition-opacity duration-200 ${
+                                  hoveredMessageId === message.id || copiedId === message.id || likedIds.has(message.id)
+                                    ? "opacity-100" 
+                                    : "opacity-0"
+                                }`}
+                              >
+                                <MessageAction
+                                  onClick={() => copyMessage(part.text, message.id)}
+                                  icon={Copy}
+                                  activeIcon={Check}
+                                  label={copiedId === message.id ? "Copied!" : "Copy"}
+                                  isActive={copiedId === message.id}
+                                />
+                                <MessageAction
+                                  onClick={() => toggleLike(message.id)}
+                                  icon={ThumbsUp}
+                                  label={likedIds.has(message.id) ? "Liked" : "Helpful"}
+                                  isActive={likedIds.has(message.id)}
+                                />
+                              </div>
+                            )}
                           </div>
                         )
                       }
@@ -444,25 +541,27 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
             )
           })}
 
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {status === "streaming" && messages[messages.length - 1]?.role !== "assistant" && (
               <motion.div 
-                initial={{ opacity: 0, y: 10 }} 
-                animate={{ opacity: 1, y: 0 }} 
-                exit={{ opacity: 0, y: -4 }}
-                transition={{ type: "spring", stiffness: 400, damping: 32 }}
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
                 className="mt-5"
               >
                 <div className="flex items-center gap-1.5 mb-1">
                   <img src={avatarUrl || "/placeholder.svg"} alt="" className="w-6 h-6 rounded-full object-cover" />
                 </div>
-                <div className="flex items-center gap-[5px]">
+                <div className="flex items-center gap-[3px] pl-0.5">
                   {[0, 1, 2].map((i) => (
-                    <motion.span
+                    <span
                       key={i}
-                      className="w-[5px] h-[5px] rounded-full bg-foreground/25"
-                      animate={{ opacity: [0.15, 0.55, 0.15], scale: [0.8, 1, 0.8] }}
-                      transition={{ duration: 1.4, repeat: Number.POSITIVE_INFINITY, delay: i * 0.15, ease: "easeInOut" }}
+                      className="w-[5px] h-[5px] rounded-full bg-neutral-300 animate-pulse"
+                      style={{ 
+                        animationDelay: `${i * 150}ms`,
+                        animationDuration: "1s"
+                      }}
                     />
                   ))}
                 </div>
@@ -470,68 +569,51 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
             )}
           </AnimatePresence>
 
-          {/* Quick Reply Chips */}
-          <AnimatePresence>
-            {status === "ready" && messages.length > 0 && messages[messages.length - 1]?.role === "assistant" && onQuickReply && (
-              <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 4 }}
-                transition={{ type: "spring", stiffness: 400, damping: 32, delay: 0.06 }}
-                className="pt-3"
-              >
-                <div className="relative">
-                  <div className="flex gap-1.5 overflow-x-auto scrollbar-hide pb-1">
-                    {(() => {
-                      const cta = getSmsCta(messages)
-                      if (!cta.show) return null
-                      return (
-                        <SmsTrigger key="sms-cta" context={cta.context}>
-                          <motion.button
-                            initial={{ opacity: 0, y: 6 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ type: "spring", stiffness: 400, damping: 32, delay: 0.08 }}
-                            whileTap={{ scale: 0.97 }}
-                            className="flex-shrink-0 py-2 px-4 rounded-full text-[13px] font-medium bg-neutral-900 text-white hover:bg-neutral-800 active:bg-neutral-700 transition-colors duration-150 cursor-pointer shadow-sm"
-                          >
-                            {cta.label}
-                          </motion.button>
-                        </SmsTrigger>
-                      )
-                    })()}
-                    {getQuickReplies(
-                      messages[messages.length - 1]?.parts
-                        ?.filter((p): p is { type: "text"; text: string } => p.type === "text")
-                        .map(p => p.text)
-                        .join(" ") || "",
-                      messages
-                    ).map((reply, i) => (
-                      <motion.button
-                        key={reply}
-                        initial={{ opacity: 0, y: 6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{
-                          type: "spring",
-                          stiffness: 400,
-                          damping: 32,
-                          delay: 0.1 + i * 0.02,
-                        }}
-                        whileTap={{ scale: 0.97 }}
-                        onClick={() => onQuickReply(reply)}
-                        className="flex-shrink-0 py-2 px-4 rounded-full text-[13px] font-medium bg-neutral-100 text-neutral-700 hover:bg-neutral-200 active:bg-neutral-300 transition-colors duration-150 shadow-sm"
+          {/* Quick Reply Chips - smooth fade, no jitter */}
+          <div 
+            className={`pt-4 transition-opacity duration-300 ${
+              status === "ready" && messages.length > 0 && messages[messages.length - 1]?.role === "assistant" && onQuickReply
+                ? "opacity-100"
+                : "opacity-0 pointer-events-none"
+            }`}
+          >
+            <div className="relative">
+              <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 scroll-smooth">
+                {(() => {
+                  const cta = getSmsCta(messages)
+                  if (!cta.show) return null
+                  return (
+                    <SmsTrigger key="sms-cta" context={cta.context}>
+                      <button
+                        className="flex-shrink-0 py-2.5 px-4 rounded-full text-[13px] font-medium bg-neutral-900 text-white hover:bg-neutral-800 active:bg-neutral-700 transition-colors duration-150 cursor-pointer active:scale-[0.98]"
                       >
-                        {reply}
-                      </motion.button>
-                    ))}
-                  </div>
-                  <div
-                    className="absolute right-0 top-0 bottom-1 w-10 pointer-events-none"
-                    style={{ background: "linear-gradient(to right, transparent, var(--card))" }}
-                  />
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                        {cta.label}
+                      </button>
+                    </SmsTrigger>
+                  )
+                })()}
+                {getQuickReplies(
+                  messages[messages.length - 1]?.parts
+                    ?.filter((p): p is { type: "text"; text: string } => p.type === "text")
+                    .map(p => p.text)
+                    .join(" ") || "",
+                  messages
+                ).map((reply) => (
+                  <button
+                    key={reply}
+                    onClick={() => onQuickReply?.(reply)}
+                    className="flex-shrink-0 py-2.5 px-4 rounded-full text-[13px] font-medium border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50 active:bg-neutral-100 active:scale-[0.98] transition-all duration-150"
+                  >
+                    {reply}
+                  </button>
+                ))}
+              </div>
+              <div
+                className="absolute right-0 top-0 bottom-1 w-12 pointer-events-none"
+                style={{ background: "linear-gradient(to right, transparent, var(--card))" }}
+              />
+            </div>
+          </div>
 
           <div className="h-4 flex-shrink-0" aria-hidden="true" />
           <div ref={messagesEndRef} />

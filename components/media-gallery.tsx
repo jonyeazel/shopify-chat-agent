@@ -1,76 +1,61 @@
 "use client"
 
-// Media Gallery - v0 University Portfolio Showcase
+// v0.3.0 - All data self-contained, zero external imports
 import { useState, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, ChevronLeft, ChevronRight, MessageCircle } from "lucide-react"
-import { PORTFOLIO_DATA } from "@/lib/portfolio-data"
 import { useDrawerGesture, springClose } from "@/hooks/use-drawer-gesture"
 
-// ============================================
-// LOCAL TYPES AND DATA - NOT IMPORTED
-// ============================================
+// Self-contained gallery data - NO imports from portfolio-data
+const GALLERY_DATA = [
+  { category: "landing", label: "Stadics", url: "https://www.stadics.com" },
+  { category: "portfolio", label: "The Shopify Guy", url: "https://www.theshopifyguy.dev" },
+  { category: "portfolio", label: "Ilya Volgin", url: "https://www.ilyavolgin.com" },
+  { category: "portfolio", label: "Molar Digital", url: "https://www.molar.digital" },
+  { category: "saas", label: "AI Blocks", url: "https://v0-aiblocks.vercel.app" },
+  { category: "saas", label: "Design Blocks", url: "https://v0-designblocks.vercel.app" },
+  { category: "landing", label: "Vibe Code", url: "https://vibecode-black.vercel.app" },
+  { category: "saas", label: "Neon Templates", url: "https://v0-neon-v0-templates.vercel.app" },
+  { category: "ecommerce", label: "MudWater", url: "https://v0-mudwater.vercel.app" },
+  { category: "ecommerce", label: "Shopify Storefront", url: "https://v0-shopifystorefront.vercel.app" },
+  { category: "ecommerce", label: "Commerce PDP", url: "https://v0-vcommercepdp.vercel.app" },
+  { category: "ecommerce", label: "Brez Product", url: "https://v0-brez-product-page.vercel.app" },
+  { category: "saas", label: "Viberr Pro", url: "https://v0-viberrpro.vercel.app" },
+]
 
-interface GalleryItemLocal {
-  category: string
-  label: string
-  url: string
-}
-
-const CATEGORIES_LOCAL = [
+const CATEGORY_OPTIONS = [
   { value: "all", label: "All" },
   { value: "landing", label: "Landing Pages" },
   { value: "ecommerce", label: "E-Commerce" },
   { value: "saas", label: "SaaS" },
+  { value: "portfolio", label: "Portfolios" },
 ]
-
-const ITEMS_LOCAL: GalleryItemLocal[] = PORTFOLIO_DATA.galleryItems.map((item) => ({
-  category: item.category,
-  label: item.name,
-  url: item.thumbnail,
-}))
-
-// ============================================
-// COMPONENT
-// ============================================
 
 interface MediaGalleryProps {
   isOpen: boolean
   onClose: () => void
-  onStartChat?: () => void
+  onAskAbout?: (item: string) => void
 }
 
-export function MediaGallery({ isOpen, onClose, onStartChat }: MediaGalleryProps) {
+export function MediaGallery({ isOpen, onClose, onAskAbout }: MediaGalleryProps) {
   const [selectedCategory, setSelectedCategory] = useState("all")
-  const [selectedImage, setSelectedImage] = useState<GalleryItemLocal | null>(null)
-  const [imageError, setImageError] = useState<Set<string>>(new Set())
-
-  const { dragY, handleDragEnd, isDragging } = useDrawerGesture({
-    onClose,
-    threshold: 100,
-  })
+  const [selectedItem, setSelectedItem] = useState<typeof GALLERY_DATA[0] | null>(null)
 
   const filteredItems = selectedCategory === "all"
-    ? ITEMS_LOCAL
-    : ITEMS_LOCAL.filter((item) => item.category === selectedCategory)
+    ? GALLERY_DATA
+    : GALLERY_DATA.filter(item => item.category === selectedCategory)
 
-  const handleImageError = useCallback((url: string) => {
-    setImageError((prev) => new Set(prev).add(url))
-  }, [])
+  const handleClose = useCallback(() => {
+    setSelectedItem(null)
+    onClose()
+  }, [onClose])
 
-  const handlePrevImage = useCallback(() => {
-    if (!selectedImage) return
-    const currentIndex = filteredItems.findIndex((item) => item.url === selectedImage.url)
-    const prevIndex = currentIndex > 0 ? currentIndex - 1 : filteredItems.length - 1
-    setSelectedImage(filteredItems[prevIndex])
-  }, [selectedImage, filteredItems])
+  const { dragHandlers, dragY, isDragging } = useDrawerGesture({ 
+    onClose: handleClose,
+    threshold: 100 
+  })
 
-  const handleNextImage = useCallback(() => {
-    if (!selectedImage) return
-    const currentIndex = filteredItems.findIndex((item) => item.url === selectedImage.url)
-    const nextIndex = currentIndex < filteredItems.length - 1 ? currentIndex + 1 : 0
-    setSelectedImage(filteredItems[nextIndex])
-  }, [selectedImage, filteredItems])
+  if (!isOpen) return null
 
   return (
     <AnimatePresence>
@@ -81,158 +66,107 @@ export function MediaGallery({ isOpen, onClose, onStartChat }: MediaGalleryProps
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
+            onClick={handleClose}
             className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
           />
 
-          {/* Drawer */}
+          {/* Gallery Drawer */}
           <motion.div
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={springClose}
-            style={{ y: dragY }}
-            drag="y"
-            dragConstraints={{ top: 0 }}
-            dragElastic={0.2}
-            onDragEnd={handleDragEnd}
-            className="fixed inset-x-0 bottom-0 z-50 h-[85vh] bg-background rounded-t-3xl overflow-hidden"
+            style={{ y: isDragging ? dragY : 0 }}
+            className="fixed inset-x-0 bottom-0 z-50 max-h-[85vh] flex flex-col bg-white rounded-t-3xl shadow-2xl"
           >
-            {/* Drag handle */}
-            <div className="flex justify-center pt-3 pb-2">
-              <div className="w-10 h-1 rounded-full bg-foreground/20" />
+            {/* Handle */}
+            <div {...dragHandlers} className="flex justify-center pt-3 pb-2 cursor-grab active:cursor-grabbing">
+              <div className="w-10 h-1 bg-neutral-200 rounded-full" />
             </div>
 
             {/* Header */}
-            <div className="flex items-center justify-between px-5 pb-4">
-              <h2 className="text-lg font-semibold text-foreground">Gallery</h2>
-              <button
-                onClick={onClose}
-                className="p-2 rounded-full hover:bg-foreground/10 transition-colors"
-              >
-                <X className="w-5 h-5 text-foreground/60" />
+            <div className="flex items-center justify-between px-5 pb-3">
+              <h2 className="text-lg font-semibold text-neutral-900">Gallery</h2>
+              <button onClick={handleClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-neutral-100">
+                <X className="w-4 h-4 text-neutral-600" />
               </button>
             </div>
 
-            {/* Categories */}
-            <div className="px-5 pb-4">
-              <div className="flex gap-2 overflow-x-auto scrollbar-hide">
-                {CATEGORIES_LOCAL.map((cat) => (
+            {/* Category Tabs */}
+            <div className="flex gap-2 px-5 pb-4 overflow-x-auto no-scrollbar">
+              {CATEGORY_OPTIONS.map(cat => (
+                <button
+                  key={cat.value}
+                  onClick={() => setSelectedCategory(cat.value)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    selectedCategory === cat.value
+                      ? "bg-neutral-900 text-white"
+                      : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Grid or Detail View */}
+            <div className="flex-1 overflow-y-auto px-5 pb-6">
+              {selectedItem ? (
+                <div className="space-y-4">
                   <button
-                    key={cat.value}
-                    onClick={() => setSelectedCategory(cat.value)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                      selectedCategory === cat.value
-                        ? "bg-foreground text-background"
-                        : "bg-foreground/10 text-foreground hover:bg-foreground/20"
-                    }`}
+                    onClick={() => setSelectedItem(null)}
+                    className="flex items-center gap-2 text-sm text-neutral-600 hover:text-neutral-900"
                   >
-                    {cat.label}
+                    <ChevronLeft className="w-4 h-4" />
+                    Back to gallery
                   </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Grid */}
-            <div className="flex-1 overflow-y-auto px-5 pb-24">
-              <div className="grid grid-cols-2 gap-3">
-                {filteredItems.map((item, index) => (
-                  <motion.button
-                    key={`${item.url}-${index}`}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: index * 0.05 }}
-                    onClick={() => setSelectedImage(item)}
-                    className="relative aspect-[4/3] rounded-xl overflow-hidden bg-foreground/5 group"
-                  >
-                    {!imageError.has(item.url) ? (
-                      <img
-                        src={item.url}
-                        alt={item.label}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        onError={() => handleImageError(item.url)}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-foreground/40">
-                        <span className="text-xs">Image unavailable</span>
-                      </div>
+                  
+                  <div className="aspect-video bg-neutral-100 rounded-xl overflow-hidden">
+                    <iframe
+                      src={selectedItem.url}
+                      className="w-full h-full"
+                      title={selectedItem.label}
+                    />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">{selectedItem.label}</h3>
+                    {onAskAbout && (
+                      <button
+                        onClick={() => {
+                          onAskAbout(selectedItem.label)
+                          handleClose()
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 bg-neutral-900 text-white rounded-full text-sm font-medium"
+                      >
+                        <MessageCircle className="w-4 h-4" />
+                        Ask about this
+                      </button>
                     )}
-                    <div className="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/60 to-transparent">
-                      <p className="text-xs text-white font-medium truncate">{item.label}</p>
-                    </div>
-                  </motion.button>
-                ))}
-              </div>
-            </div>
-
-            {/* CTA */}
-            {onStartChat && (
-              <div className="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-background via-background to-transparent">
-                <button
-                  onClick={onStartChat}
-                  className="w-full py-4 bg-foreground text-background rounded-2xl font-medium flex items-center justify-center gap-2"
-                >
-                  <MessageCircle className="w-5 h-5" />
-                  Start Building
-                </button>
-              </div>
-            )}
-          </motion.div>
-
-          {/* Lightbox */}
-          <AnimatePresence>
-            {selectedImage && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center"
-                onClick={() => setSelectedImage(null)}
-              >
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    handlePrevImage()
-                  }}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-                >
-                  <ChevronLeft className="w-6 h-6 text-white" />
-                </button>
-
-                <motion.img
-                  key={selectedImage.url}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  src={selectedImage.url}
-                  alt={selectedImage.label}
-                  className="max-w-[90vw] max-h-[80vh] object-contain rounded-lg"
-                  onClick={(e) => e.stopPropagation()}
-                />
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    handleNextImage()
-                  }}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-                >
-                  <ChevronRight className="w-6 h-6 text-white" />
-                </button>
-
-                <button
-                  onClick={() => setSelectedImage(null)}
-                  className="absolute top-4 right-4 p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-                >
-                  <X className="w-6 h-6 text-white" />
-                </button>
-
-                <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
-                  <p className="text-white text-lg font-medium">{selectedImage.label}</p>
+                  </div>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              ) : (
+                <div className="grid grid-cols-2 gap-3">
+                  {filteredItems.map((item, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setSelectedItem(item)}
+                      className="aspect-video bg-neutral-100 rounded-xl overflow-hidden relative group"
+                    >
+                      <iframe
+                        src={item.url}
+                        className="w-full h-full pointer-events-none"
+                        title={item.label}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-3">
+                        <span className="text-white text-sm font-medium">{item.label}</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </motion.div>
         </>
       )}
     </AnimatePresence>

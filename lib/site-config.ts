@@ -1,9 +1,9 @@
 export const siteConfig = {
   brand: {
     name: "v0 University",
-    headerSubtitle: "Build websites with AI",
-    tagline: "Build your first real website with AI.",
-    subtitle: "A 57-second lesson showing you exactly how. No experience needed.",
+    headerSubtitle: "Build sites with AI",
+    tagline: "Build sites with AI. No code. No designers.",
+    subtitle: "Learn the system in minutes. Build forever.",
     avatarUrl: "/images/jon-profile.png",
     headerLogoUrl: "/images/v0-university-logo.png",
     logoUrl: "/images/v0-university-logo.png",
@@ -15,7 +15,7 @@ export const siteConfig = {
     smsBody: "Hey Jon, I'm interested in v0 University",
     email: "support@v0university.com",
     adminEmail: "admin@v0university.com",
-    calendlyUrl: "https://calendly.com/v0university/coaching",
+    calendlyUrl: "https://calendly.com/v0university/live-build",
     calendlySupportUrl: "https://calendly.com/v0university/support",
   },
 
@@ -24,21 +24,10 @@ export const siteConfig = {
     video: "https://youtu.be/i9na_W31rLg",
   },
 
-  // Removed stats - they lacked context and felt salesy
-  // The conversation will reveal value naturally
-
-  pricing: {
-    video: {
-      name: "v0 University",
-      price: 297,
-      description: "One video. All templates. Build a site today.",
-    },
-  },
-
   meta: {
-    title: "v0 University | Build Websites with AI in 57 Seconds",
+    title: "v0 University | Build Sites with AI",
     description:
-      "A 57-second video that teaches you how to build real websites with AI. No code. No design skills. Just describe what you want.",
+      "The v0 Playbook: 78 templates, 200+ prompt swipes, and the core method video. Build professional websites by describing what you want.",
     keywords: [
       "v0",
       "v0 tutorial",
@@ -47,14 +36,14 @@ export const siteConfig = {
       "build websites with AI",
       "AI design",
       "Vercel v0",
-      "website AI",
       "v0 university",
+      "v0 playbook",
     ],
-    ogTitle: "Build Websites with AI in 57 Seconds",
+    ogTitle: "Build Sites with AI. No Code. No Designers.",
     ogDescription:
-      "A 57-second video that teaches you how to build real websites with AI. No experience needed.",
+      "The v0 Playbook: Learn the prompting system that gets professional results. 78 templates. 200+ prompt swipes.",
     twitterDescription:
-      "Build your first real website with AI. 57-second lesson. No experience needed.",
+      "Build sites with AI. The v0 Playbook teaches you how.",
   },
 } as const
 

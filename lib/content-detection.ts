@@ -1,10 +1,46 @@
 export type DetectedContent = {
-  type: "videoPreview" | "liveSites" | "pricing" | "paymentOptions" | "v0Referral"
+  type: "videoPreview" | "liveSites" | "pricing" | "paymentOptions" | "v0Referral" | "faq" | "coursePreview" | "skillAssessment"
   data?: any
 }
 
 export function detectContentToShow(text: string): DetectedContent | null {
   const lower = text.toLowerCase()
+
+  // Skill Assessment - interactive quiz
+  if (
+    lower.includes("let me help you figure out") ||
+    lower.includes("let's see if this is right") ||
+    lower.includes("quick assessment") ||
+    lower.includes("few questions to help") ||
+    (lower.includes("assessment") && lower.includes("right for"))
+  ) {
+    return { type: "skillAssessment", data: null }
+  }
+
+  // Course Preview - what's included
+  if (
+    lower.includes("what's included") ||
+    lower.includes("what you get") ||
+    lower.includes("here's what's inside") ||
+    lower.includes("course includes") ||
+    (lower.includes("inside") && lower.includes("course")) ||
+    (lower.includes("get") && lower.includes("access"))
+  ) {
+    return { type: "coursePreview", data: null }
+  }
+
+  // FAQ - show accordion when answering common questions
+  if (
+    (lower.includes("how does this") && lower.includes("work")) ||
+    (lower.includes("is this for") && lower.includes("non-technical")) ||
+    (lower.includes("why") && lower.includes("$297")) ||
+    lower.includes("common questions") ||
+    lower.includes("people usually ask") ||
+    lower.includes("frequently asked") ||
+    (lower.includes("three main") && lower.includes("things"))
+  ) {
+    return { type: "faq", data: null }
+  }
 
   // v0 Referral - show the lead magnet card
   if (
