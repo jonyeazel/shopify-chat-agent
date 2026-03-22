@@ -16,14 +16,7 @@ export async function startCheckout(productId: string = V0_PLAYBOOK.id) {
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {
-        price_data: {
-          currency: "usd",
-          product_data: {
-            name: product.name,
-            description: product.description,
-          },
-          unit_amount: product.priceInCents,
-        },
+        price: product.stripePriceId,
         quantity: 1,
       },
     ],
@@ -53,14 +46,7 @@ export async function startEmbeddedCheckout(productId: string = V0_PLAYBOOK.id):
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {
-        price_data: {
-          currency: "usd",
-          product_data: {
-            name: product.name,
-            description: product.description,
-          },
-          unit_amount: product.priceInCents,
-        },
+        price: product.stripePriceId,
         quantity: 1,
       },
     ],

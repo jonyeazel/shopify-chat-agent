@@ -26,11 +26,11 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, o
   const closeGallery = useCallback(() => setShowGallery(false), [])
 
   const actionButtons = [
-    { icon: Play, label: "Preview", action: onVideoClick || (() => onSubmit("Show me the video")) },
-    { icon: LayoutGrid, label: "Examples", action: onExamplesClick || (() => onSubmit("Show me examples")) },
-    { icon: Info, label: "How It Works", action: () => onSubmit("How does this work?") },
-    { icon: HelpCircle, label: "Pricing", action: () => onSubmit("What are the pricing options?") },
-    { icon: CreditCard, label: "Get Started", action: onBuyClick, highlight: true },
+    { icon: Play, label: "Watch", action: onVideoClick || (() => onSubmit("Show me the video")) },
+    { icon: LayoutGrid, label: "Results", action: onExamplesClick || (() => onSubmit("Show me results")) },
+    { icon: Info, label: "How", action: () => onSubmit("How easy is this?") },
+    { icon: HelpCircle, label: "Offer", action: () => onSubmit("What's the deal?") },
+    { icon: CreditCard, label: "Buy Now", action: onBuyClick, highlight: true },
   ]
 
   return (
@@ -57,13 +57,13 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, o
 
         {/* Tagline */}
         <h1 className="text-[24px] font-semibold text-foreground leading-tight tracking-[-0.02em] text-center max-w-[280px]">
-          <span className="block">Build sites with AI.</span>
-          <span className="block">No code. No designers.</span>
+          <span className="block">Your site live today.</span>
+          <span className="block">Zero experience needed.</span>
         </h1>
 
         {/* Subtitle */}
         <p className="text-[15px] text-muted-foreground mt-3 text-center max-w-[280px] leading-relaxed">
-          Learn the system in minutes. Build forever.
+          20-minute video. Custom domain. Guaranteed.
         </p>
 
         {/* Action buttons - horizontal row */}
@@ -74,7 +74,7 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, o
               onClick={action}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-[13px] font-medium transition-all ${
                 highlight 
-                  ? "bg-emerald-600 text-white hover:bg-emerald-700" 
+                  ? "bg-emerald-500 text-white hover:bg-emerald-600 cta-pulse" 
                   : "bg-foreground text-background hover:opacity-90"
               }`}
             >
@@ -93,6 +93,7 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, o
           onSubmit={onSubmit}
           disabled={chatDisabled}
           placeholder="Ask me anything..."
+          voiceFirst={true}
         />
       </div>
     </aside>

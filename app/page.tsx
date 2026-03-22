@@ -85,6 +85,15 @@ function IconBuy({ className, strokeWidth = 1.5 }: { className?: string; strokeW
   )
 }
 
+// STRIPE - Official Stripe "S" mark (slanted parallelogram)
+function IconStripe({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.591-7.305z" />
+    </svg>
+  )
+}
+
 import { IdentityPanel } from "@/components/chat/identity-panel"
 import { ChatInput } from "@/components/chat/chat-input"
 import { MessageList } from "@/components/chat/message-list"
@@ -516,12 +525,11 @@ export default function Home() {
         {/* Mobile: Vertical icon rail */}
         <div className="md:hidden flex flex-col items-center justify-end gap-2.5 flex-shrink-0 pr-[16px] pl-[6px] pb-[max(env(safe-area-inset-bottom),16px)]">
           {([
-            { icon: IconVideo, label: "Preview", action: () => setShowVideo(true) },
-            { icon: IconExamples, label: "Examples", action: () => setShowShowcase(true) },
-            { icon: IconInfo, label: "Info", action: () => handleChatSubmit("How does this work?") },
-            { icon: IconFAQ, label: "Pricing", action: () => handleChatSubmit("What are the pricing options?") },
-            { icon: IconBuy, label: "Start", action: () => setShowCheckout(true), highlight: true },
-          ] as const).map(({ icon: Icon, label, highlight, ...rest }, index) => (
+            { icon: IconVideo, label: "Watch", action: () => setShowVideo(true) },
+            { icon: IconExamples, label: "Results", action: () => setShowShowcase(true) },
+            { icon: IconInfo, label: "How", action: () => handleChatSubmit("How easy is this?") },
+            { icon: IconFAQ, label: "Offer", action: () => handleChatSubmit("What's the deal?") },
+          ] as const).map(({ icon: Icon, label, ...rest }, index) => (
             <motion.button
               key={label}
               initial={{ opacity: 0, x: 16 }}
@@ -531,16 +539,26 @@ export default function Home() {
               onClick={"action" in rest ? rest.action : undefined}
               className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
             >
-              <div className={`w-[52px] h-[52px] rounded-full flex items-center justify-center ring-1 ${
-                highlight 
-                  ? "bg-emerald-500 ring-emerald-400/30 cta-pulse" 
-                  : "bg-foreground ring-white/[0.06] rubber-button"
-              }`}>
-                <Icon className={`w-6 h-6 ${highlight ? "text-white" : "text-background"}`} strokeWidth={1.5} />
+              <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center ring-1 bg-foreground ring-white/[0.06] rubber-button">
+                <Icon className="w-6 h-6 text-background" strokeWidth={1.5} />
               </div>
-              <span className={`text-[10px] leading-tight font-medium ${highlight ? "text-emerald-600" : "text-muted-foreground"}`}>{label}</span>
+              <span className="text-[10px] leading-tight font-medium text-muted-foreground">{label}</span>
             </motion.button>
           ))}
+          {/* Stripe checkout button with logo */}
+          <motion.button
+            initial={{ opacity: 0, x: 16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.22, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+            whileTap={{ scale: 0.92 }}
+            onClick={() => setShowCheckout(true)}
+            className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+          >
+            <div className="w-[52px] h-[52px] rounded-full overflow-hidden cta-pulse ring-1 ring-[#635BFF]/30">
+              <img src="/stripe-logo.png" alt="Checkout with Stripe" className="w-full h-full object-cover" />
+            </div>
+            <span className="text-[10px] leading-tight font-medium text-[#635BFF]">Buy Now</span>
+          </motion.button>
         </div>
 
         </div>
