@@ -74,7 +74,7 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, o
               onClick={action}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-[13px] font-medium transition-all ${
                 highlight 
-                  ? "bg-emerald-600 text-white hover:bg-emerald-700" 
+                  ? "bg-emerald-500 text-white hover:bg-emerald-600 cta-pulse" 
                   : "bg-foreground text-background hover:opacity-90"
               }`}
             >
@@ -93,6 +93,7 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, o
           onSubmit={onSubmit}
           disabled={chatDisabled}
           placeholder="Ask me anything..."
+          voiceFirst={true}
         />
       </div>
     </aside>

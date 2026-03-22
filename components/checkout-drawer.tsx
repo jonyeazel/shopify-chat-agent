@@ -100,13 +100,14 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
                     <button
                       key={product.id}
                       onClick={() => setSelectedProduct(product)}
-                      className={`flex-shrink-0 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                      className={`flex-shrink-0 px-4 py-3 rounded-xl transition-all ${
                         selectedProduct.id === product.id
-                          ? "bg-neutral-900 text-white"
+                          ? "bg-neutral-900 text-white ring-2 ring-neutral-900 ring-offset-2"
                           : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                       }`}
                     >
-                      {formatPrice(product.priceInCents)}
+                      <div className="text-xs opacity-70 mb-0.5">{product.name.split("—")[0].trim()}</div>
+                      <div className="text-base font-semibold">{formatPrice(product.priceInCents)}</div>
                     </button>
                   ))}
                 </div>
@@ -170,7 +171,7 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
                 <button
                   onClick={handleCheckout}
                   disabled={isLoading}
-                  className="w-full py-4 bg-neutral-900 text-white font-semibold rounded-xl flex items-center justify-center gap-2 hover:bg-neutral-800 disabled:opacity-50 transition-colors active:scale-[0.98]"
+                  className="w-full py-4 bg-emerald-500 text-white font-semibold rounded-xl flex items-center justify-center gap-2 hover:bg-emerald-600 disabled:opacity-50 transition-colors active:scale-[0.98] cta-pulse"
                 >
                   {isLoading ? (
                     <>
@@ -215,19 +216,19 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
               {/* Content */}
               <div className="flex-1 overflow-y-auto p-6">
                 {/* Tier selector */}
-                <div className="grid grid-cols-3 gap-2 mb-6">
+                <div className="grid grid-cols-3 gap-3 mb-6">
                   {[V0_PLAYBOOK, LIVE_BUILD, BUILD_SPRINT].map((product) => (
                     <button
                       key={product.id}
                       onClick={() => setSelectedProduct(product)}
-                      className={`p-3 rounded-xl text-center transition-all ${
+                      className={`p-4 rounded-xl text-center transition-all ${
                         selectedProduct.id === product.id
                           ? "bg-neutral-900 text-white ring-2 ring-neutral-900 ring-offset-2"
                           : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                       }`}
                     >
-                      <div className="text-lg font-bold">{formatPrice(product.priceInCents)}</div>
-                      <div className="text-xs opacity-70 mt-0.5">{product.name}</div>
+                      <div className="text-xs opacity-70 mb-1">{product.name.split("—")[0].trim()}</div>
+                      <div className="text-xl font-bold">{formatPrice(product.priceInCents)}</div>
                     </button>
                   ))}
                 </div>
@@ -311,7 +312,7 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
                 <button
                   onClick={handleCheckout}
                   disabled={isLoading}
-                  className="w-full py-4 bg-neutral-900 text-white font-semibold rounded-xl flex items-center justify-center gap-2 hover:bg-neutral-800 disabled:opacity-50 transition-colors"
+                  className="w-full py-4 bg-emerald-500 text-white font-semibold rounded-xl flex items-center justify-center gap-2 hover:bg-emerald-600 disabled:opacity-50 transition-colors cta-pulse"
                 >
                   {isLoading ? (
                     <>
@@ -322,8 +323,8 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
                     <>{selectedProduct.cta} — {formatPrice(selectedProduct.priceInCents)}</>
                   )}
                 </button>
-                <p className="text-xs text-neutral-400 text-center mt-3">
-                  Secure checkout via Stripe
+                <p className="text-xs text-neutral-500 text-center mt-3">
+                  Secure checkout • Instant access
                 </p>
               </div>
             </div>
