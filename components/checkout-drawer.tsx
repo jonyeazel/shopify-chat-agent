@@ -94,20 +94,21 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
 
               {/* Scrollable content */}
               <div className="flex-1 overflow-y-auto px-5">
-                {/* Tier selector */}
-                <div className="flex gap-2 pb-4 overflow-x-auto scrollbar-hide">
+                {/* Tier selector - segmented control style */}
+                <div className="flex gap-1 p-1 bg-neutral-100 rounded-2xl mb-5">
                   {[V0_PLAYBOOK, LIVE_BUILD, BUILD_SPRINT].map((product) => (
                     <button
                       key={product.id}
                       onClick={() => setSelectedProduct(product)}
-                      className={`flex-shrink-0 px-4 py-3 rounded-xl transition-all ${
+                      className={`flex-1 py-2.5 px-2 rounded-xl text-center transition-all ${
                         selectedProduct.id === product.id
-                          ? "bg-neutral-900 text-white ring-2 ring-neutral-900 ring-offset-2"
-                          : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                          ? "bg-white text-neutral-900 shadow-sm"
+                          : "text-neutral-500"
                       }`}
                     >
-                      <div className="text-xs opacity-70 mb-0.5">{product.name.split("—")[0].trim()}</div>
-                      <div className="text-base font-semibold">{formatPrice(product.priceInCents)}</div>
+                      <div className={`text-sm font-semibold ${selectedProduct.id === product.id ? "text-neutral-900" : "text-neutral-600"}`}>
+                        {formatPrice(product.priceInCents)}
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -127,42 +128,21 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
                   </div>
                 </div>
 
-                {/* Value stack */}
-                {stackValue > 0 && (
-                  <div className="pb-4">
-                    <div className="p-4 bg-neutral-50 rounded-xl">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-neutral-500">Total value</span>
-                        <span className="text-sm text-neutral-400 line-through">${stackValue.toLocaleString()}+</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-neutral-900">Your price</span>
-                        <span className="text-xl font-bold text-neutral-900">{formatPrice(selectedProduct.priceInCents)}</span>
-                      </div>
+                {/* Price summary */}
+                <div className="pb-5">
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-sm text-neutral-500">Today</span>
+                    <div className="text-right">
+                      <span className="text-2xl font-bold text-neutral-900">{formatPrice(selectedProduct.priceInCents)}</span>
+                      <span className="text-sm text-neutral-400 ml-2">one-time</span>
                     </div>
                   </div>
-                )}
+                </div>
 
-                {/* v0 Referral */}
-                <a
-                  href="https://v0.link/jon"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-3 bg-neutral-900 rounded-xl mb-4"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center flex-shrink-0">
-                    <img src="/v0-logo-light.png" alt="v0" className="w-6 h-6 object-contain" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-white font-medium">Get $10 free on v0</p>
-                    <p className="text-xs text-neutral-400">Sign up with this link</p>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-neutral-400" />
-                </a>
-              </div>
+                </div>
 
               {/* Fixed CTA */}
-              <div className="px-5 pb-6 pt-4 border-t border-neutral-100 flex-shrink-0">
+              <div className="px-5 pb-6 pt-4 bg-white flex-shrink-0">
                 {error && (
                   <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-xl">
                     {error}
@@ -171,7 +151,7 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
                 <button
                   onClick={handleCheckout}
                   disabled={isLoading}
-                  className="w-full py-4 bg-emerald-500 text-white font-semibold rounded-xl flex items-center justify-center gap-2 hover:bg-emerald-600 disabled:opacity-50 transition-colors active:scale-[0.98] cta-pulse"
+                  className="w-full py-4 bg-emerald-500 text-white font-semibold rounded-2xl flex items-center justify-center gap-2 hover:bg-emerald-600 disabled:opacity-50 transition-colors active:scale-[0.98]"
                 >
                   {isLoading ? (
                     <>
@@ -179,10 +159,10 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
                       Processing...
                     </>
                   ) : (
-                    <>{selectedProduct.cta} — {formatPrice(selectedProduct.priceInCents)}</>
+                    <>Buy Now — {formatPrice(selectedProduct.priceInCents)}</>
                   )}
                 </button>
-                <p className="text-xs text-neutral-400 text-center mt-3">
+                <p className="text-xs text-neutral-400 text-center mt-2.5">
                   Secure checkout via Stripe
                 </p>
               </div>
