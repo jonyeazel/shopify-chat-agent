@@ -13,13 +13,23 @@ export async function startCheckout(productId: string = V0_PLAYBOOK.id) {
     ? `https://${process.env.VERCEL_URL}` 
     : "http://localhost:3000"
 
-  const session = await stripe.checkout.sessions.create({
-    line_items: [
-      {
-        price: product.stripePriceId,
+  // Use stripePriceId if available, otherwise create price dynamically
+  const lineItem = product.stripePriceId 
+    ? { price: product.stripePriceId, quantity: 1 }
+    : {
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: product.name,
+            description: product.description,
+          },
+          unit_amount: product.priceInCents,
+        },
         quantity: 1,
-      },
-    ],
+      }
+
+  const session = await stripe.checkout.sessions.create({
+    line_items: [lineItem],
     mode: "payment",
     success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${baseUrl}?canceled=true`,
@@ -43,13 +53,23 @@ export async function startEmbeddedCheckout(productId: string = V0_PLAYBOOK.id):
     ? `https://${process.env.VERCEL_URL}` 
     : "http://localhost:3000"
 
-  const session = await stripe.checkout.sessions.create({
-    line_items: [
-      {
-        price: product.stripePriceId,
+  // Use stripePriceId if available, otherwise create price dynamically
+  const lineItem = product.stripePriceId 
+    ? { price: product.stripePriceId, quantity: 1 }
+    : {
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: product.name,
+            description: product.description,
+          },
+          unit_amount: product.priceInCents,
+        },
         quantity: 1,
-      },
-    ],
+      }
+
+  const session = await stripe.checkout.sessions.create({
+    line_items: [lineItem],
     mode: "payment",
     ui_mode: "embedded",
     return_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,

@@ -41,7 +41,7 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, o
       <MediaGallery isOpen={showGallery} onClose={closeGallery} onAskAbout={onSubmit} />
 
       <div className="flex-1 flex flex-col items-center justify-center px-8">
-        {/* Avatar */}
+        {/* Avatar with text icon */}
         <div className="relative mb-6">
           <img
             src={brand.avatarUrl || "/placeholder.svg"}
@@ -53,6 +53,15 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, o
             draggable={false}
             onClick={openGallery}
           />
+          {/* iMessage blue text icon */}
+          <a
+            href="sms:+14078677201&body=Hey%20Jon%2C%20I%20was%20just%20on%20v0university.com"
+            className="absolute -bottom-1 -right-1 w-8 h-8 bg-[#007AFF] rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+          >
+            <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+          </a>
         </div>
 
         {/* Tagline */}

@@ -94,6 +94,15 @@ function IconStripe({ className }: { className?: string }) {
   )
 }
 
+// TEXT - iMessage style chat bubble
+function IconText({ className, strokeWidth = 1.5 }: { className?: string; strokeWidth?: number }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    </svg>
+  )
+}
+
 import { IdentityPanel } from "@/components/chat/identity-panel"
 import { ChatInput } from "@/components/chat/chat-input"
 import { MessageList } from "@/components/chat/message-list"
@@ -220,6 +229,38 @@ export default function Home() {
       setChatError(err.message || "Something went wrong. Please try again.")
     },
   })
+
+  // Context-aware SMS link generator - must be after useChat
+  const getContextAwareSmsLink = useCallback(() => {
+    const userMessages = messages
+      .filter(m => m.role === "user")
+      .flatMap(m => m.parts?.filter((p): p is { type: "text"; text: string } => p.type === "text").map(p => p.text) || [])
+    
+    const lastUserMessage = userMessages[userMessages.length - 1] || ""
+    const allText = userMessages.join(" ").toLowerCase()
+    
+    let prefill = "Hey Jon, I was just on v0university.com"
+    
+    // Context-aware prefills based on conversation
+    if (allText.includes("landing") || allText.includes("page")) {
+      prefill = "Hey Jon, I want to build a landing page"
+    } else if (allText.includes("store") || allText.includes("shop") || allText.includes("ecommerce")) {
+      prefill = "Hey Jon, I need a store built"
+    } else if (allText.includes("portfolio")) {
+      prefill = "Hey Jon, I want a portfolio site"
+    } else if (allText.includes("ready") || allText.includes("i'm in") || allText.includes("buy")) {
+      prefill = "Hey Jon, I'm ready to get started"
+    } else if (allText.includes("question") || allText.includes("help")) {
+      prefill = "Hey Jon, quick question about v0 University"
+    } else if (allText.includes("price") || allText.includes("cost") || allText.includes("$")) {
+      prefill = "Hey Jon, I have a question about pricing"
+    } else if (lastUserMessage.length > 10) {
+      const truncated = lastUserMessage.slice(0, 40).replace(/[^\w\s]/g, "")
+      prefill = `Hey Jon, re: "${truncated}..."`
+    }
+    
+    return `sms:4078677201?body=${encodeURIComponent(prefill)}`
+  }, [messages])
 
   const handleChatSubmit = useCallback((text: string) => {
     setChatError(null)
@@ -405,6 +446,11 @@ export default function Home() {
 
         {/* Scrollable content */}
         <div className="flex-1 min-h-0 flex flex-col relative z-10">
+          {/* Top fade - matches quick reply pill fades */}
+          <div 
+            className="absolute top-0 left-0 right-0 h-8 z-20 pointer-events-none md:hidden"
+            style={{ background: "linear-gradient(to bottom, var(--background), transparent)" }}
+          />
           <div
             className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-hide"
             style={{ overscrollBehavior: "contain" }}
@@ -505,9 +551,11 @@ export default function Home() {
           </div>
 
 
-          {/* Mobile: Fade above input */}
-          {/* Mobile: Frosted gradient fade */}
-          <div className="flex-shrink-0 md:hidden h-12 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent, rgba(255,255,255,0.9))" }} />
+          {/* Mobile: Bottom fade - matches top fade */}
+          <div 
+            className="flex-shrink-0 md:hidden h-10 pointer-events-none -mt-10 relative z-20" 
+            style={{ background: "linear-gradient(to bottom, transparent, var(--background))" }} 
+          />
           {/* Mobile: Chat input with glass effect */}
           <div className="flex-shrink-0 md:hidden pb-3 px-3 glass-surface">
             <ChatInput
@@ -545,16 +593,30 @@ export default function Home() {
               <span className="text-[10px] leading-tight font-medium text-muted-foreground">{label}</span>
             </motion.button>
           ))}
-          {/* Stripe checkout button with logo */}
-          <motion.button
+          {/* Text Jon button - iMessage blue */}
+          <motion.a
+            href={getContextAwareSmsLink()}
             initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.22, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
             whileTap={{ scale: 0.92 }}
-            onClick={() => setShowCheckout(true)}
             className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
           >
-            <div className="w-[52px] h-[52px] rounded-full overflow-hidden cta-pulse ring-1 ring-[#635BFF]/30">
+            <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center bg-[#007AFF] rubber-button">
+              <IconText className="w-6 h-6 text-white" strokeWidth={1.5} />
+            </div>
+            <span className="text-[10px] leading-tight font-medium text-[#007AFF]">Text Jon</span>
+          </motion.a>
+          {/* Stripe checkout button with logo */}
+          <motion.button
+            initial={{ opacity: 0, x: 16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.26, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+            whileTap={{ scale: 0.92 }}
+            onClick={() => setShowCheckout(true)}
+            className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full mb-2"
+          >
+            <div className="w-[52px] h-[52px] rounded-full overflow-hidden stripe-pulse">
               <img src="/stripe-logo.png" alt="Checkout with Stripe" className="w-full h-full object-cover" />
             </div>
             <span className="text-[10px] leading-tight font-medium text-[#635BFF]">Buy Now</span>

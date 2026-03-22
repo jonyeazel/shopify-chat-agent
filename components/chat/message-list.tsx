@@ -104,95 +104,44 @@ function getSmsCta(messages: UIMessage[]): { label: string; context: SmsContext;
   return { label: "Text Jon", context: "general", show: false }
 }
 
-// Quick reply suggestions — context-aware, conversational, never robotic
+// Quick reply suggestions — simple, natural, conversion-focused
 function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[]): string[] {
   const lower = lastAssistantMessage.toLowerCase()
   const msgCount = allMessages.length
   
-  // Get what user has already said to avoid repetition
-  const userMessages = allMessages
-    .filter(m => m.role === "user")
-    .flatMap(m => m.parts?.filter((p): p is { type: "text"; text: string } => p.type === "text").map(p => p.text.toLowerCase()) || [])
-  const allUserText = userMessages.join(" ")
-  
-  // Track conversation progress
-  const hasSharedGoal = ["shopify", "store", "landing", "portfolio", "website", "client", "freelance", "agency", "ecommerce"].some(g => allUserText.includes(g))
-  const hasSeenPricing = allUserText.includes("$197") || allUserText.includes("$1,497") || allUserText.includes("price") || allUserText.includes("cost") || allUserText.includes("offer")
-  const hasSeenExamples = allUserText.includes("example") || allUserText.includes("portfolio") || allUserText.includes("results") || lower.includes("built")
-  const isDeep = msgCount >= 6
-  
-  // GUARANTEE MENTIONED
-  if (lower.includes("guarantee") || lower.includes("zero risk") || lower.includes("makes it right")) {
-    return ["I'm in", "What's included?", "Show me results"]
+  // Buying signals in AI response - they're being directed to buy
+  if (lower.includes("buy now") || lower.includes("tap") || lower.includes("button")) {
+    return ["Done", "One question first"]
   }
 
-  // MOM/SISTER SOCIAL PROOF
-  if (lower.includes("mom") || lower.includes("sister") || lower.includes("no experience") || lower.includes("zero experience")) {
-    return ["That's reassuring", "I want to try", "What's it cost?"]
-  }
-
-  // QUESTION ENDS — match what AI just asked
+  // AI asked a question - give natural answers
   if (lower.endsWith("?")) {
-    // "What would you build first?"
-    if (lower.includes("what kind") || lower.includes("what would you") || lower.includes("build first")) {
-      return ["A landing page", "Something for my store", "A portfolio", "Not sure yet"]
+    if (lower.includes("what") && (lower.includes("build") || lower.includes("create") || lower.includes("make"))) {
+      return ["A landing page", "A store", "A portfolio"]
     }
-    // "Want to see what's included?"
-    if (lower.includes("want to see") || lower.includes("included")) {
-      return ["Yes, show me", "Just buy it", "What's the guarantee?"]
+    if (lower.includes("hesitation") || lower.includes("holding you back")) {
+      return ["Just making sure it works", "Budget", "Timing"]
     }
-    // "Which sounds closer?"
-    if (lower.includes("which sounds") || lower.includes("what you need")) {
-      return ["The Playbook", "I want help building", "Not sure yet"]
-    }
+    return ["Yes", "Tell me more", "Not sure yet"]
   }
 
-  // PRICING SHOWN — new $197 pricing
-  if (lower.includes("$197") || lower.includes("$1,497") || lower.includes("$4,997")) {
-    if (lower.includes("limited time") || lower.includes("normally")) {
-      return ["I'm ready", "What's the guarantee?", "Show me results first"]
-    }
-    return ["That works", "What's included?", "Is there a guarantee?"]
+  // Pricing mentioned
+  if (lower.includes("$197") || lower.includes("$1,497")) {
+    return ["I'm in", "What's the guarantee?"]
   }
 
-  // EXAMPLES/RESULTS SHOWN
-  if (lower.includes("built") || lower.includes("beginners") || lower.includes("real sites")) {
-    return ["I can do that", "How do I start?", "What's the offer?"]
+  // Examples/proof mentioned
+  if (lower.includes("example") || lower.includes("sites") || lower.includes("built")) {
+    return ["Impressive", "I want that", "How do I start?"]
   }
 
-  // REASSURANCE — explaining how easy
-  if (lower.includes("20 minute") || lower.includes("20-minute") || lower.includes("that's it")) {
-    return ["I'm convinced", "Show me results", "What do I get?"]
+  // Early conversation
+  if (msgCount <= 3) {
+    return ["How does this work?", "Show me examples"]
   }
 
-  // PLAYBOOK MENTIONED
-  if (lower.includes("playbook") || lower.includes("method")) {
-    return ["Get it now", "What's included?", "Show me examples"]
-  }
-
-  // EARLY CONVERSATION — discovery phase
-  if (msgCount <= 4) {
-    if (!hasSharedGoal) {
-      return ["I want to build a site", "I run a business", "Just exploring"]
-    }
-    return ["How easy is this?", "Show me results", "What's the offer?"]
-  }
-
-  // MID CONVERSATION — consideration phase
-  if (!hasSeenPricing && !hasSeenExamples) {
-    return ["Show me examples", "What are my options?", "Who is this for?"]
-  }
-  
-  if (!hasSeenPricing) {
-    return ["What's it cost?", "Tell me more", "I'm interested"]
-  }
-
-  // LATE CONVERSATION — decision phase
-  if (isDeep) {
-    return ["I'm in", "One more question", "Let me think"]
-  }
-
-  return ["Tell me more", "Show me examples", "What's next?"]
+  // Default - keep it simple
+  return ["Tell me more", "I'm interested"]
 }
 
 // Check if two messages are from the same sender and close in time (within 2min)

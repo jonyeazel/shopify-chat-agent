@@ -12,7 +12,7 @@
  */
 :root {
   --edge-padding: 8px;
-  --background: #fafafa;
+  --background: #ffffff;
   --foreground: #0a0a0a;
 
   --card: #ffffff;
@@ -267,6 +267,20 @@
 
 .cta-pulse {
   animation: cta-pulse 3s ease-in-out infinite;
+}
+
+/* Stripe purple pulse - smaller, contained */
+@keyframes stripe-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 rgba(99, 91, 255, 0);
+  }
+  50% { 
+    box-shadow: 0 0 0 4px rgba(99, 91, 255, 0.25);
+  }
+}
+
+.stripe-pulse {
+  animation: stripe-pulse 2.5s ease-in-out infinite;
 }
 
 /* Frosted glass effect for input areas */
