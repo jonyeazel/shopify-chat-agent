@@ -24,19 +24,17 @@ export const PRODUCTS: Product[] = [
     thumbnail: "https://img.youtube.com/vi/i9na_W31rLg/maxresdefault.jpg",
     includes: [
       "Core Method Video — the prompt structure that works",
-      "78 Production-Ready Templates",
-      "13 Live Site Breakdowns",
-      "200+ Prompt Swipe File",
+      "5 Foundation Templates (covers 90% of use cases)",
+      "5 Power Prompts (the exact words that work)",
       "Lifetime Updates",
       "Direct SMS Access to Jon"
     ],
     valueStack: [
-      { item: "Core Method Video", value: 97 },
-      { item: "78 Templates", value: 497 },
-      { item: "13 Site Breakdowns", value: 297 },
-      { item: "200+ Prompt Swipes", value: 197 },
-      { item: "Lifetime Updates", value: 297 },
-      { item: "SMS Access", value: 0 }, // priceless
+      { item: "Core Method Video", value: 297 },
+      { item: "5 Foundation Templates", value: 497 },
+      { item: "5 Power Prompts", value: 297 },
+      { item: "Lifetime Updates", value: 197 },
+      { item: "Direct SMS Access", value: 0 }, // priceless
     ],
     cta: "Get Instant Access",
     urgency: "Templates updated weekly"

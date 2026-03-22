@@ -20,7 +20,7 @@ const FAQ_ITEMS = [
   },
   {
     question: "What do I get in the Playbook?",
-    answer: "The core method video, 78 templates, 13 site breakdowns, 200+ prompt swipes, lifetime updates, and direct SMS to Jon."
+    answer: "The core method video, 5 foundation templates, 5 power prompts, lifetime updates, and direct SMS to Jon. Intentionally curated—not filler."
   },
   {
     question: "What happens in a Live Build?",
@@ -106,18 +106,18 @@ const COURSE_MODULES = [
     highlight: true
   },
   { 
-    title: "78 Templates",
-    subtitle: "Production-ready, copy and customize",
+    title: "5 Foundation Templates",
+    subtitle: "Landing, portfolio, store, blog, app",
     icon: "grid"
   },
   { 
-    title: "13 Site Breakdowns",
-    subtitle: "Real sites reverse-engineered",
+    title: "5 Power Prompts",
+    subtitle: "Copy, paste, build anything",
     icon: "browser"
   },
   { 
-    title: "200+ Prompt Swipes",
-    subtitle: "Copy, paste, build",
+    title: "Lifetime Updates",
+    subtitle: "Templates evolve with AI",
     icon: "refresh"
   },
 ]

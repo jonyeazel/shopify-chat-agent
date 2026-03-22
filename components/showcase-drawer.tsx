@@ -99,7 +99,7 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
             onClick={(e) => e.stopPropagation()}
-            className="absolute bottom-0 left-0 right-0 h-[95vh] bg-background rounded-t-2xl shadow-2xl flex flex-col overflow-hidden"
+            className="absolute bottom-0 left-0 right-0 h-[85vh] bg-background rounded-t-2xl shadow-2xl flex flex-col overflow-hidden"
           >
             {/* Minimal header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
@@ -135,10 +135,12 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
                 )}
                 <iframe
                   src={currentSite.url}
-                  className="w-full h-full"
+                  className="w-full h-full pointer-events-none"
                   onLoad={() => setIsLoaded(true)}
                   title={currentSite.name}
                 />
+                {/* Overlay to prevent interaction - swipe still works */}
+                <div className="absolute inset-0" />
               </motion.div>
             </div>
 

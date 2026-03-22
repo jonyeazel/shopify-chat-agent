@@ -104,114 +104,94 @@ function getSmsCta(messages: UIMessage[]): { label: string; context: SmsContext;
   return { label: "Text Jon", context: "general", show: false }
 }
 
-// Quick reply suggestions for v0 University — discovery flow for course sales
+// Quick reply suggestions — context-aware, conversational, never robotic
 function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[]): string[] {
   const lower = lastAssistantMessage.toLowerCase()
+  const msgCount = allMessages.length
   
-  // Check conversation history
-  const allUserText = allMessages
+  // Get what user has already said to avoid repetition
+  const userMessages = allMessages
     .filter(m => m.role === "user")
     .flatMap(m => m.parts?.filter((p): p is { type: "text"; text: string } => p.type === "text").map(p => p.text.toLowerCase()) || [])
-    .join(" ")
+  const allUserText = userMessages.join(" ")
   
-  const hasSharedGoal = ["shopify", "store", "landing page", "portfolio", "website", "client", "freelance", "agency"].some(g => allUserText.includes(g))
-  const hasSharedExperience = ["tried v0", "used v0", "never", "beginner", "don't code", "no code", "designer", "developer"].some(e => allUserText.includes(e))
-  const hasAskedPrice = ["how much", "price", "cost", "$297", "expensive", "afford"].some(p => allUserText.includes(p))
+  // Track conversation progress
+  const hasSharedGoal = ["shopify", "store", "landing", "portfolio", "website", "client", "freelance", "agency", "ecommerce"].some(g => allUserText.includes(g))
+  const hasSeenPricing = allUserText.includes("$297") || allUserText.includes("$1,497") || allUserText.includes("price") || allUserText.includes("cost")
+  const hasSeenExamples = allUserText.includes("example") || allUserText.includes("portfolio") || lower.includes("built")
+  const isDeep = msgCount >= 6
   
-  // ENROLLMENT — AI showing enrollment page
-  if (lower.includes("enrollment") || lower.includes("here's how to enroll") || lower.includes("sign up")) {
-    return ["Take me there", "What's included again?", "Do you have a payment plan?"]
+  // QUESTION ENDS — match what AI just asked
+  if (lower.endsWith("?")) {
+    // "What kind of site would you build?"
+    if (lower.includes("what kind") || lower.includes("what would you") || lower.includes("what are you")) {
+      return ["A landing page", "Something for my store", "Client work", "Not sure yet"]
+    }
+    // "What frustrated you?" or "What happened?"
+    if (lower.includes("frustrated") || lower.includes("what happened") || lower.includes("went wrong")) {
+      return ["Results looked generic", "Couldn't get it right", "Didn't know where to start"]
+    }
+    // "Does that make sense?" or "Sound good?"
+    if (lower.includes("make sense") || lower.includes("sound good") || lower.includes("help")) {
+      return ["Yeah, tell me more", "I have a question", "What's the price?"]
+    }
+    // "Ready to start?" or buying signal
+    if (lower.includes("ready") || lower.includes("want to")) {
+      return ["Yes", "Almost, one question", "What's included?"]
+    }
   }
 
-  // READY TO BUY — signals they want to proceed
-  if (lower.includes("ready to start") || lower.includes("let's do it") || lower.includes("how do i enroll")) {
-    return ["Sign me up", "One more question first"]
+  // PRICING SHOWN — just saw prices
+  if (lower.includes("$297") || lower.includes("$1,497") || lower.includes("$4,997")) {
+    if (lower.includes("live build")) {
+      return ["Book a session", "Tell me more about that", "What's in the Playbook?"]
+    }
+    return ["That works", "What's in each?", "Which do you recommend?"]
   }
 
-  // PRICE SHOWN — $297, $1,497, or $3,497 mentioned
-  if (lower.includes("$297") || lower.includes("$1,497") || lower.includes("$3,497") || lower.includes("the course is")) {
-    return ["That works for me", "What's included?", "Do students actually get results?", "Is there a guarantee?"]
+  // EXAMPLES SHOWN — just saw portfolio
+  if (lower.includes("built this") || lower.includes("check out") || lower.includes("example") || lower.includes("site they")) {
+    return ["Impressive", "How long did that take?", "Can I build that?"]
   }
 
-  // OBJECTION HANDLING — price concern
-  if (lower.includes("compared to") || lower.includes("make it back") || lower.includes("save that") || lower.includes("pays for itself")) {
-    return ["That makes sense", "Show me some results", "I need to think about it"]
+  // REASSURANCE — AI explaining how easy it is
+  if (lower.includes("no code") || lower.includes("plain english") || lower.includes("don't need")) {
+    return ["That's what I need", "Show me how", "What's it cost?"]
   }
 
-  // SHOPIFY FOUNDER FLOW — specific to store owners
-  if (lower.includes("how much have you spent") || lower.includes("design work") || lower.includes("designer") || lower.includes("developer")) {
-    return ["Thousands, honestly", "A few hundred", "I do it all myself", "I'm just starting out"]
+  // LIVE BUILD EXPLANATION
+  if (lower.includes("60 minutes") || lower.includes("build with you") || lower.includes("finished site")) {
+    return ["Book that", "What would we build?", "How does it work?"]
   }
 
-  // SHOPIFY CONTEXT — they mentioned having a store
-  if (lower.includes("product page") || lower.includes("landing page") || lower.includes("campaign") || lower.includes("module 3")) {
-    return ["Show me examples", "How long does that take to learn?", "What's the course cost?"]
+  // PLAYBOOK EXPLANATION  
+  if (lower.includes("template") || lower.includes("prompt swipe") || lower.includes("playbook")) {
+    return ["Get the Playbook", "What's in it?", "Show me a sample"]
   }
 
-  // STUDENT RESULTS — after showing portfolio or success stories
-  if (lower.includes("student") && (lower.includes("built") || lower.includes("launched") || lower.includes("zero experience"))) {
-    return ["I want results like that", "How long did that take them?", "What's the course cost?"]
+  // EARLY CONVERSATION — discovery phase
+  if (msgCount <= 4) {
+    if (!hasSharedGoal) {
+      return ["I run an online store", "I want to build sites", "Just exploring"]
+    }
+    return ["Show me examples", "How does it work?", "What's it cost?"]
   }
 
-  // BEGINNER REASSURANCE — addressing "I'm not technical" concern
-  if (lower.includes("zero code") || lower.includes("plain english") || lower.includes("describe what you want") || lower.includes("no design experience")) {
-    return ["That's exactly what I need", "What would I build first?", "Show me how it works"]
-  }
-
-  // FREE VALUE — offered a preview or sample
-  if (lower.includes("preview") || lower.includes("module 1") || lower.includes("sample") || lower.includes("free")) {
-    return ["Yes, show me", "What's in the full course?", "Just tell me the price"]
-  }
-
-  // YOUTUBE COMPARISON — addressing free content objection
-  if (lower.includes("shortcut") || lower.includes("structured") || lower.includes("trial and error") || lower.includes("youtube")) {
-    return ["I'd rather have the shortcut", "What makes this different?", "What's it cost?"]
-  }
-
-  // WHAT BRINGS YOU HERE — opening question
-  if (lower.includes("what brings you") || lower.includes("wondering if they needed to") || lower.includes("paid someone")) {
-    return ["I'm a Shopify founder", "I want to learn v0", "I've been burned by agencies", "Just curious what this is"]
-  }
-
-  // WHAT DO YOU WANT TO BUILD — discovery question
-  if (lower.includes("what are you trying to build") || lower.includes("what would you build") || lower.includes("what's the first thing")) {
-    return ["Landing pages for my store", "A portfolio site", "Client websites", "I'm not sure yet"]
-  }
-
-  // TRIED V0 BEFORE — diagnosing past experience
-  if (lower.includes("what happened") || lower.includes("went wrong") || lower.includes("prompt") || lower.includes("generic results")) {
-    return ["It looked too basic", "I couldn't get the code to work", "I didn't know how to prompt it", "I got frustrated and quit"]
-  }
-
-  // SHOWING COURSE CONTENT — curriculum or modules
-  if (lower.includes("module") || lower.includes("curriculum") || lower.includes("what's included") || lower.includes("what you get")) {
-    return ["That's exactly what I need", "How long does it take?", "What's the price?"]
-  }
-
-  // GUARANTEE QUESTION
-  if (lower.includes("guarantee") || lower.includes("refund") || lower.includes("money back")) {
-    return ["That's fair", "How do I sign up?", "Show me some results first"]
-  }
-
-  // TIME QUESTION — how long does it take
-  if (lower.includes("45 minutes") || lower.includes("by the end of the day") || lower.includes("weekend") || lower.includes("how long")) {
-    return ["That's faster than I expected", "What would I build first?", "What's the cost?"]
-  }
-
-  // DEFAULT: based on conversation state
-  if (!hasSharedGoal) {
-    return ["I have a Shopify store", "I want to build websites", "I'm just exploring", "What is v0?"]
+  // MID CONVERSATION — consideration phase
+  if (!hasSeenPricing && !hasSeenExamples) {
+    return ["Show me examples", "What are my options?", "Who is this for?"]
   }
   
-  if (!hasSharedExperience) {
-    return ["I've never used v0", "I tried it but got stuck", "I know the basics", "I'm a complete beginner"]
+  if (!hasSeenPricing) {
+    return ["What's it cost?", "Tell me more", "I'm interested"]
   }
 
-  if (!hasAskedPrice) {
-    return ["What's it cost?", "Show me sites people built", "Is this right for me?"]
+  // LATE CONVERSATION — decision phase
+  if (isDeep) {
+    return ["I'm in", "One more question", "Let me think"]
   }
 
-  return ["Show me examples", "What's included?", "I'm ready"]
+  return ["Tell me more", "Show me examples", "What's next?"]
 }
 
 // Check if two messages are from the same sender and close in time (within 2min)
