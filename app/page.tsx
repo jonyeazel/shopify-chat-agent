@@ -529,8 +529,7 @@ export default function Home() {
             { icon: IconExamples, label: "Examples", action: () => setShowShowcase(true) },
             { icon: IconInfo, label: "Info", action: () => handleChatSubmit("How does this work?") },
             { icon: IconFAQ, label: "Pricing", action: () => handleChatSubmit("What are the pricing options?") },
-            { icon: IconStripe, label: "Start", action: () => setShowCheckout(true), highlight: true },
-          ] as const).map(({ icon: Icon, label, highlight, ...rest }, index) => (
+          ] as const).map(({ icon: Icon, label, ...rest }, index) => (
             <motion.button
               key={label}
               initial={{ opacity: 0, x: 16 }}
@@ -540,16 +539,26 @@ export default function Home() {
               onClick={"action" in rest ? rest.action : undefined}
               className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
             >
-              <div className={`w-[52px] h-[52px] rounded-full flex items-center justify-center ring-1 ${
-                highlight 
-                  ? "bg-emerald-500 ring-emerald-400/30 cta-pulse" 
-                  : "bg-foreground ring-white/[0.06] rubber-button"
-              }`}>
-                <Icon className={`w-6 h-6 ${highlight ? "text-white" : "text-background"}`} strokeWidth={1.5} />
+              <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center ring-1 bg-foreground ring-white/[0.06] rubber-button">
+                <Icon className="w-6 h-6 text-background" strokeWidth={1.5} />
               </div>
-              <span className={`text-[10px] leading-tight font-medium ${highlight ? "text-emerald-600" : "text-muted-foreground"}`}>{label}</span>
+              <span className="text-[10px] leading-tight font-medium text-muted-foreground">{label}</span>
             </motion.button>
           ))}
+          {/* Stripe checkout button with logo */}
+          <motion.button
+            initial={{ opacity: 0, x: 16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.22, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+            whileTap={{ scale: 0.92 }}
+            onClick={() => setShowCheckout(true)}
+            className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+          >
+            <div className="w-[52px] h-[52px] rounded-full overflow-hidden cta-pulse ring-1 ring-[#635BFF]/30">
+              <img src="/stripe-logo.png" alt="Checkout with Stripe" className="w-full h-full object-cover" />
+            </div>
+            <span className="text-[10px] leading-tight font-medium text-[#635BFF]">Start</span>
+          </motion.button>
         </div>
 
         </div>
