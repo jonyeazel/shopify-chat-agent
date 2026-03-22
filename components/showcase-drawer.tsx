@@ -129,18 +129,17 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
                 className="w-full h-full rounded-xl overflow-hidden border border-border/30 bg-white relative"
               >
                 {!isLoaded && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-muted/50">
+                  <div className="absolute inset-0 flex items-center justify-center bg-muted/50 pointer-events-none z-10">
                     <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                   </div>
                 )}
                 <iframe
                   src={currentSite.url}
-                  className="w-full h-full pointer-events-none"
+                  className="w-full h-full"
                   onLoad={() => setIsLoaded(true)}
                   title={currentSite.name}
+                  sandbox="allow-scripts allow-same-origin"
                 />
-                {/* Overlay to prevent interaction - swipe still works */}
-                <div className="absolute inset-0" />
               </motion.div>
             </div>
 
