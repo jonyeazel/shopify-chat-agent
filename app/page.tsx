@@ -208,39 +208,6 @@ export default function Home() {
     }
   }, [adminLongPressTimer])
 
-  // Context-aware SMS link generator
-  const getContextAwareSmsLink = useCallback(() => {
-    const userMessages = messages
-      .filter(m => m.role === "user")
-      .flatMap(m => m.parts?.filter((p): p is { type: "text"; text: string } => p.type === "text").map(p => p.text) || [])
-    
-    const lastUserMessage = userMessages[userMessages.length - 1] || ""
-    const allText = userMessages.join(" ").toLowerCase()
-    
-    let prefill = "Hey Jon, I was just on v0university.com"
-    
-    // Context-aware prefills
-    if (allText.includes("landing") || allText.includes("page")) {
-      prefill = "Hey Jon, I want to build a landing page"
-    } else if (allText.includes("store") || allText.includes("shop") || allText.includes("ecommerce")) {
-      prefill = "Hey Jon, I need a store built"
-    } else if (allText.includes("portfolio")) {
-      prefill = "Hey Jon, I want a portfolio site"
-    } else if (allText.includes("ready") || allText.includes("i'm in") || allText.includes("buy")) {
-      prefill = "Hey Jon, I'm ready to get started"
-    } else if (allText.includes("question") || allText.includes("help")) {
-      prefill = "Hey Jon, quick question about v0 University"
-    } else if (allText.includes("price") || allText.includes("cost") || allText.includes("$")) {
-      prefill = "Hey Jon, I have a question about pricing"
-    } else if (lastUserMessage.length > 10) {
-      // Use their actual message context
-      const truncated = lastUserMessage.slice(0, 40).replace(/[^\w\s]/g, "")
-      prefill = `Hey Jon, re: "${truncated}..."`
-    }
-    
-    return `sms:4078677201?body=${encodeURIComponent(prefill)}`
-  }, [messages])
-
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
     setIsDragging(true)
@@ -262,6 +229,38 @@ export default function Home() {
       setChatError(err.message || "Something went wrong. Please try again.")
     },
   })
+
+  // Context-aware SMS link generator - must be after useChat
+  const getContextAwareSmsLink = useCallback(() => {
+    const userMessages = messages
+      .filter(m => m.role === "user")
+      .flatMap(m => m.parts?.filter((p): p is { type: "text"; text: string } => p.type === "text").map(p => p.text) || [])
+    
+    const lastUserMessage = userMessages[userMessages.length - 1] || ""
+    const allText = userMessages.join(" ").toLowerCase()
+    
+    let prefill = "Hey Jon, I was just on v0university.com"
+    
+    // Context-aware prefills based on conversation
+    if (allText.includes("landing") || allText.includes("page")) {
+      prefill = "Hey Jon, I want to build a landing page"
+    } else if (allText.includes("store") || allText.includes("shop") || allText.includes("ecommerce")) {
+      prefill = "Hey Jon, I need a store built"
+    } else if (allText.includes("portfolio")) {
+      prefill = "Hey Jon, I want a portfolio site"
+    } else if (allText.includes("ready") || allText.includes("i'm in") || allText.includes("buy")) {
+      prefill = "Hey Jon, I'm ready to get started"
+    } else if (allText.includes("question") || allText.includes("help")) {
+      prefill = "Hey Jon, quick question about v0 University"
+    } else if (allText.includes("price") || allText.includes("cost") || allText.includes("$")) {
+      prefill = "Hey Jon, I have a question about pricing"
+    } else if (lastUserMessage.length > 10) {
+      const truncated = lastUserMessage.slice(0, 40).replace(/[^\w\s]/g, "")
+      prefill = `Hey Jon, re: "${truncated}..."`
+    }
+    
+    return `sms:4078677201?body=${encodeURIComponent(prefill)}`
+  }, [messages])
 
   const handleChatSubmit = useCallback((text: string) => {
     setChatError(null)

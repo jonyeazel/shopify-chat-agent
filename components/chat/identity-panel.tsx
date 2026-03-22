@@ -55,12 +55,11 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, o
           />
           {/* iMessage blue text icon */}
           <a
-            href="sms:4078677201"
+            href="sms:+14078677201&body=Hey%20Jon%2C%20I%20was%20just%20on%20v0university.com"
             className="absolute -bottom-1 -right-1 w-8 h-8 bg-[#007AFF] rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
           >
-            <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/>
-              <path d="M7 9h10v2H7zm0-3h10v2H7z"/>
+            <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
             </svg>
           </a>
         </div>
