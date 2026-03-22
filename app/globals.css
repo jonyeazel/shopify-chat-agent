@@ -251,6 +251,61 @@
   50% { opacity: 0.15; }
 }
 
+/* S-tier CTA pulse - subtle, magnetic draw */
+@keyframes cta-pulse {
+  0%, 100% { 
+    box-shadow: 
+      0 0 0 0 rgba(16, 185, 129, 0),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+  50% { 
+    box-shadow: 
+      0 0 0 8px rgba(16, 185, 129, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+}
+
+.cta-pulse {
+  animation: cta-pulse 3s ease-in-out infinite;
+}
+
+/* Frosted glass effect for input areas */
+.glass-surface {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Ambient mic ready state */
+@keyframes mic-ready {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 rgba(10, 10, 10, 0);
+  }
+  50% { 
+    box-shadow: 0 0 0 4px rgba(10, 10, 10, 0.06);
+  }
+}
+
+.mic-ready {
+  animation: mic-ready 2.5s ease-in-out infinite;
+}
+
+/* AI thinking shimmer for icon rail */
+@keyframes rail-shimmer {
+  0% { opacity: 0; transform: translateY(100%); }
+  50% { opacity: 0.15; }
+  100% { opacity: 0; transform: translateY(-100%); }
+}
+
+/* Voice-first input prominence */
+.voice-prominent {
+  transition: all 200ms ease-out;
+}
+
+.voice-prominent:hover {
+  transform: scale(1.05);
+}
+
 /* Online indicator — slow breathing glow */
 @keyframes pulse-alive {
   0%, 100% { box-shadow: 0 0 0 0 rgba(10, 77, 58, 0); }

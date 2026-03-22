@@ -497,44 +497,48 @@ export default function Home() {
 
 
           {/* Mobile: Fade above input */}
-          <div className="flex-shrink-0 md:hidden h-10 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent, var(--card))" }} />
-          {/* Mobile: Chat input */}
-          <div className="flex-shrink-0 md:hidden pb-3 px-3">
+          {/* Mobile: Frosted gradient fade */}
+          <div className="flex-shrink-0 md:hidden h-12 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent, rgba(255,255,255,0.9))" }} />
+          {/* Mobile: Chat input with glass effect */}
+          <div className="flex-shrink-0 md:hidden pb-3 px-3 glass-surface">
             <ChatInput
               input={input ?? ""}
               setInput={setInput}
               onSubmit={handleChatSubmit}
               disabled={status !== "ready"}
-              showMicNudge={messages.length >= 2 && messages.length <= 6 && status === "ready"}
+              showMicNudge={messages.length === 0 || (messages.length >= 2 && messages.length <= 6 && status === "ready")}
+              voiceFirst={true}
             />
           </div>
         </div>
         </div>
 
         {/* Mobile: Vertical icon rail */}
-        <div className="md:hidden flex flex-col items-center justify-end gap-2 flex-shrink-0 pr-[16px] pl-[6px] pb-[max(env(safe-area-inset-bottom),16px)]">
+        <div className="md:hidden flex flex-col items-center justify-end gap-2.5 flex-shrink-0 pr-[16px] pl-[6px] pb-[max(env(safe-area-inset-bottom),16px)]">
           {([
-            { icon: IconVideo, label: "Video", action: () => setShowVideo(true) },
+            { icon: IconVideo, label: "Preview", action: () => setShowVideo(true) },
             { icon: IconExamples, label: "Examples", action: () => setShowShowcase(true) },
-            { icon: IconInfo, label: "Info", action: () => handleChatSubmit("Tell me more about v0 University") },
-            { icon: IconFAQ, label: "FAQ", action: () => handleChatSubmit("What are the most common questions about v0 University?") },
-            { icon: IconBuy, label: "Buy", action: () => setShowCheckout(true), highlight: true },
+            { icon: IconInfo, label: "Info", action: () => handleChatSubmit("How does this work?") },
+            { icon: IconFAQ, label: "Pricing", action: () => handleChatSubmit("What are the pricing options?") },
+            { icon: IconBuy, label: "Start", action: () => setShowCheckout(true), highlight: true },
           ] as const).map(({ icon: Icon, label, highlight, ...rest }, index) => (
             <motion.button
               key={label}
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, x: 16 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.04, type: "spring", stiffness: 400, damping: 30 }}
+              transition={{ delay: 0.1 + index * 0.03, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
               whileTap={{ scale: 0.92 }}
               onClick={"action" in rest ? rest.action : undefined}
               className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
             >
-              <div className={`w-[56px] h-[56px] rounded-full flex items-center justify-center rubber-button ring-1 ring-white/[0.06] ${
-                highlight ? "bg-foreground" : "bg-foreground"
+              <div className={`w-[52px] h-[52px] rounded-full flex items-center justify-center ring-1 ${
+                highlight 
+                  ? "bg-emerald-500 ring-emerald-400/30 cta-pulse" 
+                  : "bg-foreground ring-white/[0.06] rubber-button"
               }`}>
-                <Icon className="w-7 h-7 text-background" strokeWidth={1.5} />
+                <Icon className={`w-6 h-6 ${highlight ? "text-white" : "text-background"}`} strokeWidth={1.5} />
               </div>
-              <span className="text-[11px] text-muted-foreground leading-tight font-medium">{label}</span>
+              <span className={`text-[10px] leading-tight font-medium ${highlight ? "text-emerald-600" : "text-muted-foreground"}`}>{label}</span>
             </motion.button>
           ))}
         </div>

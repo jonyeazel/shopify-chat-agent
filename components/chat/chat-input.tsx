@@ -7,8 +7,8 @@ import { motion, AnimatePresence } from "framer-motion"
 
 const PLACEHOLDER_TEXTS = [
   "Ask me anything...",
-  "What kind of site would you build?",
-  "Type or tap a button...",
+  "Tap the mic or type...",
+  "What would you build?",
 ]
 
 const MAX_RECORDING_MS = 120_000
@@ -40,6 +40,7 @@ interface ChatInputProps {
   isExpanded?: boolean
   onToggleExpand?: () => void
   showMicNudge?: boolean
+  voiceFirst?: boolean // Hides + button, makes mic prominent
 }
 
 function getSupportedMimeType(): string {
@@ -67,6 +68,7 @@ export function ChatInput({
   isExpanded = false,
   onToggleExpand,
   showMicNudge = false,
+  voiceFirst = false,
 }: ChatInputProps) {
   const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([])
   const [isDragging, setIsDragging] = useState(false)
@@ -497,29 +499,37 @@ export function ChatInput({
 
           <div className="flex items-center justify-between px-2.5 pb-2">
             <div className="flex items-center gap-0.5">
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-neutral-200 active:bg-neutral-300 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400"
-                title="Add file"
-              >
-                <Plus className="w-[18px] h-[18px] text-neutral-500" strokeWidth={1.5} />
-              </button>
+              {/* File attachment - hidden in voiceFirst mode */}
+              {!voiceFirst && (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-neutral-200 active:bg-neutral-300 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400"
+                  title="Add file"
+                >
+                  <Plus className="w-[18px] h-[18px] text-neutral-500" strokeWidth={1.5} />
+                </button>
+              )}
 
               {micSupported && (
                 <div className="relative flex items-center justify-center">
-                  {/* Nudge ring */}
+                  {/* Nudge ring - more prominent in voiceFirst mode */}
                   <AnimatePresence>
                     {micRingVisible && (
                       <motion.span
                         initial={{ scale: 1, opacity: 0.35 }}
-                        animate={{ scale: 2.5, opacity: 0 }}
+                        animate={{ scale: voiceFirst ? 2.8 : 2.5, opacity: 0 }}
                         exit={{ opacity: 0 }}
-                        transition={{ duration: 1, ease: "easeOut" }}
+                        transition={{ duration: 1.2, ease: "easeOut" }}
                         className="absolute inset-0 rounded-full border-[1.5px] border-foreground/25 pointer-events-none"
                       />
                     )}
                   </AnimatePresence>
+
+                  {/* Ambient ready pulse for voiceFirst */}
+                  {voiceFirst && micState === "idle" && !input && (
+                    <span className="absolute inset-[-2px] rounded-full mic-ready pointer-events-none" />
+                  )}
 
                   {/* Audio level ring */}
                   {micState === "recording" && (
@@ -537,12 +547,16 @@ export function ChatInput({
                     type="button"
                     onClick={handleMicClick}
                     disabled={micState === "requesting"}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 ${
+                    className={`rounded-full flex items-center justify-center transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 ${
+                      voiceFirst ? "w-9 h-9" : "w-8 h-8"
+                    } ${
                       micState === "recording"
                         ? "bg-[#dc2626]"
                         : micState === "processing"
                           ? "bg-neutral-200"
-                          : "hover:bg-neutral-200 active:bg-neutral-300"
+                          : voiceFirst && !input
+                            ? "bg-neutral-200 hover:bg-neutral-300"
+                            : "hover:bg-neutral-200 active:bg-neutral-300"
                     }`}
                     style={
                       micState === "recording"
@@ -556,7 +570,7 @@ export function ChatInput({
                           ? "Cancel"
                           : micState === "denied"
                             ? "Tap to retry"
-                            : "Voice input"
+                            : "Tap to speak"
                     }
                     aria-label={
                       micState === "recording"
@@ -574,12 +588,14 @@ export function ChatInput({
                       <MicOff className="w-[18px] h-[18px] text-neutral-400" strokeWidth={1.5} />
                     ) : (
                       <Mic
-                        className={`w-[18px] h-[18px] transition-colors duration-150 ${
+                        className={`transition-colors duration-150 ${voiceFirst ? "w-5 h-5" : "w-[18px] h-[18px]"} ${
                           micState === "error" || micState === "empty"
                             ? "text-[#dc2626]"
                             : micState === "requesting"
                               ? "text-neutral-300"
-                              : "text-neutral-500"
+                              : voiceFirst && !input
+                                ? "text-neutral-600"
+                                : "text-neutral-500"
                         }`}
                         strokeWidth={1.5}
                       />
