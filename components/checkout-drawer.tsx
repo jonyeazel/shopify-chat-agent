@@ -142,12 +142,20 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
                     {error}
                   </div>
                 )}
+                {/* Urgency banner for Playbook */}
+                {selectedProduct.id === "v0-playbook" && (
+                  <div className="mb-3 py-2 px-3 bg-amber-50 rounded-xl text-center">
+                    <span className="text-sm text-amber-700 font-medium">Limited time offer</span>
+                  </div>
+                )}
                 {/* Price line */}
                 <div className="flex items-baseline justify-between mb-3">
                   <span className="text-sm text-neutral-500">Total</span>
-                  <div>
+                  <div className="flex items-baseline gap-2">
+                    {selectedProduct.originalPriceInCents && (
+                      <span className="text-sm text-neutral-400 line-through">{formatPrice(selectedProduct.originalPriceInCents)}</span>
+                    )}
                     <span className="text-2xl font-bold text-neutral-900">{formatPrice(selectedProduct.priceInCents)}</span>
-                    <span className="text-sm text-neutral-400 ml-1.5">USD</span>
                   </div>
                 </div>
                 <button
@@ -169,6 +177,11 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
                     </>
                   )}
                 </button>
+                {selectedProduct.id === "v0-playbook" && (
+                  <p className="text-xs text-neutral-500 text-center mt-2.5">
+                    Your site live today or text Jon
+                  </p>
+                )}
               </div>
             </div>
           </motion.div>

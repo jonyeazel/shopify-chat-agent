@@ -11,24 +11,24 @@ import { useIsMobile } from "@/hooks/use-mobile"
 // FAQ Accordion - Beautiful expandable Q&A
 const FAQ_ITEMS = [
   {
-    question: "What's the difference between the options?",
-    answer: "The Playbook ($297) is self-paced learning with templates. Live Build ($1,497) is 1-on-1 with Jon where you leave with a finished site. Build Sprint ($4,997) is 3 sessions for your entire web presence."
+    question: "Can I really do this with no experience?",
+    answer: "Yes. Jon's mom and little sister both build websites now. Neither had any tech background. The Playbook is a 20-minute video that shows you exactly what to type."
   },
   {
-    question: "Is this for non-technical people?",
-    answer: "Yes. Zero code. You describe what you want, AI builds it. The Playbook teaches you how. The Live sessions, Jon does it with you."
+    question: "What's the guarantee?",
+    answer: "Your site live on your custom domain today. If you watch the Playbook and can't build a site, text Jon and he makes it right. Zero risk."
   },
   {
-    question: "What do I get in the Playbook?",
-    answer: "The core method video, 5 foundation templates, 5 power prompts, lifetime updates, and direct SMS to Jon. Intentionally curated—not filler."
+    question: "What do I get for $197?",
+    answer: "The core method video, 5 templates, 5 power prompts, a free custom domain, $50 in v0 credits, and direct SMS to Jon. Everything you need to start building today."
   },
   {
-    question: "What happens in a Live Build?",
-    answer: "60 minutes on Zoom. You tell Jon what you need, he builds it with you watching. You leave with a deployed site and the recording."
+    question: "Why is it discounted?",
+    answer: "Limited time launch pricing. Once Jon has enough students, it goes back to $297. The bonuses (domain + credits) may also go away."
   },
   {
-    question: "Do I need v0 Pro?",
-    answer: "No. Free tier works for learning. Sign up through Jon's link for $10 free credits."
+    question: "What if I want more help?",
+    answer: "Live Build ($1,497) is 1-on-1 with Jon. He builds your actual project with you in 60 minutes. You leave with a finished, deployed site."
   }
 ]
 

@@ -117,64 +117,65 @@ function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[])
   
   // Track conversation progress
   const hasSharedGoal = ["shopify", "store", "landing", "portfolio", "website", "client", "freelance", "agency", "ecommerce"].some(g => allUserText.includes(g))
-  const hasSeenPricing = allUserText.includes("$297") || allUserText.includes("$1,497") || allUserText.includes("price") || allUserText.includes("cost")
-  const hasSeenExamples = allUserText.includes("example") || allUserText.includes("portfolio") || lower.includes("built")
+  const hasSeenPricing = allUserText.includes("$197") || allUserText.includes("$1,497") || allUserText.includes("price") || allUserText.includes("cost") || allUserText.includes("offer")
+  const hasSeenExamples = allUserText.includes("example") || allUserText.includes("portfolio") || allUserText.includes("results") || lower.includes("built")
   const isDeep = msgCount >= 6
   
+  // GUARANTEE MENTIONED
+  if (lower.includes("guarantee") || lower.includes("zero risk") || lower.includes("makes it right")) {
+    return ["I'm in", "What's included?", "Show me results"]
+  }
+
+  // MOM/SISTER SOCIAL PROOF
+  if (lower.includes("mom") || lower.includes("sister") || lower.includes("no experience") || lower.includes("zero experience")) {
+    return ["That's reassuring", "I want to try", "What's it cost?"]
+  }
+
   // QUESTION ENDS — match what AI just asked
   if (lower.endsWith("?")) {
-    // "What kind of site would you build?"
-    if (lower.includes("what kind") || lower.includes("what would you") || lower.includes("what are you")) {
-      return ["A landing page", "Something for my store", "Client work", "Not sure yet"]
+    // "What would you build first?"
+    if (lower.includes("what kind") || lower.includes("what would you") || lower.includes("build first")) {
+      return ["A landing page", "Something for my store", "A portfolio", "Not sure yet"]
     }
-    // "What frustrated you?" or "What happened?"
-    if (lower.includes("frustrated") || lower.includes("what happened") || lower.includes("went wrong")) {
-      return ["Results looked generic", "Couldn't get it right", "Didn't know where to start"]
+    // "Want to see what's included?"
+    if (lower.includes("want to see") || lower.includes("included")) {
+      return ["Yes, show me", "Just buy it", "What's the guarantee?"]
     }
-    // "Does that make sense?" or "Sound good?"
-    if (lower.includes("make sense") || lower.includes("sound good") || lower.includes("help")) {
-      return ["Yeah, tell me more", "I have a question", "What's the price?"]
-    }
-    // "Ready to start?" or buying signal
-    if (lower.includes("ready") || lower.includes("want to")) {
-      return ["Yes", "Almost, one question", "What's included?"]
+    // "Which sounds closer?"
+    if (lower.includes("which sounds") || lower.includes("what you need")) {
+      return ["The Playbook", "I want help building", "Not sure yet"]
     }
   }
 
-  // PRICING SHOWN — just saw prices
-  if (lower.includes("$297") || lower.includes("$1,497") || lower.includes("$4,997")) {
-    if (lower.includes("live build")) {
-      return ["Book a session", "Tell me more about that", "What's in the Playbook?"]
+  // PRICING SHOWN — new $197 pricing
+  if (lower.includes("$197") || lower.includes("$1,497") || lower.includes("$4,997")) {
+    if (lower.includes("limited time") || lower.includes("normally")) {
+      return ["I'm ready", "What's the guarantee?", "Show me results first"]
     }
-    return ["That works", "What's in each?", "Which do you recommend?"]
+    return ["That works", "What's included?", "Is there a guarantee?"]
   }
 
-  // EXAMPLES SHOWN — just saw portfolio
-  if (lower.includes("built this") || lower.includes("check out") || lower.includes("example") || lower.includes("site they")) {
-    return ["Impressive", "How long did that take?", "Can I build that?"]
+  // EXAMPLES/RESULTS SHOWN
+  if (lower.includes("built") || lower.includes("beginners") || lower.includes("real sites")) {
+    return ["I can do that", "How do I start?", "What's the offer?"]
   }
 
-  // REASSURANCE — AI explaining how easy it is
-  if (lower.includes("no code") || lower.includes("plain english") || lower.includes("don't need")) {
-    return ["That's what I need", "Show me how", "What's it cost?"]
+  // REASSURANCE — explaining how easy
+  if (lower.includes("20 minute") || lower.includes("20-minute") || lower.includes("that's it")) {
+    return ["I'm convinced", "Show me results", "What do I get?"]
   }
 
-  // LIVE BUILD EXPLANATION
-  if (lower.includes("60 minutes") || lower.includes("build with you") || lower.includes("finished site")) {
-    return ["Book that", "What would we build?", "How does it work?"]
-  }
-
-  // PLAYBOOK EXPLANATION  
-  if (lower.includes("template") || lower.includes("prompt swipe") || lower.includes("playbook")) {
-    return ["Get the Playbook", "What's in it?", "Show me a sample"]
+  // PLAYBOOK MENTIONED
+  if (lower.includes("playbook") || lower.includes("method")) {
+    return ["Get it now", "What's included?", "Show me examples"]
   }
 
   // EARLY CONVERSATION — discovery phase
   if (msgCount <= 4) {
     if (!hasSharedGoal) {
-      return ["I run an online store", "I want to build sites", "Just exploring"]
+      return ["I want to build a site", "I run a business", "Just exploring"]
     }
-    return ["Show me examples", "How does it work?", "What's it cost?"]
+    return ["How easy is this?", "Show me results", "What's the offer?"]
   }
 
   // MID CONVERSATION — consideration phase
