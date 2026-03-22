@@ -20,26 +20,26 @@ export const PRODUCTS: Product[] = [
     // No stripePriceId - will charge $197 dynamically (discounted from $297)
     name: "The v0 Playbook",
     headline: "Your site live TODAY. Zero experience needed.",
-    description: "20-minute video. Your website on your domain. Guaranteed.",
+    description: "30-min call with Jon. Your first site built together.",
     priceInCents: 19700,
     originalPriceInCents: 29700,
-    thumbnail: "https://img.youtube.com/vi/i9na_W31rLg/maxresdefault.jpg",
+    thumbnail: "/jon-avatar.jpg",
     includes: [
-      "Core Method Video (20 min)",
+      "30-min 1-on-1 Call with Jon",
+      "Build Your First Site Together",
       "5 Foundation Templates",
       "5 Power Prompts",
       "Free Custom Domain",
-      "$50 in v0 Credits",
-      "Direct SMS to Jon"
+      "$50 in v0 Credits"
     ],
     valueStack: [
-      { item: "Core Method Video", value: 297 },
+      { item: "1-on-1 Call with Jon", value: 297 },
       { item: "5 Foundation Templates", value: 297 },
       { item: "5 Power Prompts", value: 197 },
       { item: "Custom Domain", value: 20 },
       { item: "$50 v0 Credits", value: 50 },
     ],
-    cta: "Get Instant Access",
+    cta: "Book Your Call",
     urgency: "Limited time: $197 (normally $297)"
   },
   {

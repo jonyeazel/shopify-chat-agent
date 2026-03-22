@@ -6,7 +6,7 @@ import { siteConfig } from "@/lib/site-config"
 import { ChatInput } from "@/components/chat/chat-input"
 import { MediaGallery } from "@/components/media-gallery"
 import { SmsTrigger } from "@/components/sms-trigger"
-import { Play, LayoutGrid, Info, HelpCircle, CreditCard } from "lucide-react"
+import { LayoutGrid, Info, HelpCircle, CreditCard } from "lucide-react"
 
 interface IdentityPanelProps {
   availabilityStatus: "online" | "away" | "offline"
@@ -27,7 +27,6 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, o
   const closeGallery = useCallback(() => setShowGallery(false), [])
 
   const actionButtons = [
-    { icon: Play, label: "Watch", action: onVideoClick || (() => onSubmit("Show me the video")) },
     { icon: LayoutGrid, label: "Results", action: onExamplesClick || (() => onSubmit("Show me results")) },
     { icon: Info, label: "How", action: () => onSubmit("How easy is this?") },
     { icon: HelpCircle, label: "Offer", action: () => onSubmit("What's the deal?") },

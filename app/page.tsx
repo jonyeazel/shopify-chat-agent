@@ -113,7 +113,6 @@ import { InstantSiteCreator } from "@/components/admin/instant-site-creator"
 import { CheckoutDrawer } from "@/components/checkout-drawer"
 import { LiveShowcase } from "@/components/live-showcase"
 import { ShowcaseDrawer } from "@/components/showcase-drawer"
-import { VideoDrawer } from "@/components/video-drawer"
 import { siteConfig } from "@/lib/site-config"
 import { SmsTrigger } from "@/components/sms-trigger"
 import { type AvailabilityStatus } from "@/lib/chat-config"
@@ -146,7 +145,6 @@ export default function Home() {
   const [showSiteCreator, setShowSiteCreator] = useState(false)
   const [showCheckout, setShowCheckout] = useState(false)
   const [showShowcase, setShowShowcase] = useState(false)
-  const [showVideo, setShowVideo] = useState(false)
   const [adminLongPressTimer, setAdminLongPressTimer] = useState<NodeJS.Timeout | null>(null)
 
   // Panel resize - 25/75 split default
@@ -573,7 +571,6 @@ export default function Home() {
         {/* Mobile: Vertical icon rail */}
         <div className="md:hidden flex flex-col items-center justify-end gap-2.5 flex-shrink-0 pr-[16px] pl-[6px] pb-[max(env(safe-area-inset-bottom),16px)]">
           {([
-            { icon: IconVideo, label: "Watch", action: () => setShowVideo(true) },
             { icon: IconExamples, label: "Results", action: () => setShowShowcase(true) },
             { icon: IconInfo, label: "How", action: () => handleChatSubmit("How easy is this?") },
             { icon: IconFAQ, label: "Offer", action: () => handleChatSubmit("What's the deal?") },
@@ -637,12 +634,6 @@ export default function Home() {
       <ShowcaseDrawer
         isOpen={showShowcase}
         onClose={() => setShowShowcase(false)}
-      />
-
-      {/* Video drawer */}
-      <VideoDrawer
-        isOpen={showVideo}
-        onClose={() => setShowVideo(false)}
       />
     </main>
   )
