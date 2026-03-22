@@ -11,24 +11,24 @@ import { useIsMobile } from "@/hooks/use-mobile"
 // FAQ Accordion - Beautiful expandable Q&A
 const FAQ_ITEMS = [
   {
-    question: "How does this actually work?",
-    answer: "You describe what you want in plain English, and AI builds it. The video shows the exact prompts that get professional results instead of generic output."
+    question: "What's the difference between the options?",
+    answer: "The Playbook ($297) is self-paced learning with templates. Live Build ($1,497) is 1-on-1 with Jon where you leave with a finished site. Build Sprint ($4,997) is 3 sessions for your entire web presence."
   },
   {
     question: "Is this for non-technical people?",
-    answer: "Yes. Zero code needed. You just describe your vision and AI handles everything technical. Perfect for entrepreneurs, creators, and anyone with ideas."
+    answer: "Yes. Zero code. You describe what you want, AI builds it. The Playbook teaches you how. The Live sessions, Jon does it with you."
   },
   {
-    question: "Why $297?",
-    answer: "One freelancer project costs $2-5k. One website builder subscription is $200+/year. This is a one-time payment for lifetime access to templates and the video."
+    question: "What do I get in the Playbook?",
+    answer: "The core method video, 78 templates, 13 site breakdowns, 200+ prompt swipes, lifetime updates, and direct SMS to Jon."
   },
   {
-    question: "What do I get exactly?",
-    answer: "A 57-second video showing exactly how to prompt v0, plus smart templates you can customize. Everything you need to build professional sites."
+    question: "What happens in a Live Build?",
+    answer: "60 minutes on Zoom. You tell Jon what you need, he builds it with you watching. You leave with a deployed site and the recording."
   },
   {
     question: "Do I need v0 Pro?",
-    answer: "No. The free tier works great for learning. You can upgrade later if you want more generations per day."
+    answer: "No. Free tier works for learning. Sign up through Jon's link for $10 free credits."
   }
 ]
 
@@ -97,27 +97,27 @@ export function V0ReferralCard() {
   )
 }
 
-// Course Preview - Bento grid showing what's included
+// Course Preview - Bento grid showing what's included in The Playbook
 const COURSE_MODULES = [
   { 
-    title: "The Prompting System",
-    subtitle: "57-second core lesson",
+    title: "Core Method Video",
+    subtitle: "The prompt syntax that works",
     icon: "play",
     highlight: true
   },
   { 
-    title: "Template Library",
-    subtitle: "Landing pages, portfolios, stores",
+    title: "78 Templates",
+    subtitle: "Production-ready, copy and customize",
     icon: "grid"
   },
   { 
-    title: "Real Examples",
-    subtitle: "13+ live site breakdowns",
+    title: "13 Site Breakdowns",
+    subtitle: "Real sites reverse-engineered",
     icon: "browser"
   },
   { 
-    title: "Lifetime Updates",
-    subtitle: "New templates as AI evolves",
+    title: "200+ Prompt Swipes",
+    subtitle: "Copy, paste, build",
     icon: "refresh"
   },
 ]
