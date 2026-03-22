@@ -405,6 +405,11 @@ export default function Home() {
 
         {/* Scrollable content */}
         <div className="flex-1 min-h-0 flex flex-col relative z-10">
+          {/* Top fade - matches quick reply pill fades */}
+          <div 
+            className="absolute top-0 left-0 right-0 h-8 z-20 pointer-events-none md:hidden"
+            style={{ background: "linear-gradient(to bottom, var(--background), transparent)" }}
+          />
           <div
             className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-hide"
             style={{ overscrollBehavior: "contain" }}
@@ -505,9 +510,11 @@ export default function Home() {
           </div>
 
 
-          {/* Mobile: Fade above input */}
-          {/* Mobile: Frosted gradient fade */}
-          <div className="flex-shrink-0 md:hidden h-12 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent, rgba(255,255,255,0.9))" }} />
+          {/* Mobile: Bottom fade - matches top fade */}
+          <div 
+            className="flex-shrink-0 md:hidden h-10 pointer-events-none -mt-10 relative z-20" 
+            style={{ background: "linear-gradient(to bottom, transparent, var(--background))" }} 
+          />
           {/* Mobile: Chat input with glass effect */}
           <div className="flex-shrink-0 md:hidden pb-3 px-3 glass-surface">
             <ChatInput

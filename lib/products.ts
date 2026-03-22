@@ -1,6 +1,6 @@
 export interface Product {
   id: string
-  stripePriceId: string // Stripe price ID for checkout
+  stripePriceId?: string // Stripe price ID for checkout (optional - will create dynamically if not set)
   name: string
   headline: string
   description: string
@@ -17,7 +17,7 @@ export interface Product {
 export const PRODUCTS: Product[] = [
   {
     id: "v0-playbook",
-    stripePriceId: "price_1TDeFNRjQCLburEC7Cr2WEds",
+    // No stripePriceId - will charge $197 dynamically (discounted from $297)
     name: "The v0 Playbook",
     headline: "Your site live TODAY. Zero experience needed.",
     description: "20-minute video. Your website on your domain. Guaranteed.",
