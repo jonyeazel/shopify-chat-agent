@@ -3,194 +3,170 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
-import { ArrowLeft, Download, Lock } from "lucide-react"
+import { ArrowLeft, Lock, Sparkles } from "lucide-react"
 
-// Template category data
-const TEMPLATE_CATEGORIES = [
+// 5 Foundation Templates - curated, not overwhelming
+const FOUNDATION_TEMPLATES = [
   {
     id: "landing",
-    name: "Landing Pages",
-    count: 12,
-    color: "#3B82F6",
-    description: "High-converting hero sections, features, and CTAs",
-    files: ["hero-sections.tsx", "feature-grids.tsx", "pricing-tables.tsx", "testimonials.tsx"]
-  },
-  {
-    id: "ecommerce",
-    name: "E-Commerce",
-    count: 8,
+    name: "Landing Page",
+    tagline: "Convert visitors into customers",
     color: "#10B981",
-    description: "Product pages, carts, and checkout flows",
-    files: ["product-cards.tsx", "cart-drawer.tsx", "checkout-form.tsx", "collection-grid.tsx"]
-  },
-  {
-    id: "saas",
-    name: "SaaS Dashboards",
-    count: 15,
-    color: "#8B5CF6",
-    description: "Analytics, tables, charts, and admin panels",
-    files: ["dashboard-layout.tsx", "data-tables.tsx", "chart-cards.tsx", "sidebar-nav.tsx"]
+    description: "Hero, features, social proof, CTA. The structure that sells.",
+    useCases: ["Product launches", "SaaS pages", "Course sales", "App downloads"],
+    preview: "Everything you need to capture attention and drive action. Hero section, feature grid, testimonials, pricing, and CTA—all working together."
   },
   {
     id: "portfolio",
-    name: "Portfolios",
-    count: 6,
+    name: "Portfolio",
+    tagline: "Showcase your best work",
+    color: "#8B5CF6",
+    description: "Projects, about, contact. Clean and memorable.",
+    useCases: ["Designers", "Developers", "Creators", "Freelancers"],
+    preview: "A minimal showcase that lets your work speak. Project grid, about section, and contact—nothing more, nothing less."
+  },
+  {
+    id: "store",
+    name: "Store",
+    tagline: "Sell products online",
     color: "#F59E0B",
-    description: "Creative showcases for designers and developers",
-    files: ["project-grid.tsx", "about-section.tsx", "contact-form.tsx", "skill-bars.tsx"]
+    description: "Products, cart, checkout. The e-commerce essentials.",
+    useCases: ["Shopify stores", "Digital products", "Merchandise", "Physical goods"],
+    preview: "Product cards, collection grid, cart drawer, and checkout flow. Everything needed to sell, nothing that slows you down."
   },
   {
     id: "blog",
-    name: "Blogs & Content",
-    count: 9,
+    name: "Blog",
+    tagline: "Share your ideas",
     color: "#EC4899",
-    description: "Article layouts, MDX templates, and reading experiences",
-    files: ["article-layout.tsx", "post-cards.tsx", "newsletter-cta.tsx", "author-bio.tsx"]
+    description: "Posts, reading experience, newsletter. Content that connects.",
+    useCases: ["Personal blogs", "Company updates", "Thought leadership", "Newsletters"],
+    preview: "Article layout with great typography, post cards for browsing, and newsletter capture. Content-first design."
   },
   {
-    id: "agency",
-    name: "Agency Sites",
-    count: 7,
-    color: "#06B6D4",
-    description: "Services, case studies, and team sections",
-    files: ["services-grid.tsx", "case-study.tsx", "team-cards.tsx", "process-steps.tsx"]
-  },
-  {
-    id: "ai",
-    name: "AI & Chat",
-    count: 11,
-    color: "#F97316",
-    description: "Chat interfaces, AI tools, and prompt UIs",
-    files: ["chat-interface.tsx", "message-list.tsx", "prompt-input.tsx", "ai-response.tsx"]
-  },
-  {
-    id: "mobile",
-    name: "Mobile-First",
-    count: 10,
-    color: "#EF4444",
-    description: "App-like experiences optimized for touch",
-    files: ["bottom-nav.tsx", "swipe-cards.tsx", "pull-refresh.tsx", "gesture-drawer.tsx"]
+    id: "app",
+    name: "Web App",
+    tagline: "Build interactive tools",
+    color: "#3B82F6",
+    description: "Dashboard, data, actions. App-like experiences.",
+    useCases: ["SaaS dashboards", "Admin panels", "Internal tools", "AI interfaces"],
+    preview: "Sidebar nav, data tables, cards, and actions. The foundation for any tool or dashboard you can imagine."
   }
 ]
 
-// Stylized folder component
-function TemplateFolder({ 
-  category, 
+// 5 Power Prompts - the exact words that work
+const POWER_PROMPTS = [
+  {
+    name: "The Starter",
+    description: "Gets you 80% there in one prompt",
+    prompt: "Build a [type] for [purpose]. Include [sections]. Style: modern, minimal, professional."
+  },
+  {
+    name: "The Refiner",
+    description: "Fixes what doesn't look right",
+    prompt: "Make this more [adjective]. Specifically: [what to change]. Keep [what to preserve]."
+  },
+  {
+    name: "The Cloner",
+    description: "Recreates sites you admire",
+    prompt: "Match the style of [reference]. Same layout, different content. Focus on [specific element]."
+  },
+  {
+    name: "The Expander",
+    description: "Adds sections without breaking things",
+    prompt: "Add a [section type] between [existing sections]. Match existing styles exactly."
+  },
+  {
+    name: "The Polisher",
+    description: "Makes it feel premium",
+    prompt: "Add subtle animations, better spacing, micro-interactions. Make it feel expensive."
+  }
+]
+
+// Template card component
+function TemplateCard({ 
+  template, 
   index,
-  isHovered,
-  onHover
+  isExpanded,
+  onToggle
 }: { 
-  category: typeof TEMPLATE_CATEGORIES[0]
+  template: typeof FOUNDATION_TEMPLATES[0]
   index: number
-  isHovered: boolean
-  onHover: (id: string | null) => void
+  isExpanded: boolean
+  onToggle: () => void
 }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: index * 0.05 }}
-      onMouseEnter={() => onHover(category.id)}
-      onMouseLeave={() => onHover(null)}
+      transition={{ duration: 0.3, delay: index * 0.08 }}
+      onClick={onToggle}
       className="group cursor-pointer"
     >
-      <div className="relative">
-        {/* Folder back */}
+      <div 
+        className="relative p-6 rounded-2xl border transition-all duration-300 hover:shadow-lg"
+        style={{ 
+          borderColor: isExpanded ? template.color : 'rgb(229 231 235)',
+          background: isExpanded ? `${template.color}08` : 'white'
+        }}
+      >
+        {/* Number badge */}
         <div 
-          className="absolute inset-0 rounded-2xl transition-transform duration-300 group-hover:scale-[1.02]"
-          style={{ 
-            background: `linear-gradient(135deg, ${category.color}20 0%, ${category.color}10 100%)`,
-            border: `1px solid ${category.color}30`
-          }}
-        />
-        
-        {/* Folder tab */}
-        <div 
-          className="absolute -top-3 left-4 w-16 h-5 rounded-t-lg"
-          style={{ backgroundColor: `${category.color}40` }}
-        />
-        
-        {/* Main folder body */}
-        <div 
-          className="relative p-6 rounded-2xl transition-all duration-300 group-hover:translate-y-[-2px]"
-          style={{ 
-            background: `linear-gradient(180deg, ${category.color}15 0%, transparent 100%)`,
-            borderTop: `2px solid ${category.color}50`
-          }}
+          className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white"
+          style={{ backgroundColor: template.color }}
         >
-          {/* v0 badge */}
-          <div className="absolute top-4 right-4 flex items-center gap-1.5 px-2 py-1 rounded-full bg-neutral-900 text-white text-[10px] font-medium">
-            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2L2 19h20L12 2zm0 4l6.5 11h-13L12 6z"/>
-            </svg>
-            v0
-          </div>
-          
-          {/* Folder icon */}
-          <div 
-            className="w-14 h-14 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110"
-            style={{ backgroundColor: `${category.color}25` }}
-          >
-            <svg 
-              className="w-7 h-7 transition-transform duration-300 group-hover:rotate-[-5deg]" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke={category.color} 
-              strokeWidth="1.5"
+          {index + 1}
+        </div>
+        
+        {/* Template name */}
+        <h3 className="text-xl font-semibold text-foreground mb-1">
+          {template.name}
+        </h3>
+        
+        {/* Tagline */}
+        <p className="text-sm font-medium mb-3" style={{ color: template.color }}>
+          {template.tagline}
+        </p>
+        
+        {/* Description */}
+        <p className="text-sm text-muted-foreground mb-4">
+          {template.description}
+        </p>
+        
+        {/* Use cases */}
+        <div className="flex flex-wrap gap-1.5 mb-4">
+          {template.useCases.map((use) => (
+            <span 
+              key={use} 
+              className="px-2 py-0.5 rounded-full text-[11px] bg-neutral-100 text-neutral-600"
             >
-              <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-              <path d="M3 7h18" strokeDasharray="4 2" opacity="0.5" />
-            </svg>
-          </div>
-          
-          {/* Category name */}
-          <h3 className="text-lg font-semibold text-foreground mb-1">
-            {category.name}
-          </h3>
-          
-          {/* Description */}
-          <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-            {category.description}
-          </p>
-          
-          {/* File count */}
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground">
-              {category.count} templates
+              {use}
             </span>
-            <div 
-              className="flex items-center gap-1 text-xs font-medium transition-colors"
-              style={{ color: category.color }}
-            >
-              <Download className="w-3.5 h-3.5" />
-              .zip
-            </div>
+          ))}
+        </div>
+        
+        {/* Expanded preview */}
+        <motion.div
+          initial={false}
+          animate={{ 
+            height: isExpanded ? "auto" : 0,
+            opacity: isExpanded ? 1 : 0 
+          }}
+          transition={{ duration: 0.2 }}
+          className="overflow-hidden"
+        >
+          <div className="pt-4 border-t border-neutral-200">
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {template.preview}
+            </p>
           </div>
-          
-          {/* File preview on hover */}
-          <motion.div
-            initial={false}
-            animate={{ 
-              height: isHovered ? "auto" : 0,
-              opacity: isHovered ? 1 : 0 
-            }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden"
-          >
-            <div className="pt-4 mt-4 border-t border-neutral-200 dark:border-neutral-800">
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">
-                Included files
-              </p>
-              <div className="space-y-1">
-                {category.files.map((file) => (
-                  <div key={file} className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <div className="w-1 h-1 rounded-full bg-current opacity-40" />
-                    {file}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
+        </motion.div>
+        
+        {/* Expand indicator */}
+        <div className="flex items-center justify-center mt-2">
+          <div 
+            className={`w-1 h-1 rounded-full transition-all duration-200 ${isExpanded ? 'bg-neutral-400' : 'bg-neutral-300'}`} 
+          />
         </div>
       </div>
     </motion.div>
@@ -198,99 +174,113 @@ function TemplateFolder({
 }
 
 export default function TemplatesPage() {
-  const [hoveredId, setHoveredId] = useState<string | null>(null)
-  
-  const totalTemplates = TEMPLATE_CATEGORIES.reduce((acc, cat) => acc + cat.count, 0)
+  const [expandedId, setExpandedId] = useState<string | null>(null)
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-neutral-200 dark:border-neutral-800">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-neutral-200">
+        <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link 
             href="/"
             className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to v0 University
+            Back
           </Link>
           
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-100 dark:bg-neutral-800 text-xs text-muted-foreground">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-100 text-xs text-muted-foreground">
             <Lock className="w-3 h-3" />
-            Included with purchase
+            Included with Playbook
           </div>
         </div>
       </header>
 
       {/* Hero */}
-      <section className="max-w-6xl mx-auto px-6 pt-16 pb-12 text-center">
+      <section className="max-w-4xl mx-auto px-6 pt-16 pb-12 text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-neutral-100 dark:bg-neutral-800 text-sm mb-6">
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            {totalTemplates} templates included
-          </div>
-          
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 tracking-tight">
-            Template Library
+            5 Templates. 5 Prompts.
           </h1>
           
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Production-ready templates organized by category. 
-            Each folder contains battle-tested components you can prompt v0 to customize.
+          <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+            Intentionally curated. Not 100 templates you'll never use.
+            These 5 cover 90% of what people actually build.
           </p>
         </motion.div>
       </section>
 
-      {/* Template Grid */}
-      <section className="max-w-6xl mx-auto px-6 pb-24">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {TEMPLATE_CATEGORIES.map((category, index) => (
-            <TemplateFolder
-              key={category.id}
-              category={category}
+      {/* Foundation Templates */}
+      <section className="max-w-4xl mx-auto px-6 pb-16">
+        <div className="flex items-center gap-2 mb-8">
+          <Sparkles className="w-5 h-5 text-neutral-400" />
+          <h2 className="text-lg font-semibold text-foreground">Foundation Templates</h2>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {FOUNDATION_TEMPLATES.map((template, index) => (
+            <TemplateCard
+              key={template.id}
+              template={template}
               index={index}
-              isHovered={hoveredId === category.id}
-              onHover={setHoveredId}
+              isExpanded={expandedId === template.id}
+              onToggle={() => setExpandedId(expandedId === template.id ? null : template.id)}
             />
           ))}
         </div>
+      </section>
+
+      {/* Power Prompts */}
+      <section className="max-w-4xl mx-auto px-6 pb-24">
+        <div className="flex items-center gap-2 mb-8">
+          <Sparkles className="w-5 h-5 text-neutral-400" />
+          <h2 className="text-lg font-semibold text-foreground">Power Prompts</h2>
+        </div>
         
-        {/* Bottom CTA */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="mt-16 text-center"
-        >
-          <div className="inline-flex flex-col items-center gap-4 p-8 rounded-3xl bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-neutral-900 dark:bg-white flex items-center justify-center">
-                <svg className="w-6 h-6 text-white dark:text-neutral-900" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2L2 19h20L12 2zm0 4l6.5 11h-13L12 6z"/>
-                </svg>
-              </div>
-              <div className="text-left">
-                <p className="font-semibold text-foreground">v0 University</p>
-                <p className="text-sm text-muted-foreground">All templates + video course</p>
-              </div>
-            </div>
-            
-            <Link
-              href="/"
-              className="px-6 py-3 rounded-full bg-foreground text-background text-sm font-medium hover:opacity-90 transition-opacity"
+        <div className="space-y-3">
+          {POWER_PROMPTS.map((prompt, index) => (
+            <motion.div
+              key={prompt.name}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.4 + index * 0.05 }}
+              className="p-5 rounded-2xl border border-neutral-200 bg-white"
             >
-              Get instant access - $297
-            </Link>
-            
-            <p className="text-xs text-muted-foreground">
-              One-time payment. Lifetime updates.
-            </p>
-          </div>
-        </motion.div>
+              <div className="flex items-start justify-between mb-2">
+                <div>
+                  <h3 className="font-semibold text-foreground">{prompt.name}</h3>
+                  <p className="text-sm text-muted-foreground">{prompt.description}</p>
+                </div>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-neutral-900 text-white">
+                  {index + 1}
+                </span>
+              </div>
+              <div className="mt-3 p-3 rounded-lg bg-neutral-50 font-mono text-xs text-neutral-600">
+                {prompt.prompt}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Bottom CTA */}
+      <section className="max-w-4xl mx-auto px-6 pb-24">
+        <div className="text-center p-8 rounded-3xl bg-neutral-900 text-white">
+          <h3 className="text-xl font-semibold mb-2">Ready to build?</h3>
+          <p className="text-neutral-400 text-sm mb-6">
+            Get the templates, prompts, and the core method video.
+          </p>
+          <Link
+            href="/"
+            className="inline-flex px-6 py-3 rounded-full bg-white text-neutral-900 text-sm font-medium hover:bg-neutral-100 transition-colors"
+          >
+            Get The Playbook — $297
+          </Link>
+        </div>
       </section>
     </div>
   )

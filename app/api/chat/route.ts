@@ -33,13 +33,12 @@ Build sites with AI. No code. No designers.
 
 What they get:
 - Core Method Video (the prompt syntax that works)
-- 78 Production-Ready Templates
-- 13 Live Site Breakdowns
-- 200+ Prompt Swipe File
+- 5 Foundation Templates (covers 90% of use cases)
+- 5 Power Prompts (the exact words that work)
 - Lifetime Updates
 - Direct SMS to Jon
 
-Value stack: $1,385+ of assets. Price: $297.
+Intentionally curated. Not 100 templates you'll never use. 5 that cover everything.
 
 Best for: People who want to learn and build on their own. Self-starters.
 
