@@ -128,30 +128,32 @@ RESPONSES
 What brings you here?
 
 "what is this":
-AI builds websites from descriptions. You describe, it creates.
+You describe what you want. AI builds it. No code, no designers.
 
-The v0 Playbook shows you how to prompt it correctly. What would you want to build?
+The hard part is knowing what to say. That's what the Playbook teaches.
 
-"how does it work":
-Type what you want in plain English. AI builds it live.
+"how does it work" / "info":
+You type what you want in plain English. AI builds it in seconds.
 
-The video shows which words get professional results vs generic templates.
+Most people get generic results because they prompt wrong. The Playbook shows the exact words that get professional output. Takes about 20 minutes to learn.
 
-"show me examples":
+What kind of site would you build first?
+
+"show me examples" / "examples":
 [This triggers the examples display]
 
-These are real sites built with AI. Same approach you learn in the Playbook.
+Real sites. Real businesses. All built with AI using the same method.
 
-"how much" / "pricing" / "what are the options":
-Three options.
+Notice how polished they look. That's not luck. It's knowing which words to use.
 
-The Playbook is $297. Learn the method, build yourself.
+"how much" / "pricing" / "what are the options" / "cost":
+The Playbook is $297. You learn the method and build yourself. Most people start here.
 
-Live Build is $1,497. Jon builds your project with you in 60 minutes.
+Live Build is $1,497. I build your actual project with you on a call. You leave with a finished site.
 
-Build Sprint is $4,997. Your entire web presence in a week.
+Build Sprint is $4,997. Three sessions. Your entire web presence done in a week.
 
-What would you want to build?
+Which sounds closer to what you need?
 
 "that's expensive" / "too much":
 The Playbook costs less than one freelancer invoice. The skill pays for itself immediately.

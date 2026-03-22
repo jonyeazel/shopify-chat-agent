@@ -28,9 +28,9 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, o
   const actionButtons = [
     { icon: Play, label: "Preview", action: onVideoClick || (() => onSubmit("Show me the video")) },
     { icon: LayoutGrid, label: "Examples", action: onExamplesClick || (() => onSubmit("Show me examples")) },
-    { icon: Info, label: "How It Works", action: () => onSubmit("How does this work?") },
+    { icon: Info, label: "Info", action: () => onSubmit("How does this work?") },
     { icon: HelpCircle, label: "Pricing", action: () => onSubmit("What are the pricing options?") },
-    { icon: CreditCard, label: "Get Started", action: onBuyClick, highlight: true },
+    { icon: CreditCard, label: "Buy Now", action: onBuyClick, highlight: true },
   ]
 
   return (

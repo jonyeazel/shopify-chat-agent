@@ -557,7 +557,7 @@ export default function Home() {
             <div className="w-[52px] h-[52px] rounded-full overflow-hidden cta-pulse ring-1 ring-[#635BFF]/30">
               <img src="/stripe-logo.png" alt="Checkout with Stripe" className="w-full h-full object-cover" />
             </div>
-            <span className="text-[10px] leading-tight font-medium text-[#635BFF]">Start</span>
+            <span className="text-[10px] leading-tight font-medium text-[#635BFF]">Buy Now</span>
           </motion.button>
         </div>
 
