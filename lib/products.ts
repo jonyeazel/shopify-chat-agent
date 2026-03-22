@@ -1,5 +1,6 @@
 export interface Product {
   id: string
+  stripePriceId: string // Stripe price ID for checkout
   name: string
   headline: string
   description: string
@@ -16,6 +17,7 @@ export interface Product {
 export const PRODUCTS: Product[] = [
   {
     id: "v0-playbook",
+    stripePriceId: "price_1TDeFNRjQCLburEC7Cr2WEds",
     name: "The v0 Playbook",
     headline: "Build sites with AI. No code. No designers. No limits.",
     description: "The complete system for building professional websites using v0.",
@@ -41,6 +43,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "live-build",
+    stripePriceId: "price_1TDeFURjQCLburECQeLUBw4t",
     name: "Live Build Session",
     headline: "Your site. Built live. In 60 minutes.",
     description: "1-on-1 with Jon. You leave with a finished, deployed website.",
@@ -64,6 +67,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "build-sprint",
+    stripePriceId: "price_1TDeFZRjQCLburECw63Ynqym",
     name: "The Build Sprint",
     headline: "Your entire web presence. Built in a week.",
     description: "3 Live Build sessions. Landing page, portfolio, and one custom project.",
