@@ -66,15 +66,14 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, o
           </SmsTrigger>
         </div>
 
-        {/* Tagline */}
-        <h1 className="text-[24px] font-semibold text-foreground leading-tight tracking-[-0.02em] text-center max-w-[280px]">
-          <span className="block">Your site live today.</span>
-          <span className="block">Zero experience needed.</span>
+        {/* Name */}
+        <h1 className="text-[24px] font-semibold text-foreground leading-tight tracking-[-0.02em] text-center">
+          {brand.name}
         </h1>
 
         {/* Subtitle */}
-        <p className="text-[15px] text-muted-foreground mt-3 text-center max-w-[280px] leading-relaxed">
-          20-minute video. Custom domain. Guaranteed.
+        <p className="text-[15px] text-muted-foreground mt-2 text-center">
+          {brand.headerSubtitle}
         </p>
 
         {/* Action buttons - horizontal row */}
