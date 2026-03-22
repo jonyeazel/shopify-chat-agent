@@ -92,66 +92,68 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
                 </button>
               </div>
 
-              {/* Scrollable content */}
-              <div className="flex-1 overflow-y-auto px-5">
+              {/* Scrollable content - fixed height to prevent jarring */}
+              <div className="flex-1 overflow-y-auto px-5 min-h-[320px]">
                 {/* Tier selector - segmented control style */}
                 <div className="flex gap-1 p-1 bg-neutral-100 rounded-2xl mb-5">
                   {[V0_PLAYBOOK, LIVE_BUILD, BUILD_SPRINT].map((product) => (
                     <button
                       key={product.id}
                       onClick={() => setSelectedProduct(product)}
-                      className={`flex-1 py-2.5 px-2 rounded-xl text-center transition-all ${
+                      className={`flex-1 py-2.5 px-2 rounded-xl text-center transition-all duration-200 ${
                         selectedProduct.id === product.id
                           ? "bg-white text-neutral-900 shadow-sm"
-                          : "text-neutral-500"
+                          : "text-neutral-500 hover:text-neutral-700"
                       }`}
                     >
-                      <div className={`text-sm font-semibold ${selectedProduct.id === product.id ? "text-neutral-900" : "text-neutral-600"}`}>
+                      <div className={`text-sm font-semibold transition-colors duration-200 ${selectedProduct.id === product.id ? "text-neutral-900" : "text-neutral-600"}`}>
                         {formatPrice(product.priceInCents)}
                       </div>
                     </button>
                   ))}
                 </div>
 
-                {/* What's included */}
+                {/* What's included - animated content swap */}
                 <div className="pb-4">
                   <h4 className="text-xs font-semibold text-neutral-400 uppercase tracking-wide mb-3">
                     What you get
                   </h4>
-                  <div className="space-y-2">
+                  <motion.div 
+                    key={selectedProduct.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="space-y-2.5"
+                  >
                     {selectedProduct.includes.map((item, i) => (
                       <div key={i} className="flex items-start gap-2.5">
-                        <Check className="w-4 h-4 text-neutral-900 flex-shrink-0 mt-0.5" />
+                        <Check className="w-4 h-4 text-[#635BFF] flex-shrink-0 mt-0.5" />
                         <span className="text-sm text-neutral-700">{item}</span>
                       </div>
                     ))}
-                  </div>
+                  </motion.div>
                 </div>
-
-                {/* Price summary */}
-                <div className="pb-5">
-                  <div className="flex items-baseline justify-between">
-                    <span className="text-sm text-neutral-500">Today</span>
-                    <div className="text-right">
-                      <span className="text-2xl font-bold text-neutral-900">{formatPrice(selectedProduct.priceInCents)}</span>
-                      <span className="text-sm text-neutral-400 ml-2">one-time</span>
-                    </div>
-                  </div>
-                </div>
-
-                </div>
+              </div>
 
               {/* Fixed CTA */}
-              <div className="px-5 pb-6 pt-4 bg-white flex-shrink-0">
+              <div className="px-5 pb-6 pt-3 bg-white flex-shrink-0 border-t border-neutral-100">
                 {error && (
-                  <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-xl">
+                  <div className="mb-3 p-3 bg-red-50 text-red-600 text-sm rounded-xl">
                     {error}
                   </div>
                 )}
+                {/* Price line */}
+                <div className="flex items-baseline justify-between mb-3">
+                  <span className="text-sm text-neutral-500">Total</span>
+                  <div>
+                    <span className="text-2xl font-bold text-neutral-900">{formatPrice(selectedProduct.priceInCents)}</span>
+                    <span className="text-sm text-neutral-400 ml-1.5">USD</span>
+                  </div>
+                </div>
                 <button
                   onClick={handleCheckout}
                   disabled={isLoading}
-                  className="w-full py-4 bg-emerald-500 text-white font-semibold rounded-2xl flex items-center justify-center gap-2 hover:bg-emerald-600 disabled:opacity-50 transition-colors active:scale-[0.98]"
+                  className="w-full py-4 bg-[#635BFF] text-white font-semibold rounded-2xl flex items-center justify-center gap-2.5 hover:bg-[#5851ea] disabled:opacity-50 transition-colors active:scale-[0.98]"
                 >
                   {isLoading ? (
                     <>
@@ -159,12 +161,14 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
                       Processing...
                     </>
                   ) : (
-                    <>Buy Now — {formatPrice(selectedProduct.priceInCents)}</>
+                    <>
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.591-7.305z" />
+                      </svg>
+                      Buy with Stripe
+                    </>
                   )}
                 </button>
-                <p className="text-xs text-neutral-400 text-center mt-2.5">
-                  Secure checkout via Stripe
-                </p>
               </div>
             </div>
           </motion.div>
@@ -289,10 +293,18 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
                     {error}
                   </div>
                 )}
+                {/* Price line */}
+                <div className="flex items-baseline justify-between mb-4">
+                  <span className="text-sm text-neutral-500">Total</span>
+                  <div>
+                    <span className="text-2xl font-bold text-neutral-900">{formatPrice(selectedProduct.priceInCents)}</span>
+                    <span className="text-sm text-neutral-400 ml-1.5">USD</span>
+                  </div>
+                </div>
                 <button
                   onClick={handleCheckout}
                   disabled={isLoading}
-                  className="w-full py-4 bg-emerald-500 text-white font-semibold rounded-xl flex items-center justify-center gap-2 hover:bg-emerald-600 disabled:opacity-50 transition-colors cta-pulse"
+                  className="w-full py-4 bg-[#635BFF] text-white font-semibold rounded-xl flex items-center justify-center gap-2.5 hover:bg-[#5851ea] disabled:opacity-50 transition-colors"
                 >
                   {isLoading ? (
                     <>
@@ -300,12 +312,14 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
                       Processing...
                     </>
                   ) : (
-                    <>{selectedProduct.cta} — {formatPrice(selectedProduct.priceInCents)}</>
+                    <>
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.591-7.305z" />
+                      </svg>
+                      Buy with Stripe
+                    </>
                   )}
                 </button>
-                <p className="text-xs text-neutral-500 text-center mt-3">
-                  Secure checkout • Instant access
-                </p>
               </div>
             </div>
           </motion.div>
