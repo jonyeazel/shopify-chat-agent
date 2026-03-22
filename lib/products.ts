@@ -19,27 +19,28 @@ export const PRODUCTS: Product[] = [
     id: "v0-playbook",
     stripePriceId: "price_1TDeFNRjQCLburEC7Cr2WEds",
     name: "The v0 Playbook",
-    headline: "Build sites with AI. No code. No designers. No limits.",
-    description: "The complete system for building professional websites using v0.",
-    priceInCents: 29700,
-    originalPriceInCents: 139700,
+    headline: "Your site live TODAY. Zero experience needed.",
+    description: "20-minute video. Your website on your domain. Guaranteed.",
+    priceInCents: 19700,
+    originalPriceInCents: 29700,
     thumbnail: "https://img.youtube.com/vi/i9na_W31rLg/maxresdefault.jpg",
     includes: [
-      "Core Method Video — the prompt structure that works",
-      "5 Foundation Templates (covers 90% of use cases)",
-      "5 Power Prompts (the exact words that work)",
-      "Lifetime Updates",
-      "Direct SMS Access to Jon"
+      "Core Method Video (20 min)",
+      "5 Foundation Templates",
+      "5 Power Prompts",
+      "Free Custom Domain",
+      "$50 in v0 Credits",
+      "Direct SMS to Jon"
     ],
     valueStack: [
       { item: "Core Method Video", value: 297 },
-      { item: "5 Foundation Templates", value: 497 },
-      { item: "5 Power Prompts", value: 297 },
-      { item: "Lifetime Updates", value: 197 },
-      { item: "Direct SMS Access", value: 0 }, // priceless
+      { item: "5 Foundation Templates", value: 297 },
+      { item: "5 Power Prompts", value: 197 },
+      { item: "Custom Domain", value: 20 },
+      { item: "$50 v0 Credits", value: 50 },
     ],
     cta: "Get Instant Access",
-    urgency: "Templates updated weekly"
+    urgency: "Limited time: $197 (normally $297)"
   },
   {
     id: "live-build",

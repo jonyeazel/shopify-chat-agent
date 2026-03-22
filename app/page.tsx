@@ -525,10 +525,10 @@ export default function Home() {
         {/* Mobile: Vertical icon rail */}
         <div className="md:hidden flex flex-col items-center justify-end gap-2.5 flex-shrink-0 pr-[16px] pl-[6px] pb-[max(env(safe-area-inset-bottom),16px)]">
           {([
-            { icon: IconVideo, label: "Preview", action: () => setShowVideo(true) },
-            { icon: IconExamples, label: "Examples", action: () => setShowShowcase(true) },
-            { icon: IconInfo, label: "Info", action: () => handleChatSubmit("How does this work?") },
-            { icon: IconFAQ, label: "Pricing", action: () => handleChatSubmit("What are the pricing options?") },
+            { icon: IconVideo, label: "Watch", action: () => setShowVideo(true) },
+            { icon: IconExamples, label: "Results", action: () => setShowShowcase(true) },
+            { icon: IconInfo, label: "How", action: () => handleChatSubmit("How easy is this?") },
+            { icon: IconFAQ, label: "Offer", action: () => handleChatSubmit("What's the deal?") },
           ] as const).map(({ icon: Icon, label, ...rest }, index) => (
             <motion.button
               key={label}
