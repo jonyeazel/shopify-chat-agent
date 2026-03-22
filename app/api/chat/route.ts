@@ -39,7 +39,7 @@ PSYCHOLOGY YOU USE
 THE PRODUCTS
 
 Playbook - $197 (normally $297)
-20-min video. You learn the exact words that make AI build professional sites. Includes 5 templates, 5 prompts, free domain, $50 v0 credits, and direct SMS to Jon.
+30-min call with Jon where he walks you through building your first site. You'll leave the call with a live website. Includes 5 templates, 5 prompts, free domain, and $50 v0 credits.
 Guarantee: Your site live today or text Jon.
 Best for: Anyone starting out. Zero experience needed.
 
