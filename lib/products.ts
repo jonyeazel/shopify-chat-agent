@@ -91,6 +91,32 @@ export const PRODUCTS: Product[] = [
     ],
     cta: "Apply for Sprint",
     urgency: "2 spots per month"
+  },
+  {
+    id: "ai-cofounder",
+    // Custom pricing based on value - starts at $2,997
+    name: "AI Co-Founder Site",
+    headline: "Your own AI-powered sales machine.",
+    description: "A site exactly like this one, customized for your business. AI handles conversations 24/7.",
+    priceInCents: 299700, // Base price, actual price determined by consultation
+    thumbnail: "https://img.youtube.com/vi/i9na_W31rLg/maxresdefault.jpg",
+    includes: [
+      "Full AI-Powered Conversational Site",
+      "Custom-Trained on Your Business",
+      "Stripe Checkout Integration",
+      "SMS Lead Notifications",
+      "30 Days of Optimization",
+      "Monthly Strategy Call"
+    ],
+    valueStack: [
+      { item: "AI Site Clone", value: 15000 },
+      { item: "Custom AI Training", value: 5000 },
+      { item: "Stripe Integration", value: 2000 },
+      { item: "30-Day Optimization", value: 3000 },
+      { item: "Monthly Calls", value: 2400 },
+    ],
+    cta: "Get Your AI Site",
+    urgency: "Value-based pricing"
   }
 ]
 
@@ -103,6 +129,7 @@ export function getProduct(id: string): Product | undefined {
 export const V0_PLAYBOOK = PRODUCTS[0]
 export const LIVE_BUILD = PRODUCTS[1]
 export const BUILD_SPRINT = PRODUCTS[2]
+export const AI_COFOUNDER = PRODUCTS[3]
 
 // Legacy alias
 export const V0_UNIVERSITY = V0_PLAYBOOK
