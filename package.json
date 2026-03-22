@@ -1,6 +1,6 @@
 {
   "name": "my-v0-project",
-  "version": "3.4.0",
+  "version": "3.5.0",
   "private": true,
   "scripts": {
     "build": "next build",
@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.35",
+    "@ai-sdk/gateway": "^1.0.0",
     "@ai-sdk/react": "3.0.41",
     "@emotion/is-prop-valid": "latest",
     "@hookform/resolvers": "^3.10.0",
