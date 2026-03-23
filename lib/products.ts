@@ -13,110 +13,106 @@ export interface Product {
   urgency?: string
 }
 
-// Three-tier offer structure
+// Four-tier offer structure
 export const PRODUCTS: Product[] = [
   {
     id: "v0-playbook",
-    // No stripePriceId - will charge $197 dynamically (discounted from $297)
-    name: "The v0 Playbook",
-    headline: "Your site live TODAY. Zero experience needed.",
-    description: "30-min call with Jon. Your first site built together.",
+    // Dynamic pricing at $197
+    name: "See It For Yourself",
+    headline: "Download the skillset. Build in seconds.",
+    description: "Quick walkthrough with Jon. Watch a website appear from a sentence.",
     priceInCents: 19700,
     originalPriceInCents: 29700,
     thumbnail: "/jon-avatar.jpg",
     includes: [
-      "30-min 1-on-1 Call with Jon",
-      "Build Your First Site Together",
+      "Quick walkthrough with Jon",
+      "Fill-in-the-blank prompt system",
       "5 Foundation Templates",
       "5 Power Prompts",
       "Free Custom Domain",
       "$50 in v0 Credits"
     ],
     valueStack: [
-      { item: "1-on-1 Call with Jon", value: 297 },
-      { item: "5 Foundation Templates", value: 297 },
-      { item: "5 Power Prompts", value: 197 },
+      { item: "Walkthrough with Jon", value: 297 },
+      { item: "Prompt System", value: 297 },
+      { item: "5 Templates", value: 197 },
       { item: "Custom Domain", value: 20 },
       { item: "$50 v0 Credits", value: 50 },
     ],
-    cta: "Book Your Call",
-    urgency: "Limited time: $197 (normally $297)"
+    cta: "Try It Now",
+    urgency: "Limited time: $197"
   },
   {
     id: "live-build",
     stripePriceId: "price_1TDeFURjQCLburECQeLUBw4t",
-    name: "Live Build Session",
-    headline: "Your site. Built live. In 60 minutes.",
-    description: "1-on-1 with Jon. You leave with a finished, deployed website.",
+    name: "Build With Me",
+    headline: "Your project. Built live. Skill transferred.",
+    description: "1-on-1 with Jon. You click, he guides. Leave knowing how to build.",
     priceInCents: 149700,
-    thumbnail: "https://img.youtube.com/vi/i9na_W31rLg/maxresdefault.jpg",
+    thumbnail: "/jon-avatar.jpg",
     includes: [
-      "60-min Live Build (your project, not a demo)",
+      "Live 1:1 Build Session",
+      "Your Real Project (not a demo)",
       "Full Session Recording",
-      "The v0 Playbook (included)",
-      "7 Days Post-Session SMS Support",
-      "Priority Rebooking"
+      "7 Days SMS Support",
+      "See It For Yourself (included)"
     ],
     valueStack: [
-      { item: "60-min Live Build", value: 1500 },
+      { item: "Live 1:1 Session", value: 1500 },
+      { item: "Your Project Built", value: 500 },
       { item: "Session Recording", value: 297 },
-      { item: "v0 Playbook", value: 297 },
-      { item: "7-Day SMS Support", value: 497 },
+      { item: "7-Day Support", value: 497 },
     ],
     cta: "Book Your Session",
-    urgency: "Limited spots per week"
+    urgency: "Limited spots weekly"
   },
   {
-    id: "build-sprint",
-    stripePriceId: "price_1TDeFZRjQCLburECw63Ynqym",
-    name: "The Build Sprint",
-    headline: "Your entire web presence. Built in a week.",
-    description: "3 Live Build sessions. Landing page, portfolio, and one custom project.",
-    priceInCents: 499700,
-    thumbnail: "https://img.youtube.com/vi/i9na_W31rLg/maxresdefault.jpg",
+    id: "done-for-you",
+    // Premium tier
+    name: "Done-For-You",
+    headline: "Jon's exact system. Built for your business.",
+    description: "High-converting, AI-native site. You get what works.",
+    priceInCents: 649700,
+    thumbnail: "/jon-avatar.jpg",
     includes: [
-      "3 Live Build Sessions (60 min each)",
-      "Full Web Presence: Landing + Portfolio + Custom",
-      "All Session Recordings",
-      "The v0 Playbook (included)",
-      "30 Days Unlimited SMS Support",
-      "Quarterly Check-in Call"
-    ],
-    valueStack: [
-      { item: "3 Live Builds", value: 4500 },
-      { item: "All Recordings", value: 891 },
-      { item: "v0 Playbook", value: 297 },
-      { item: "30-Day Support", value: 1497 },
-      { item: "Quarterly Call", value: 500 },
-    ],
-    cta: "Apply for Sprint",
-    urgency: "2 spots per month"
-  },
-  {
-    id: "ai-cofounder",
-    // Custom pricing based on value - starts at $2,997
-    name: "AI Co-Founder Site",
-    headline: "Your own AI-powered sales machine.",
-    description: "A site exactly like this one, customized for your business. AI handles conversations 24/7.",
-    priceInCents: 299700, // Base price, actual price determined by consultation
-    thumbnail: "https://img.youtube.com/vi/i9na_W31rLg/maxresdefault.jpg",
-    includes: [
-      "Full AI-Powered Conversational Site",
-      "Custom-Trained on Your Business",
+      "Jon's Full System Rebuilt",
+      "Customized for Your Business",
+      "AI Conversation Layer",
       "Stripe Checkout Integration",
-      "SMS Lead Notifications",
-      "30 Days of Optimization",
+      "30 Days Optimization",
       "Monthly Strategy Call"
     ],
     valueStack: [
-      { item: "AI Site Clone", value: 15000 },
+      { item: "Full System Clone", value: 15000 },
       { item: "Custom AI Training", value: 5000 },
       { item: "Stripe Integration", value: 2000 },
       { item: "30-Day Optimization", value: 3000 },
-      { item: "Monthly Calls", value: 2400 },
     ],
-    cta: "Get Your AI Site",
-    urgency: "Value-based pricing"
+    cta: "Get Your Site",
+    urgency: "Premium option"
+  },
+  {
+    id: "ai-consulting",
+    // Custom pricing
+    name: "AI Consulting",
+    headline: "I don't just build sites. I build machines.",
+    description: "Custom AI agents, automation systems, scalable workflows.",
+    priceInCents: 0, // Custom pricing
+    thumbnail: "/jon-avatar.jpg",
+    includes: [
+      "Custom AI Agent Development",
+      "Automation Systems",
+      "Scalable Workflows",
+      "Ongoing Strategy",
+      "Direct Access to Jon"
+    ],
+    valueStack: [
+      { item: "Custom Development", value: 25000 },
+      { item: "Automation Systems", value: 10000 },
+      { item: "Strategy Calls", value: 5000 },
+    ],
+    cta: "Let's Talk",
+    urgency: "Custom pricing"
   }
 ]
 
@@ -126,10 +122,14 @@ export function getProduct(id: string): Product | undefined {
 }
 
 // Quick accessors
-export const V0_PLAYBOOK = PRODUCTS[0]
-export const LIVE_BUILD = PRODUCTS[1]
-export const BUILD_SPRINT = PRODUCTS[2]
-export const AI_COFOUNDER = PRODUCTS[3]
+export const SEE_IT = PRODUCTS[0]
+export const BUILD_WITH_ME = PRODUCTS[1]
+export const DONE_FOR_YOU = PRODUCTS[2]
+export const AI_CONSULTING = PRODUCTS[3]
+
+// Legacy aliases
+export const V0_PLAYBOOK = SEE_IT
+export const LIVE_BUILD = BUILD_WITH_ME
 
 // Legacy alias
 export const V0_UNIVERSITY = V0_PLAYBOOK

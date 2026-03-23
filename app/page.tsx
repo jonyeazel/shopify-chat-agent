@@ -308,7 +308,7 @@ export default function Home() {
   return (
     <main
       ref={mainRef}
-      className={`flex bg-card rounded-[24px] overflow-hidden border border-foreground/20 md:bg-transparent md:rounded-none md:overflow-visible md:border-0 rubber-card md:[box-shadow:none] ${isResizing ? "select-none cursor-col-resize" : ""}`}
+      className={`flex bg-white rounded-[24px] overflow-hidden border border-black/[0.08] shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.04)] md:bg-transparent md:rounded-none md:overflow-visible md:border-0 md:shadow-none ${isResizing ? "select-none cursor-col-resize" : ""}`}
       style={{ position: "fixed", inset: "8px" }}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
@@ -346,7 +346,7 @@ export default function Home() {
       </div>
 
       {/* Chat area */}
-      <div className="flex-1 min-w-0 flex flex-col relative bg-card md:rounded-2xl md:overflow-hidden md:border md:border-foreground/[0.12]">
+      <div className="flex-1 min-w-0 flex flex-col relative bg-white md:rounded-2xl md:overflow-hidden md:border md:border-foreground/[0.08]">
         {/* Background media */}
         {backgroundMedia && (
           <div className="absolute inset-0 z-0">
@@ -447,7 +447,7 @@ export default function Home() {
           {/* Top fade - matches quick reply pill fades */}
           <div 
             className="absolute top-0 left-0 right-0 h-8 z-20 pointer-events-none md:hidden"
-            style={{ background: "linear-gradient(to bottom, var(--background), transparent)" }}
+            style={{ background: "linear-gradient(to bottom, white, transparent)" }}
           />
           <div
             className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-hide"
@@ -552,10 +552,10 @@ export default function Home() {
           {/* Mobile: Bottom fade - matches top fade */}
           <div 
             className="flex-shrink-0 md:hidden h-10 pointer-events-none -mt-10 relative z-20" 
-            style={{ background: "linear-gradient(to bottom, transparent, var(--background))" }} 
+            style={{ background: "linear-gradient(to bottom, transparent, white)" }} 
           />
-          {/* Mobile: Chat input with glass effect */}
-          <div className="flex-shrink-0 md:hidden pb-3 px-3 glass-surface">
+          {/* Mobile: Chat input */}
+          <div className="flex-shrink-0 md:hidden pb-3 px-3 bg-white">
             <ChatInput
               input={input ?? ""}
               setInput={setInput}
@@ -568,8 +568,8 @@ export default function Home() {
         </div>
         </div>
 
-        {/* Mobile: Vertical icon rail */}
-        <div className="md:hidden flex flex-col items-center justify-end gap-2.5 flex-shrink-0 pr-[16px] pl-[6px] pb-[max(env(safe-area-inset-bottom),16px)]">
+        {/* Mobile: Vertical icon rail - aligns with chat input bottom */}
+        <div className="md:hidden flex flex-col items-center justify-end gap-2.5 flex-shrink-0 pr-[16px] pl-[6px] pb-3">
           {([
             { icon: IconExamples, label: "Results", action: () => setShowShowcase(true) },
             { icon: IconInfo, label: "How", action: () => handleChatSubmit("How easy is this?") },
@@ -611,7 +611,7 @@ export default function Home() {
             transition={{ delay: 0.26, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
             whileTap={{ scale: 0.92 }}
             onClick={() => setShowCheckout(true)}
-            className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full mb-2"
+            className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
           >
             <div className="w-[52px] h-[52px] rounded-full overflow-hidden stripe-pulse">
               <img src="/stripe-logo.png" alt="Checkout with Stripe" className="w-full h-full object-cover" />
