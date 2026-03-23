@@ -2,12 +2,11 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { X, ArrowRight, Check, Loader2 } from "lucide-react"
+import { X, ArrowRight, Check, Loader2, MessageCircle } from "lucide-react"
 import {
-  V0_PLAYBOOK,
-  LIVE_BUILD,
-  DONE_FOR_YOU,
   V0_TUTOR,
+  CLONE_SITE,
+  AI_CONSULTING,
   formatPrice,
   getStackValue,
   type Product,
@@ -20,18 +19,22 @@ interface CheckoutDrawerProps {
   productId?: string
 }
 
-const PRODUCT_IMAGE = "https://img.youtube.com/vi/i9na_W31rLg/maxresdefault.jpg"
-
-export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: CheckoutDrawerProps) {
+export function CheckoutDrawer({ isOpen, onClose, productId = "v0-tutor" }: CheckoutDrawerProps) {
   const [selectedProduct, setSelectedProduct] = useState<Product>(
-    productId === "live-build" ? LIVE_BUILD : 
-    productId === "done-for-you" ? DONE_FOR_YOU : 
-    V0_PLAYBOOK
+    productId === "clone-site" ? CLONE_SITE : 
+    productId === "ai-consulting" ? AI_CONSULTING : 
+    V0_TUTOR
   )
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const handleCheckout = async () => {
+    // For AI Consulting, open SMS instead
+    if (selectedProduct.id === "ai-consulting") {
+      window.location.href = "sms:+14078677201&body=Hey%20Jon%2C%20I%27m%20interested%20in%20AI%20Consulting"
+      return
+    }
+    
     setIsLoading(true)
     setError(null)
     
@@ -55,6 +58,7 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
   }
 
   const stackValue = getStackValue(selectedProduct)
+  const isConsulting = selectedProduct.id === "ai-consulting"
 
   return (
     <AnimatePresence>
@@ -100,11 +104,11 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
                 </button>
               </div>
 
-              {/* Scrollable content - fixed height to prevent jarring */}
+              {/* Scrollable content */}
               <div className="flex-1 overflow-y-auto px-5 min-h-[320px]">
-                {/* Tier selector - segmented control style */}
+                {/* Tier selector - 3 tiers */}
                 <div className="flex gap-1 p-1 bg-neutral-100 rounded-2xl mb-5">
-                  {[V0_PLAYBOOK, V0_TUTOR, LIVE_BUILD, DONE_FOR_YOU].map((product) => (
+                  {[V0_TUTOR, CLONE_SITE, AI_CONSULTING].map((product) => (
                     <button
                       key={product.id}
                       onClick={() => setSelectedProduct(product)}
@@ -121,7 +125,7 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
                   ))}
                 </div>
 
-                {/* What's included - animated content swap */}
+                {/* What's included */}
                 <div className="pb-4">
                   <h4 className="text-xs font-semibold text-neutral-400 uppercase tracking-wide mb-3">
                     What you get
@@ -150,10 +154,10 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
                     {error}
                   </div>
                 )}
-                {/* Urgency banner for Playbook */}
-                {selectedProduct.id === "v0-playbook" && (
+                {/* Urgency banner */}
+                {selectedProduct.urgency && (
                   <div className="mb-3 py-2 px-3 bg-amber-50 rounded-xl text-center">
-                    <span className="text-sm text-amber-700 font-medium">Limited time offer</span>
+                    <span className="text-sm text-amber-700 font-medium">{selectedProduct.urgency}</span>
                   </div>
                 )}
                 {/* Price line */}
@@ -176,20 +180,20 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
                       <Loader2 className="w-5 h-5 animate-spin" />
                       Processing...
                     </>
+                  ) : isConsulting ? (
+                    <>
+                      <MessageCircle className="w-5 h-5" />
+                      Text Jon
+                    </>
                   ) : (
                     <>
                       <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.591-7.305z" />
                       </svg>
-                      Buy with Stripe
+                      {selectedProduct.cta}
                     </>
                   )}
                 </button>
-                {selectedProduct.id === "v0-playbook" && (
-                  <p className="text-xs text-neutral-500 text-center mt-2.5">
-                    Your site live today or text Jon
-                  </p>
-                )}
               </div>
             </div>
           </motion.div>
@@ -220,9 +224,9 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
 
               {/* Content */}
               <div className="flex-1 overflow-y-auto p-6">
-                {/* Tier selector */}
-                <div className="grid grid-cols-4 gap-3 mb-6">
-                  {[V0_PLAYBOOK, V0_TUTOR, LIVE_BUILD, DONE_FOR_YOU].map((product) => (
+                {/* Tier selector - 3 tiers */}
+                <div className="grid grid-cols-3 gap-3 mb-6">
+                  {[V0_TUTOR, CLONE_SITE, AI_CONSULTING].map((product) => (
                     <button
                       key={product.id}
                       onClick={() => setSelectedProduct(product)}
@@ -232,7 +236,7 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
                           : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                       }`}
                     >
-                      <div className="text-xs opacity-70 mb-1">{product.name.split("—")[0].trim()}</div>
+                      <div className="text-xs opacity-70 mb-1">{product.name}</div>
                       <div className="text-xl font-bold">{formatPrice(product.priceInCents)}</div>
                     </button>
                   ))}
@@ -266,7 +270,7 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
                         {selectedProduct.valueStack.filter(v => v.value > 0).map((item, i) => (
                           <div key={i} className="flex items-center justify-between text-sm">
                             <span className="text-neutral-600">{item.item}</span>
-                            <span className="text-neutral-400">${item.value}</span>
+                            <span className="text-neutral-400">${item.value.toLocaleString()}</span>
                           </div>
                         ))}
                       </div>
@@ -319,7 +323,7 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
                   <span className="text-sm text-neutral-500">Total</span>
                   <div>
                     <span className="text-2xl font-bold text-neutral-900">{formatPrice(selectedProduct.priceInCents)}</span>
-                    <span className="text-sm text-neutral-400 ml-1.5">USD</span>
+                    {!isConsulting && <span className="text-sm text-neutral-400 ml-1.5">USD</span>}
                   </div>
                 </div>
                 <button
@@ -332,12 +336,17 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
                       <Loader2 className="w-5 h-5 animate-spin" />
                       Processing...
                     </>
+                  ) : isConsulting ? (
+                    <>
+                      <MessageCircle className="w-5 h-5" />
+                      Text Jon
+                    </>
                   ) : (
                     <>
                       <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.591-7.305z" />
                       </svg>
-                      Buy with Stripe
+                      {selectedProduct.cta}
                     </>
                   )}
                 </button>

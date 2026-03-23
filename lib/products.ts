@@ -1,6 +1,6 @@
 export interface Product {
   id: string
-  stripePriceId?: string // Stripe price ID for checkout (optional - will create dynamically if not set)
+  stripePriceId?: string
   name: string
   headline: string
   description: string
@@ -13,119 +13,21 @@ export interface Product {
   urgency?: string
 }
 
-// Four-tier offer structure
+// Optimized 3-tier structure: Touchless → Mid-Touch → High-Touch
 export const PRODUCTS: Product[] = [
   {
-    id: "v0-playbook",
-    // Dynamic pricing at $197
-    name: "See It For Yourself",
-    headline: "Download the skillset. Build in seconds.",
-    description: "Quick walkthrough with Jon. Watch a website appear from a sentence.",
-    priceInCents: 19700,
-    originalPriceInCents: 29700,
-    thumbnail: "/jon-avatar.jpg",
-    includes: [
-      "Quick walkthrough with Jon",
-      "Fill-in-the-blank prompt system",
-      "5 Foundation Templates",
-      "5 Power Prompts",
-      "Free Custom Domain",
-      "$50 in v0 Credits"
-    ],
-    valueStack: [
-      { item: "Walkthrough with Jon", value: 297 },
-      { item: "Prompt System", value: 297 },
-      { item: "5 Templates", value: 197 },
-      { item: "Custom Domain", value: 20 },
-      { item: "$50 v0 Credits", value: 50 },
-    ],
-    cta: "Try It Now",
-    urgency: "Limited time: $197"
-  },
-  {
-    id: "live-build",
-    stripePriceId: "price_1TDeFURjQCLburECQeLUBw4t",
-    name: "Build With Me",
-    headline: "Your project. Built live. Skill transferred.",
-    description: "1-on-1 with Jon. You click, he guides. Leave knowing how to build.",
-    priceInCents: 149700,
-    thumbnail: "/jon-avatar.jpg",
-    includes: [
-      "Live 1:1 Build Session",
-      "Your Real Project (not a demo)",
-      "Full Session Recording",
-      "7 Days SMS Support",
-      "See It For Yourself (included)"
-    ],
-    valueStack: [
-      { item: "Live 1:1 Session", value: 1500 },
-      { item: "Your Project Built", value: 500 },
-      { item: "Session Recording", value: 297 },
-      { item: "7-Day Support", value: 497 },
-    ],
-    cta: "Book Your Session",
-    urgency: "Limited spots weekly"
-  },
-  {
-    id: "done-for-you",
-    // Premium tier
-    name: "Done-For-You",
-    headline: "Jon's exact system. Built for your business.",
-    description: "High-converting, AI-native site. You get what works.",
-    priceInCents: 649700,
-    thumbnail: "/jon-avatar.jpg",
-    includes: [
-      "Jon's Full System Rebuilt",
-      "Customized for Your Business",
-      "AI Conversation Layer",
-      "Stripe Checkout Integration",
-      "30 Days Optimization",
-      "Monthly Strategy Call"
-    ],
-    valueStack: [
-      { item: "Full System Clone", value: 15000 },
-      { item: "Custom AI Training", value: 5000 },
-      { item: "Stripe Integration", value: 2000 },
-      { item: "30-Day Optimization", value: 3000 },
-    ],
-    cta: "Get Your Site",
-    urgency: "Premium option"
-  },
-  {
-    id: "ai-consulting",
-    // Custom pricing
-    name: "AI Consulting",
-    headline: "I don't just build sites. I build machines.",
-    description: "Custom AI agents, automation systems, scalable workflows.",
-    priceInCents: 0, // Custom pricing
-    thumbnail: "/jon-avatar.jpg",
-    includes: [
-      "Custom AI Agent Development",
-      "Automation Systems",
-      "Scalable Workflows",
-      "Ongoing Strategy",
-      "Direct Access to Jon"
-    ],
-    valueStack: [
-      { item: "Custom Development", value: 25000 },
-      { item: "Automation Systems", value: 10000 },
-      { item: "Strategy Calls", value: 5000 },
-    ],
-    cta: "Let's Talk",
-    urgency: "Custom pricing"
-  },
-  {
     id: "v0-tutor",
-    stripePriceId: "price_v0tutor", // Will create in Stripe
+    stripePriceId: "price_v0tutor",
     name: "v0 Tutor",
     headline: "Your private AI tutor. 24/7. Forever.",
-    description: "The exact methodology that built 25,000+ prompts. Lifetime access.",
+    description: "The exact methodology behind 25,000+ prompts. Completely automated.",
     priceInCents: 49700,
     thumbnail: "/jon-avatar.jpg",
     includes: [
       "Private AI Tutor (24/7 access)",
       "The 36-Word Seed Prompt System",
-      "Domain Linking Walkthrough",
+      "The 'Cook' Workflow",
+      "Domain Linking Guide (Vercel)",
       "Stripe Integration Guide",
       "Supabase Setup Guide",
       "Lifetime Access"
@@ -137,7 +39,56 @@ export const PRODUCTS: Product[] = [
       { item: "Lifetime Access", value: 1997 },
     ],
     cta: "Get Lifetime Access",
-    urgency: "One-time payment"
+    urgency: "One-time payment. No calls."
+  },
+  {
+    id: "clone-site",
+    name: "Clone This Site",
+    headline: "This exact site. Built for your business.",
+    description: "AI sales agent. Stripe checkout. 24/7 lead capture. Yours.",
+    priceInCents: 349700,
+    thumbnail: "/jon-avatar.jpg",
+    includes: [
+      "Exact Clone of v0university.com",
+      "AI Conversation Layer (trained on you)",
+      "Stripe Checkout Integration",
+      "SMS Lead Notifications",
+      "Custom Domain Setup",
+      "14 Days of Optimization",
+      "v0 Tutor Access (included)"
+    ],
+    valueStack: [
+      { item: "AI-Powered Site Clone", value: 10000 },
+      { item: "Custom AI Training", value: 3000 },
+      { item: "Stripe + SMS Integration", value: 2000 },
+      { item: "14-Day Optimization", value: 1500 },
+      { item: "v0 Tutor Access", value: 497 },
+    ],
+    cta: "Get Your Site",
+    urgency: "2 spots per month"
+  },
+  {
+    id: "ai-consulting",
+    name: "AI Consulting",
+    headline: "I don't just build sites. I build machines.",
+    description: "Custom AI agents, automation systems, scalable workflows.",
+    priceInCents: 0, // Custom pricing - starts at $10k
+    thumbnail: "/jon-avatar.jpg",
+    includes: [
+      "Discovery Call",
+      "Custom AI Agent Development",
+      "Automation Systems",
+      "Scalable Workflows",
+      "Ongoing Strategy",
+      "Direct Access to Jon"
+    ],
+    valueStack: [
+      { item: "Custom Development", value: 25000 },
+      { item: "Automation Systems", value: 10000 },
+      { item: "Strategy Calls", value: 5000 },
+    ],
+    cta: "Book Discovery Call",
+    urgency: "Starts at $10k"
   }
 ]
 
@@ -147,18 +98,16 @@ export function getProduct(id: string): Product | undefined {
 }
 
 // Quick accessors
-export const SEE_IT = PRODUCTS[0]
-export const BUILD_WITH_ME = PRODUCTS[1]
-export const DONE_FOR_YOU = PRODUCTS[2]
-export const AI_CONSULTING = PRODUCTS[3]
-export const V0_TUTOR = PRODUCTS[4]
+export const V0_TUTOR = PRODUCTS[0]
+export const CLONE_SITE = PRODUCTS[1]
+export const AI_CONSULTING = PRODUCTS[2]
 
-// Legacy aliases
-export const V0_PLAYBOOK = SEE_IT
-export const LIVE_BUILD = BUILD_WITH_ME
-
-// Legacy alias
-export const V0_UNIVERSITY = V0_PLAYBOOK
+// Legacy aliases for backward compatibility
+export const V0_PLAYBOOK = V0_TUTOR
+export const LIVE_BUILD = CLONE_SITE
+export const DONE_FOR_YOU = CLONE_SITE
+export const SEE_IT = V0_TUTOR
+export const BUILD_WITH_ME = CLONE_SITE
 
 // Calculate total stack value
 export function getStackValue(product: Product): number {
@@ -167,5 +116,6 @@ export function getStackValue(product: Product): number {
 
 // Format price
 export function formatPrice(cents: number): string {
+  if (cents === 0) return "Custom"
   return `$${(cents / 100).toLocaleString()}`
 }
