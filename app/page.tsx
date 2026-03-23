@@ -394,7 +394,7 @@ export default function Home() {
 
         {/* Mobile header */}
         <header className="flex-shrink-0 relative z-40 md:hidden">
-          <div className="px-3 h-14 flex items-center pt-[env(safe-area-inset-top)]">
+          <div className="px-3 h-14 flex items-center pt-[calc(env(safe-area-inset-top)+2px)]">
             <div
               className="flex items-center gap-1.5"
               onMouseDown={handleAdminPressStart}
