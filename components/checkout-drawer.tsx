@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, ArrowRight, Check, Loader2 } from "lucide-react"
-import { V0_PLAYBOOK, LIVE_BUILD, BUILD_SPRINT, formatPrice, getStackValue, type Product } from "@/lib/products"
+import { V0_PLAYBOOK, LIVE_BUILD, DONE_FOR_YOU, formatPrice, getStackValue, type Product } from "@/lib/products"
 import { startCheckout } from "@/app/actions/stripe"
 
 interface CheckoutDrawerProps {
@@ -17,7 +17,7 @@ const PRODUCT_IMAGE = "https://img.youtube.com/vi/i9na_W31rLg/maxresdefault.jpg"
 export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: CheckoutDrawerProps) {
   const [selectedProduct, setSelectedProduct] = useState<Product>(
     productId === "live-build" ? LIVE_BUILD : 
-    productId === "build-sprint" ? BUILD_SPRINT : 
+    productId === "done-for-you" ? DONE_FOR_YOU : 
     V0_PLAYBOOK
   )
   const [isLoading, setIsLoading] = useState(false)
@@ -96,7 +96,7 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
               <div className="flex-1 overflow-y-auto px-5 min-h-[320px]">
                 {/* Tier selector - segmented control style */}
                 <div className="flex gap-1 p-1 bg-neutral-100 rounded-2xl mb-5">
-                  {[V0_PLAYBOOK, LIVE_BUILD, BUILD_SPRINT].map((product) => (
+                  {[V0_PLAYBOOK, LIVE_BUILD, DONE_FOR_YOU].map((product) => (
                     <button
                       key={product.id}
                       onClick={() => setSelectedProduct(product)}
@@ -214,7 +214,7 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
               <div className="flex-1 overflow-y-auto p-6">
                 {/* Tier selector */}
                 <div className="grid grid-cols-3 gap-3 mb-6">
-                  {[V0_PLAYBOOK, LIVE_BUILD, BUILD_SPRINT].map((product) => (
+                  {[V0_PLAYBOOK, LIVE_BUILD, DONE_FOR_YOU].map((product) => (
                     <button
                       key={product.id}
                       onClick={() => setSelectedProduct(product)}
