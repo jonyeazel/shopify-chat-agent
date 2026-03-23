@@ -568,8 +568,8 @@ export default function Home() {
         </div>
         </div>
 
-        {/* Mobile: Vertical icon rail */}
-        <div className="md:hidden flex flex-col items-center justify-end gap-2.5 flex-shrink-0 pr-[16px] pl-[6px] pb-[max(env(safe-area-inset-bottom),16px)]">
+        {/* Mobile: Vertical icon rail - aligns with chat input bottom */}
+        <div className="md:hidden flex flex-col items-center justify-end gap-2.5 flex-shrink-0 pr-[16px] pl-[6px] pb-3">
           {([
             { icon: IconExamples, label: "Results", action: () => setShowShowcase(true) },
             { icon: IconInfo, label: "How", action: () => handleChatSubmit("How easy is this?") },
@@ -611,7 +611,7 @@ export default function Home() {
             transition={{ delay: 0.26, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
             whileTap={{ scale: 0.92 }}
             onClick={() => setShowCheckout(true)}
-            className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full mb-2"
+            className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
           >
             <div className="w-[52px] h-[52px] rounded-full overflow-hidden stripe-pulse">
               <img src="/stripe-logo.png" alt="Checkout with Stripe" className="w-full h-full object-cover" />

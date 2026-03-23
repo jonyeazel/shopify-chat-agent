@@ -285,7 +285,7 @@
 
 /* Frosted glass effect for input areas */
 .glass-surface {
-  background: rgba(255, 255, 255, 0.85);
+  background: #ffffff;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }

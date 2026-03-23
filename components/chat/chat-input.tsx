@@ -474,8 +474,8 @@ export function ChatInput({
         <div
           className={`rounded-xl border transition-all duration-150 ${
             isDragging
-              ? "bg-neutral-200 border-neutral-300"
-              : "bg-neutral-100 border-neutral-200 focus-within:border-neutral-300"
+              ? "bg-neutral-100 border-neutral-300"
+              : "bg-[#f4f4f5] border-neutral-200 focus-within:border-neutral-300"
           }`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
