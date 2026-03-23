@@ -3,7 +3,14 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, ArrowRight, Check, Loader2 } from "lucide-react"
-import { V0_PLAYBOOK, LIVE_BUILD, DONE_FOR_YOU, formatPrice, getStackValue, type Product } from "@/lib/products"
+import {
+  V0_PLAYBOOK,
+  LIVE_BUILD,
+  DONE_FOR_YOU,
+  formatPrice,
+  getStackValue,
+  type Product,
+} from "@/lib/products"
 import { startCheckout } from "@/app/actions/stripe"
 
 interface CheckoutDrawerProps {

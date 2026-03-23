@@ -4,11 +4,7 @@
 export const PORTFOLIO_DATA = {
   liveSites: [
     { name: "Stadics", url: "https://www.stadics.com" },
-    { name: "The Shopify Guy", url: "https://www.theshopifyguy.dev" },
     { name: "Ilya Volgin", url: "https://www.ilyavolgin.com" },
-    { name: "Molar Digital", url: "https://www.molar.digital" },
-    { name: "AI Blocks", url: "https://v0-aiblocks.vercel.app" },
-    { name: "Design Blocks", url: "https://v0-designblocks.vercel.app" },
     { name: "Vibe Code", url: "https://vibecode-black.vercel.app" },
     { name: "Neon Templates", url: "https://v0-neon-v0-templates.vercel.app" },
     { name: "MudWater", url: "https://v0-mudwater.vercel.app" },
