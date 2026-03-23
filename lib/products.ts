@@ -113,6 +113,31 @@ export const PRODUCTS: Product[] = [
     ],
     cta: "Let's Talk",
     urgency: "Custom pricing"
+  },
+  {
+    id: "v0-tutor",
+    stripePriceId: "price_v0tutor", // Will create in Stripe
+    name: "v0 Tutor",
+    headline: "Your private AI tutor. 24/7. Forever.",
+    description: "The exact methodology that built 25,000+ prompts. Lifetime access.",
+    priceInCents: 49700,
+    thumbnail: "/jon-avatar.jpg",
+    includes: [
+      "Private AI Tutor (24/7 access)",
+      "The 36-Word Seed Prompt System",
+      "Domain Linking Walkthrough",
+      "Stripe Integration Guide",
+      "Supabase Setup Guide",
+      "Lifetime Access"
+    ],
+    valueStack: [
+      { item: "Private AI Tutor", value: 2997 },
+      { item: "Seed Prompt System", value: 997 },
+      { item: "Integration Guides", value: 497 },
+      { item: "Lifetime Access", value: 1997 },
+    ],
+    cta: "Get Lifetime Access",
+    urgency: "One-time payment"
   }
 ]
 
@@ -126,6 +151,7 @@ export const SEE_IT = PRODUCTS[0]
 export const BUILD_WITH_ME = PRODUCTS[1]
 export const DONE_FOR_YOU = PRODUCTS[2]
 export const AI_CONSULTING = PRODUCTS[3]
+export const V0_TUTOR = PRODUCTS[4]
 
 // Legacy aliases
 export const V0_PLAYBOOK = SEE_IT

@@ -7,6 +7,7 @@ import {
   V0_PLAYBOOK,
   LIVE_BUILD,
   DONE_FOR_YOU,
+  V0_TUTOR,
   formatPrice,
   getStackValue,
   type Product,
@@ -103,7 +104,7 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
               <div className="flex-1 overflow-y-auto px-5 min-h-[320px]">
                 {/* Tier selector - segmented control style */}
                 <div className="flex gap-1 p-1 bg-neutral-100 rounded-2xl mb-5">
-                  {[V0_PLAYBOOK, LIVE_BUILD, DONE_FOR_YOU].map((product) => (
+                  {[V0_PLAYBOOK, V0_TUTOR, LIVE_BUILD, DONE_FOR_YOU].map((product) => (
                     <button
                       key={product.id}
                       onClick={() => setSelectedProduct(product)}
@@ -220,8 +221,8 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-playbook" }: C
               {/* Content */}
               <div className="flex-1 overflow-y-auto p-6">
                 {/* Tier selector */}
-                <div className="grid grid-cols-3 gap-3 mb-6">
-                  {[V0_PLAYBOOK, LIVE_BUILD, DONE_FOR_YOU].map((product) => (
+                <div className="grid grid-cols-4 gap-3 mb-6">
+                  {[V0_PLAYBOOK, V0_TUTOR, LIVE_BUILD, DONE_FOR_YOU].map((product) => (
                     <button
                       key={product.id}
                       onClick={() => setSelectedProduct(product)}

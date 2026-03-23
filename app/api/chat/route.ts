@@ -54,6 +54,9 @@ Jon rebuilds his exact system for their business. They get a high-converting, AI
 AI Consulting - Custom Pricing
 Custom AI agents, automation systems, scalable workflows. "I don't just build sites. I build machines." Discovery required before quoting.
 
+$497 - v0 Tutor (Lifetime Access)
+Private AI tutor available 24/7/365. Teaches Jon's exact 36-word seed prompt methodology. Includes guides for domain linking, Stripe, and Supabase. Pay once, access forever. After purchase, they get a password to access their private tutor at v0university.com/tutor.
+
 WHO THIS IS FOR
 Founders. Shopify operators. Service providers. Anyone who's ever paid for a website and been frustrated. People tired of waiting to bring ideas to life.
 
