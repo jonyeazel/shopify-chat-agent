@@ -590,19 +590,24 @@ export default function Home() {
               <span className="text-[10px] leading-tight font-medium text-muted-foreground">{label}</span>
             </motion.button>
           ))}
-          {/* Text Jon button - iMessage blue */}
+          {/* Affiliate button - v0 signup with Jon's referral link */}
           <motion.a
-            href={getContextAwareSmsLink()}
+            href="https://v0.link/jon"
+            target="_blank"
+            rel="noopener noreferrer"
             initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.22, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
             whileTap={{ scale: 0.92 }}
             className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
           >
-            <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center bg-[#007AFF] rubber-button">
-              <IconText className="w-6 h-6 text-white" strokeWidth={1.5} />
+            <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center bg-[#00A86B] rubber-button">
+              <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="1" x2="12" y2="23" />
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+              </svg>
             </div>
-            <span className="text-[10px] leading-tight font-medium text-[#007AFF]">Text Jon</span>
+            <span className="text-[10px] leading-tight font-medium text-[#00A86B]">Get $10 Free</span>
           </motion.a>
           {/* Stripe checkout button with logo */}
           <motion.button
