@@ -138,7 +138,6 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
                   className="w-full h-full"
                   onLoad={() => setIsLoaded(true)}
                   title={currentSite.name}
-                  sandbox="allow-scripts allow-same-origin"
                 />
               </motion.div>
             </div>

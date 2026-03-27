@@ -1,62 +1,24 @@
 "use server"
 
 import { stripe } from "@/lib/stripe"
-import { PRODUCTS, V0_PLAYBOOK } from "@/lib/products"
+import { PRODUCTS, V0_TUTOR } from "@/lib/products"
 
-export async function startCheckout(productId: string = V0_PLAYBOOK.id) {
-  const product = PRODUCTS.find((p) => p.id === productId)
-  if (!product) {
-    throw new Error("Product not found")
-  }
-
-  const baseUrl = process.env.NEXT_PUBLIC_URL || process.env.VERCEL_URL 
-    ? `https://${process.env.VERCEL_URL}` 
-    : "http://localhost:3000"
-
-  // Use stripePriceId if available, otherwise create price dynamically
-  const lineItem = product.stripePriceId 
-    ? { price: product.stripePriceId, quantity: 1 }
-    : {
-        price_data: {
-          currency: "usd",
-          product_data: {
-            name: product.name,
-            description: product.description,
-          },
-          unit_amount: product.priceInCents,
-        },
-        quantity: 1,
-      }
-
-  const session = await stripe.checkout.sessions.create({
-    line_items: [lineItem],
-    mode: "payment",
-    success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${baseUrl}?canceled=true`,
-    metadata: {
-      productId: product.id,
-      source: "v0-university",
-    },
-  })
-
-  return session.url
+function getBaseUrl(): string {
+  if (process.env.NEXT_PUBLIC_URL) return process.env.NEXT_PUBLIC_URL
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
+  return "http://localhost:3000"
 }
 
-// Embedded checkout - returns client secret for inline Stripe form
-export async function startEmbeddedCheckout(productId: string = V0_PLAYBOOK.id): Promise<string> {
+export async function startCheckout(productId: string = V0_TUTOR.id): Promise<string> {
   const product = PRODUCTS.find((p) => p.id === productId)
-  if (!product) {
-    throw new Error("Product not found")
-  }
+  if (!product) throw new Error("Product not found")
+  if (product.priceInCents === 0) throw new Error("Custom pricing - contact Jon directly")
 
-  const baseUrl = process.env.NEXT_PUBLIC_URL || process.env.VERCEL_URL 
-    ? `https://${process.env.VERCEL_URL}` 
-    : "http://localhost:3000"
+  const baseUrl = getBaseUrl()
 
-  // Use stripePriceId if available, otherwise create price dynamically
-  const lineItem = product.stripePriceId 
-    ? { price: product.stripePriceId, quantity: 1 }
-    : {
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+      {
         price_data: {
           currency: "usd",
           product_data: {
@@ -66,22 +28,17 @@ export async function startEmbeddedCheckout(productId: string = V0_PLAYBOOK.id):
           unit_amount: product.priceInCents,
         },
         quantity: 1,
-      }
-
-  const session = await stripe.checkout.sessions.create({
-    line_items: [lineItem],
+      },
+    ],
     mode: "payment",
-    ui_mode: "embedded",
-    return_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+    success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}&product=${productId}`,
+    cancel_url: `${baseUrl}/?cancelled=true`,
     metadata: {
       productId: product.id,
       source: "v0-university",
     },
   })
 
-  if (!session.client_secret) {
-    throw new Error("Failed to create checkout session")
-  }
-
-  return session.client_secret
+  if (!session.url) throw new Error("Failed to create checkout session")
+  return session.url
 }

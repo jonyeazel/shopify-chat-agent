@@ -571,7 +571,7 @@ export default function Home() {
         {/* Mobile: Vertical icon rail - aligns with chat input bottom */}
         <div className="md:hidden flex flex-col items-center justify-end gap-2.5 flex-shrink-0 pr-[16px] pl-[6px] pb-3">
           {([
-            { icon: IconExamples, label: "Results", action: () => setShowShowcase(true) },
+            { icon: IconExamples, label: "See Work", action: () => setShowShowcase(true) },
             { icon: IconInfo, label: "How", action: () => handleChatSubmit("How easy is this?") },
             { icon: IconFAQ, label: "Offer", action: () => handleChatSubmit("What's the deal?") },
           ] as const).map(({ icon: Icon, label, ...rest }, index) => (
