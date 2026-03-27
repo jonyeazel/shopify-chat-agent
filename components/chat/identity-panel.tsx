@@ -27,7 +27,7 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, o
   const closeGallery = useCallback(() => setShowGallery(false), [])
 
   const actionButtons = [
-    { icon: LayoutGrid, label: "Results", action: onExamplesClick || (() => onSubmit("Show me results")) },
+    { icon: LayoutGrid, label: "See Work", action: onExamplesClick || (() => onSubmit("Show me results")) },
     { icon: Info, label: "How", action: () => onSubmit("How easy is this?") },
     { icon: HelpCircle, label: "Offer", action: () => onSubmit("What's the deal?") },
     { icon: CreditCard, label: "Buy Now", action: onBuyClick, highlight: true },
