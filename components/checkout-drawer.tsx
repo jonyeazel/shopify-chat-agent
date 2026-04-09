@@ -170,10 +170,19 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-tutor" }: Chec
                     <span className="text-2xl font-bold text-neutral-900">{formatPrice(selectedProduct.priceInCents)}</span>
                   </div>
                 </div>
+                {/* Trust badge */}
+                {!isConsulting && (
+                  <div className="mb-3 flex items-center justify-center gap-1.5 text-xs text-neutral-500">
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                    <span>Secure Stripe checkout</span>
+                  </div>
+                )}
                 <button
                   onClick={handleCheckout}
                   disabled={isLoading}
-                  className="w-full py-4 bg-[#635BFF] text-white font-semibold rounded-2xl flex items-center justify-center gap-2.5 hover:bg-[#5851ea] disabled:opacity-50 transition-colors active:scale-[0.98]"
+                  className="w-full py-4 bg-[#635BFF] text-white font-semibold rounded-2xl flex items-center justify-center gap-2.5 hover:bg-[#5851ea] disabled:opacity-50 transition-all active:scale-[0.98] stripe-pulse"
                 >
                   {isLoading ? (
                     <>

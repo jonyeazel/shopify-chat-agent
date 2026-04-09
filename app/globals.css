@@ -182,9 +182,9 @@
   body {
     @apply bg-background text-foreground;
     -webkit-overflow-scrolling: touch;
-    /* Subtle top-lit radial — warm center, cooler edges */
+    /* Premium top-lit glow - softer, more refined */
     background:
-      radial-gradient(ellipse 80% 60% at 50% 30%, rgba(255,255,255,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 100% 50% at 50% 0%, rgba(255,255,255,0.18) 0%, transparent 60%),
       var(--background);
     /* Inter OpenType features: stylistic alternates for refined letterforms */
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
@@ -326,12 +326,13 @@
   50% { box-shadow: 0 0 0 3px rgba(10, 77, 58, 0.15); }
 }
 
-/* Refined floating element shadow — subtle, warm, layered */
+/* Premium floating shadow — barely there, refined depth */
 .shadow-float {
   box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.04),
-    0 4px 12px rgba(0, 0, 0, 0.06),
-    0 12px 24px rgba(0, 0, 0, 0.04);
+    0 0 0 1px rgba(0, 0, 0, 0.02),
+    0 1px 2px rgba(0, 0, 0, 0.03),
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    0 8px 24px rgba(0, 0, 0, 0.03);
 }
 
 /* Inline card hover lift — barely perceptible depth on hover */

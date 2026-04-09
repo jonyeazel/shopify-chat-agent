@@ -121,10 +121,10 @@ const SITE_ID = 1
 const TEMP_ADMIN_BYPASS = true
 
 const QUICK_ACTIONS = [
-  { label: "Watch the video", message: "Show me the video" },
-  { label: "See examples", message: "Show me examples of sites people have built" },
-  { label: "How much is it?", message: "How much does v0 University cost?" },
-  { label: "Text Jon", message: null, sms: true },
+  { label: "See the work", message: "Show me examples" },
+  { label: "How it works", message: "How does this work?" },
+  { label: "Pricing", message: "What's the pricing?" },
+  { label: "Get started", message: "I want to get started" },
 ]
 
 export default function Home() {

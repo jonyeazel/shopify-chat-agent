@@ -19,76 +19,76 @@ export const PRODUCTS: Product[] = [
     id: "v0-tutor",
     stripePriceId: "price_v0tutor",
     name: "v0 Tutor",
-    headline: "Your private AI tutor. 24/7. Forever.",
-    description: "The exact methodology behind 25,000+ prompts. Completely automated.",
+    headline: "Download the skillset. Keep it forever.",
+    description: "Private AI trained on 25,000+ prompts. Teaches you the system in real time.",
     priceInCents: 49700,
     thumbnail: "/jon-avatar.jpg",
     includes: [
-      "Private AI Tutor (24/7 access)",
-      "The 36-Word Seed Prompt System",
+      "24/7 AI Tutor Access",
+      "36-Word Seed Prompt Method",
       "The 'Cook' Workflow",
-      "Domain Linking Guide (Vercel)",
+      "Domain Setup (Vercel)",
       "Stripe Integration Guide",
       "Supabase Setup Guide",
       "Lifetime Access"
     ],
     valueStack: [
-      { item: "Private AI Tutor", value: 2997 },
-      { item: "Seed Prompt System", value: 997 },
-      { item: "Integration Guides", value: 497 },
+      { item: "AI Tutor (24/7)", value: 2997 },
+      { item: "Prompting System", value: 997 },
+      { item: "Integration Playbooks", value: 497 },
       { item: "Lifetime Access", value: 1997 },
     ],
     cta: "Get Lifetime Access",
-    urgency: "One-time payment. No calls."
+    urgency: "Pay once. Keep forever."
   },
   {
     id: "clone-site",
     name: "Clone This Site",
-    headline: "This exact site. Built for your business.",
-    description: "AI sales agent. Stripe checkout. 24/7 lead capture. Yours.",
+    headline: "This exact site. For your business.",
+    description: "AI that sells 24/7. Stripe checkout. SMS alerts. Live in 14 days.",
     priceInCents: 349700,
     thumbnail: "/jon-avatar.jpg",
     includes: [
-      "Exact Clone of v0university.com",
-      "AI Conversation Layer (trained on you)",
-      "Stripe Checkout Integration",
+      "Full Clone of This Site",
+      "AI Trained on Your Business",
+      "Stripe Payment Integration",
       "SMS Lead Notifications",
-      "Custom Domain Setup",
-      "14 Days of Optimization",
-      "v0 Tutor Access (included)"
+      "Custom Domain + Hosting",
+      "14 Days of Tweaks",
+      "v0 Tutor Included"
     ],
     valueStack: [
-      { item: "AI-Powered Site Clone", value: 10000 },
+      { item: "AI Sales Site", value: 10000 },
       { item: "Custom AI Training", value: 3000 },
-      { item: "Stripe + SMS Integration", value: 2000 },
-      { item: "14-Day Optimization", value: 1500 },
+      { item: "Payments + Notifications", value: 2000 },
+      { item: "2 Weeks of Polish", value: 1500 },
       { item: "v0 Tutor Access", value: 497 },
     ],
-    cta: "Get Your Site",
-    urgency: "2 spots per month"
+    cta: "Clone It",
+    urgency: "2 spots/month"
   },
   {
     id: "ai-consulting",
     name: "AI Consulting",
-    headline: "I don't just build sites. I build machines.",
-    description: "Custom AI agents, automation systems, scalable workflows.",
+    headline: "I don't build sites. I build machines.",
+    description: "Custom AI agents. Systems that run while you sleep. 40-hour weeks back.",
     priceInCents: 0, // Custom pricing - starts at $10k
     thumbnail: "/jon-avatar.jpg",
     includes: [
       "Discovery Call",
-      "Custom AI Agent Development",
-      "Automation Systems",
-      "Scalable Workflows",
-      "Ongoing Strategy",
+      "Custom AI Agents",
+      "Automation Workflows",
+      "Backend Systems",
+      "Ongoing Support",
       "Direct Access to Jon"
     ],
     valueStack: [
-      { item: "Custom Development", value: 25000 },
+      { item: "Custom AI Build", value: 25000 },
       { item: "Automation Systems", value: 10000 },
-      { item: "Strategy Calls", value: 5000 },
+      { item: "Strategy & Support", value: 5000 },
     ],
-    cta: "Book Discovery Call",
-    urgency: "Starts at $10k"
+    cta: "Book Discovery",
+    urgency: "$10k minimum"
   }
 ]
 
