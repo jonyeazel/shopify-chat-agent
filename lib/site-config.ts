@@ -1,9 +1,9 @@
 export const siteConfig = {
   brand: {
     name: "v0 University",
-    headerSubtitle: "Build sites with AI",
-    tagline: "Type an idea. Watch it exist.",
-    subtitle: "The methodology behind 25,000+ prompts.",
+    headerSubtitle: "Download the skillset",
+    tagline: "Stop hiring. Start building.",
+    subtitle: "25,000 prompts distilled into one system.",
     avatarUrl: "/images/jon-profile.png",
     headerLogoUrl: "/images/v0-university-logo.png",
     logoUrl: "/images/v0-university-logo.png",
@@ -25,9 +25,9 @@ export const siteConfig = {
   },
 
   meta: {
-    title: "v0 University | Download the Skillset",
+    title: "v0 University | Stop Hiring. Start Building.",
     description:
-      "Private AI tutor teaching the exact prompting methodology from 25,000+ prompts. Build websites in seconds, not weeks.",
+      "AI tutor trained on 25,000+ prompts. Learn the system that builds production sites in seconds. Pay once, keep forever.",
     keywords: [
       "v0",
       "v0 tutorial",
@@ -39,11 +39,11 @@ export const siteConfig = {
       "v0 university",
       "v0 tutor",
     ],
-    ogTitle: "Type an idea. Watch it exist.",
+    ogTitle: "Stop hiring. Start building.",
     ogDescription:
-      "Private AI tutor from the world's most experienced v0 user. 25,000+ prompts distilled into one system.",
+      "The world's most experienced v0 builder (25,000+ prompts) shares the exact system. Websites in seconds.",
     twitterDescription:
-      "Download a skillset. Build websites with AI.",
+      "Stop hiring designers. Download the skillset instead.",
   },
 } as const
 

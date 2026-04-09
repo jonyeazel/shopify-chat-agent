@@ -72,7 +72,7 @@ export function IdentityPanel({ availabilityStatus, input, setInput, onSubmit, o
 
         {/* Subtitle */}
         <p className="text-[15px] text-muted-foreground mt-2 text-center">
-          {brand.headerSubtitle}
+          Download the skillset
         </p>
 
         {/* Action buttons - horizontal row */}

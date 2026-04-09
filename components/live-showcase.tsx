@@ -41,13 +41,13 @@ export function LiveShowcase() {
           </div>
           
           <h2 className="text-[28px] font-semibold text-foreground leading-tight tracking-[-0.02em] mb-3">
-            Type an idea.
+            Stop hiring.
             <br />
-            <span className="text-muted-foreground">Watch it exist.</span>
+            <span className="text-muted-foreground">Start building.</span>
           </h2>
           
           <p className="text-[15px] text-muted-foreground leading-relaxed">
-            The world's most experienced AI builder shares the exact prompts that work.
+            25,000 prompts distilled into one system. Websites in seconds, not weeks.
           </p>
         </motion.div>
         
