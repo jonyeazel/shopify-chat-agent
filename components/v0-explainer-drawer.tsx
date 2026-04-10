@@ -1,89 +1,16 @@
 "use client"
 
-import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { X, ChevronDown, ExternalLink, Zap, Globe, CreditCard, Rocket, Code2, Sparkles } from "lucide-react"
+import { X, ExternalLink, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface V0ExplainerDrawerProps {
   isOpen: boolean
   onClose: () => void
+  onBuyClick?: () => void
 }
 
-const PLATFORM_COMPARISON = [
-  {
-    name: "Traditional Developer",
-    timeline: "4-12 weeks",
-    cost: "$5,000 - $50,000+",
-    pain: "Endless revisions, scope creep, miscommunication, invoices that keep growing",
-  },
-  {
-    name: "Webflow / Squarespace",
-    timeline: "1-4 weeks",
-    cost: "$500 - $2,000 + monthly fees",
-    pain: "Steep learning curve, template limitations, looks like everyone else",
-  },
-  {
-    name: "Fiverr / Upwork",
-    timeline: "1-3 weeks",
-    cost: "$200 - $2,000",
-    pain: "Quality roulette, communication barriers, you get what you pay for",
-  },
-  {
-    name: "v0 + The Cook Method",
-    timeline: "Hours, not weeks",
-    cost: "$20/month for v0 + learning",
-    pain: "None. You describe it, AI builds it, you iterate in plain English",
-    highlight: true,
-  },
-]
-
-const FAQ_ITEMS = [
-  {
-    q: "What exactly is v0?",
-    a: "v0 is Vercel's AI-powered development platform. You describe what you want in plain English, and it generates production-ready code. It's not a template - it creates custom sites from your description. Think of it as having a senior developer who works at the speed of thought."
-  },
-  {
-    q: "What's Vercel?",
-    a: "Vercel is the company that created Next.js (used by Nike, Netflix, Notion, and half the Fortune 500). They're the leaders in web deployment. When you build with v0, you're using the same infrastructure that powers the world's biggest sites. One click deploys your site globally."
-  },
-  {
-    q: "How is this different from ChatGPT?",
-    a: "ChatGPT gives you code snippets you have to piece together. v0 gives you complete, working applications with a live preview. You can see your changes in real-time and deploy with one click. It's purpose-built for building websites, not general chat."
-  },
-  {
-    q: "What about Bolt, Lovable, Replit?",
-    a: "They're all good tools. But v0 is built by Vercel - the same team behind Next.js. The integration is seamless: build in v0, deploy to Vercel, connect your domain, done. No context switching. No export/import headaches. It's all one ecosystem."
-  },
-  {
-    q: "Do I need to know how to code?",
-    a: "No. That's the whole point. You describe outcomes in plain English: 'A pricing page that makes the expensive option feel obvious.' The AI handles the code. You handle the vision."
-  },
-  {
-    q: "What can I actually build?",
-    a: "Anything. Landing pages, portfolios, SaaS apps, e-commerce stores, dashboards, blogs, booking systems, membership sites. If you can describe it, v0 can build it. This site you're on right now? Built entirely with v0."
-  },
-  {
-    q: "What about Shopify stores?",
-    a: "v0 integrates beautifully with Shopify. You can build custom storefronts, landing pages for products, and marketing sites that connect to your Shopify backend. Best of both worlds: Shopify's commerce engine + v0's design freedom."
-  },
-  {
-    q: "How much does v0 cost?",
-    a: "v0 has a free tier to start. Pro is $20/month for more generations. My course ($497) teaches you how to use those generations efficiently - so you build more with less. The method pays for itself on your first project."
-  },
-  {
-    q: "So I pay you AND pay v0?",
-    a: "Yes, to be transparent: my course is $497 one-time, and v0 is $20/month (with a free tier to start). I teach you the skill. v0 is the tool. Think of it like a cooking class - you pay the chef to teach you, and you buy your own ingredients."
-  },
-  {
-    q: "What if I've never built anything before?",
-    a: "Perfect. You have no bad habits to unlearn. The Cook Method is designed for beginners. If you can text a friend, you can prompt v0. The barrier isn't technical skill - it's knowing what to say. That's what I teach."
-  },
-]
-
-export function V0ExplainerDrawer({ isOpen, onClose }: V0ExplainerDrawerProps) {
-  const [openFaq, setOpenFaq] = useState<number | null>(null)
-
+export function V0ExplainerDrawer({ isOpen, onClose, onBuyClick }: V0ExplainerDrawerProps) {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -103,7 +30,7 @@ export function V0ExplainerDrawer({ isOpen, onClose }: V0ExplainerDrawerProps) {
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
-            className="fixed bottom-0 left-0 right-0 z-50 h-[92vh] bg-background rounded-t-[20px] shadow-2xl flex flex-col overflow-hidden"
+            className="fixed bottom-0 left-0 right-0 z-50 h-[85vh] bg-background rounded-t-[20px] shadow-2xl flex flex-col overflow-hidden"
           >
             {/* Handle */}
             <div className="flex justify-center pt-3 pb-2">
@@ -112,13 +39,10 @@ export function V0ExplainerDrawer({ isOpen, onClose }: V0ExplainerDrawerProps) {
 
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-3 border-b border-border flex-shrink-0">
-              <div>
-                <h2 className="text-lg font-semibold text-foreground">About v0 University</h2>
-                <p className="text-sm text-muted-foreground">For the people who build, buy & sell websites</p>
-              </div>
+              <span className="text-sm font-medium text-foreground">About</span>
               <button
                 onClick={onClose}
-                className="p-2 rounded-full hover:bg-muted transition-colors"
+                className="p-2 -mr-2 rounded-full hover:bg-muted transition-colors"
               >
                 <X className="w-5 h-5 text-muted-foreground" />
               </button>
@@ -127,174 +51,117 @@ export function V0ExplainerDrawer({ isOpen, onClose }: V0ExplainerDrawerProps) {
             {/* Content */}
             <div className="flex-1 overflow-y-auto">
               {/* Hero */}
-              <div className="px-5 py-6 bg-foreground text-background">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-background/10 flex items-center justify-center">
-                    <img src="/v0-logo-light.png" alt="v0" className="w-7 h-7" />
-                  </div>
-                  <div>
-                    <p className="font-semibold">v0 by Vercel</p>
-                    <p className="text-sm text-background/60">AI-Powered Development</p>
-                  </div>
+              <div className="px-5 pt-8 pb-6 text-center">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-foreground flex items-center justify-center">
+                  <img src="/v0-logo-light.png" alt="v0" className="w-9 h-9" />
                 </div>
-                <p className="text-[15px] leading-relaxed text-background/80">
-                  Describe what you want. Watch it build. Iterate in plain English. Deploy in one click. 
-                  It&apos;s the first time building websites actually feels like the future.
+                <h1 className="text-2xl font-semibold text-foreground mb-2">
+                  v0 University
+                </h1>
+                <p className="text-muted-foreground">
+                  Prompt engineering for websites
                 </p>
               </div>
 
-              {/* Comparison */}
-              <div className="px-5 py-6 border-b border-border">
-                <h3 className="text-[13px] font-semibold text-muted-foreground uppercase tracking-wide mb-4">
-                  The Old Way vs. The New Way
-                </h3>
-                <div className="space-y-3">
-                  {PLATFORM_COMPARISON.map((item, i) => (
-                    <div 
-                      key={i} 
-                      className={`p-4 rounded-xl border ${
-                        item.highlight 
-                          ? 'bg-primary/5 border-primary/20' 
-                          : 'bg-muted/30 border-border'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-3 mb-2">
-                        <p className={`font-medium ${item.highlight ? 'text-primary' : 'text-foreground'}`}>
-                          {item.name}
-                        </p>
-                        {item.highlight && (
-                          <span className="px-2 py-0.5 bg-primary text-primary-foreground text-[10px] font-semibold rounded-full uppercase">
-                            This
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex gap-4 text-[12px] mb-2">
-                        <span className="text-muted-foreground">{item.timeline}</span>
-                        <span className="text-muted-foreground">{item.cost}</span>
-                      </div>
-                      <p className="text-[13px] text-muted-foreground">{item.pain}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Features */}
-              <div className="px-5 py-6 border-b border-border">
-                <h3 className="text-[13px] font-semibold text-muted-foreground uppercase tracking-wide mb-4">
-                  What You Get Access To
-                </h3>
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { icon: Sparkles, label: "AI Code Generation", desc: "Describe it, build it" },
-                    { icon: Globe, label: "One-Click Deploy", desc: "Live in 30 seconds" },
-                    { icon: Rocket, label: "Custom Domains", desc: "yoursite.com" },
-                    { icon: Code2, label: "Full Code Access", desc: "Own everything" },
-                    { icon: Zap, label: "Edge Network", desc: "Fast everywhere" },
-                    { icon: CreditCard, label: "Shopify Ready", desc: "E-commerce built in" },
-                  ].map((item, i) => (
-                    <div key={i} className="p-3 rounded-xl bg-muted/30 border border-border">
-                      <item.icon className="w-5 h-5 text-foreground mb-2" />
-                      <p className="text-[13px] font-medium text-foreground">{item.label}</p>
-                      <p className="text-[11px] text-muted-foreground">{item.desc}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Cost Transparency */}
-              <div className="px-5 py-6 border-b border-border bg-muted/30">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                    <CreditCard className="w-4 h-4 text-primary-foreground" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-foreground mb-1">Transparency on Costs</p>
-                    <p className="text-[13px] text-muted-foreground leading-relaxed">
-                      My course is $497 one-time. You&apos;ll also need a v0 subscription ($20/month, free tier available). 
-                      I teach you the skill. v0 is the tool you use that skill with. 
-                      The method I teach helps you build more with fewer credits.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Uber Moment */}
-              <div className="px-5 py-6 border-b border-border">
-                <p className="text-[15px] text-foreground leading-relaxed">
-                  <span className="font-semibold">Fair warning:</span> Once you build your first site with v0, 
-                  your brain gets rewired. It&apos;s like the first time you took an Uber - you don&apos;t go back 
-                  to hailing cabs. I apologize in advance if you never use your old tools again.
-                </p>
-              </div>
-
-              {/* FAQ */}
+              {/* The Promise - Visual */}
               <div className="px-5 py-6">
-                <h3 className="text-[13px] font-semibold text-muted-foreground uppercase tracking-wide mb-4">
-                  Frequently Asked Questions
-                </h3>
-                <div className="space-y-2">
-                  {FAQ_ITEMS.map((item, i) => (
-                    <div 
-                      key={i}
-                      className="border border-border rounded-xl overflow-hidden bg-card"
-                    >
-                      <button
-                        onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                        className="w-full px-4 py-3.5 flex items-center justify-between text-left hover:bg-muted/30 transition-colors"
-                      >
-                        <span className="text-[14px] font-medium text-foreground pr-4">{item.q}</span>
-                        <ChevronDown 
-                          className={`w-4 h-4 text-muted-foreground transition-transform flex-shrink-0 ${
-                            openFaq === i ? 'rotate-180' : ''
-                          }`}
-                        />
-                      </button>
-                      <AnimatePresence>
-                        {openFaq === i && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                            className="overflow-hidden"
-                          >
-                            <p className="px-4 pb-4 text-[13px] text-muted-foreground leading-relaxed">
-                              {item.a}
-                            </p>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-4 rounded-2xl bg-muted/50 border border-border">
+                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">Before</p>
+                    <p className="text-lg font-semibold text-foreground">$5-50k</p>
+                    <p className="text-[13px] text-muted-foreground">4-12 weeks</p>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20">
+                    <p className="text-[11px] text-primary uppercase tracking-wide mb-1">After</p>
+                    <p className="text-lg font-semibold text-foreground">$497</p>
+                    <p className="text-[13px] text-muted-foreground">One afternoon</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* What You Learn */}
+              <div className="px-5 py-6 border-t border-border">
+                <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-4">What you learn</p>
+                <div className="space-y-3">
+                  {[
+                    { title: "The Cook Method", desc: "Short prompts that build complete sites" },
+                    { title: "Intent Seeds", desc: "The 10-20 word prompts that work" },
+                    { title: "Iteration", desc: "Fix anything with plain English" },
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center text-[12px] font-medium flex-shrink-0">
+                        {i + 1}
+                      </div>
+                      <div>
+                        <p className="text-[14px] font-medium text-foreground">{item.title}</p>
+                        <p className="text-[13px] text-muted-foreground">{item.desc}</p>
+                      </div>
                     </div>
                   ))}
                 </div>
+              </div>
+
+              {/* Social Proof */}
+              <div className="px-5 py-6 border-t border-border bg-muted/30">
+                <div className="flex items-center gap-4">
+                  <img 
+                    src="/jon-avatar.jpg" 
+                    alt="Jon" 
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+                  <div>
+                    <p className="text-[14px] font-medium text-foreground">Jon Yeazel</p>
+                    <p className="text-[13px] text-muted-foreground">25,000+ v0 generations</p>
+                  </div>
+                </div>
+                <a
+                  href="https://v0.app/@yeazel"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 flex items-center justify-between p-3 rounded-xl bg-background border border-border hover:bg-muted/50 transition-colors"
+                >
+                  <span className="text-[13px] font-medium text-foreground">See the work</span>
+                  <ExternalLink className="w-4 h-4 text-muted-foreground" />
+                </a>
+              </div>
+
+              {/* Costs - Clean */}
+              <div className="px-5 py-6 border-t border-border">
+                <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-4">Costs</p>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between py-2">
+                    <span className="text-[14px] text-foreground">v0 Tutor (course)</span>
+                    <span className="text-[14px] font-medium text-foreground">$497 once</span>
+                  </div>
+                  <div className="flex items-center justify-between py-2 border-t border-border">
+                    <span className="text-[14px] text-foreground">v0 by Vercel</span>
+                    <span className="text-[14px] text-muted-foreground">$20/mo (free tier available)</span>
+                  </div>
+                </div>
+                <p className="mt-3 text-[12px] text-muted-foreground">
+                  I teach the skill. v0 is the tool.
+                </p>
               </div>
 
               {/* CTA */}
-              <div className="px-5 py-6 bg-foreground text-background">
-                <p className="text-[15px] text-background/80 mb-4 text-center">
-                  Ready to see what&apos;s possible?
-                </p>
-                <Button
-                  variant="secondary"
-                  className="w-full"
-                  asChild
+              <div className="px-5 py-6 border-t border-border">
+                <Button 
+                  className="w-full" 
+                  size="lg"
+                  onClick={() => {
+                    onClose()
+                    onBuyClick?.()
+                  }}
                 >
-                  <a
-                    href="https://v0.app/@yeazel"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    See Jon&apos;s v0 Profile
-                    <ExternalLink className="w-4 h-4 ml-2" />
-                  </a>
+                  Get Started
+                  <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
-                <Button
-                  variant="ghost"
+                <button
                   onClick={onClose}
-                  className="w-full mt-3 text-background hover:text-background hover:bg-background/10"
+                  className="w-full mt-3 py-2 text-[14px] text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Back to Chat
-                </Button>
+                  Back to chat
+                </button>
               </div>
             </div>
           </motion.div>

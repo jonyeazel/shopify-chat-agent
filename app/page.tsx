@@ -717,10 +717,11 @@ export default function Home() {
 
 
 
-      {/* v0 Explainer / FAQ drawer */}
+      {/* About drawer */}
       <V0ExplainerDrawer
         isOpen={showExplainer}
         onClose={() => setShowExplainer(false)}
+        onBuyClick={() => setShowCheckout(true)}
       />
     </main>
   )
