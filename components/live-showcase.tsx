@@ -1,6 +1,113 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { useEffect, useRef, useState } from "react"
+
+// Magnetic dot grid component
+function MagneticDotGrid() {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const mouseRef = useRef({ x: -1000, y: -1000 })
+  const animationRef = useRef<number>()
+  
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    
+    const resizeCanvas = () => {
+      const dpr = window.devicePixelRatio || 1
+      const rect = canvas.getBoundingClientRect()
+      canvas.width = rect.width * dpr
+      canvas.height = rect.height * dpr
+      ctx.scale(dpr, dpr)
+      canvas.style.width = `${rect.width}px`
+      canvas.style.height = `${rect.height}px`
+    }
+    
+    resizeCanvas()
+    window.addEventListener('resize', resizeCanvas)
+    
+    const dotSpacing = 32
+    const dotRadius = 1
+    const maxDisplacement = 20
+    const attractionRadius = 120
+    
+    const draw = () => {
+      const rect = canvas.getBoundingClientRect()
+      ctx.clearRect(0, 0, rect.width, rect.height)
+      
+      const cols = Math.ceil(rect.width / dotSpacing) + 1
+      const rows = Math.ceil(rect.height / dotSpacing) + 1
+      
+      for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+          const baseX = i * dotSpacing
+          const baseY = j * dotSpacing
+          
+          // Calculate distance to mouse
+          const dx = mouseRef.current.x - baseX
+          const dy = mouseRef.current.y - baseY
+          const distance = Math.sqrt(dx * dx + dy * dy)
+          
+          let offsetX = 0
+          let offsetY = 0
+          let opacity = 0.08
+          
+          if (distance < attractionRadius && distance > 0) {
+            // Gravitational pull toward cursor
+            const force = Math.pow(1 - distance / attractionRadius, 2)
+            offsetX = (dx / distance) * maxDisplacement * force
+            offsetY = (dy / distance) * maxDisplacement * force
+            opacity = 0.08 + (0.25 * force)
+          }
+          
+          ctx.beginPath()
+          ctx.arc(baseX + offsetX, baseY + offsetY, dotRadius, 0, Math.PI * 2)
+          ctx.fillStyle = `rgba(10, 10, 10, ${opacity})`
+          ctx.fill()
+        }
+      }
+      
+      animationRef.current = requestAnimationFrame(draw)
+    }
+    
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect()
+      mouseRef.current = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      }
+    }
+    
+    const handleMouseLeave = () => {
+      mouseRef.current = { x: -1000, y: -1000 }
+    }
+    
+    canvas.addEventListener('mousemove', handleMouseMove)
+    canvas.addEventListener('mouseleave', handleMouseLeave)
+    
+    draw()
+    
+    return () => {
+      window.removeEventListener('resize', resizeCanvas)
+      canvas.removeEventListener('mousemove', handleMouseMove)
+      canvas.removeEventListener('mouseleave', handleMouseLeave)
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current)
+      }
+    }
+  }, [])
+  
+  return (
+    <canvas 
+      ref={canvasRef} 
+      className="absolute inset-0 w-full h-full"
+      style={{ pointerEvents: 'auto' }}
+    />
+  )
+}
 
 const USE_CASES = [
   { label: "Landing Pages", description: "In an afternoon" },
@@ -17,26 +124,9 @@ const BEFORE_AFTER = [
 
 export function LiveShowcase() {
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center relative overflow-hidden">
-      {/* Subtle grid pattern background */}
-      <div 
-        className="absolute inset-0 opacity-[0.02]"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, #0a0a0a 1px, transparent 1px),
-            linear-gradient(to bottom, #0a0a0a 1px, transparent 1px)
-          `,
-          backgroundSize: '48px 48px'
-        }}
-      />
-      
-      {/* Soft radial gradient overlay */}
-      <div 
-        className="absolute inset-0"
-        style={{
-          background: 'radial-gradient(ellipse 100% 80% at 50% 30%, rgba(99, 91, 255, 0.04) 0%, transparent 60%)'
-        }}
-      />
+    <div className="w-full h-full flex flex-col items-center justify-center relative overflow-hidden bg-white">
+      {/* Magnetic dot grid background */}
+      <MagneticDotGrid />
       
       {/* Content */}
       <div className="relative z-10 w-full max-w-lg px-10">
