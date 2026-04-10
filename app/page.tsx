@@ -104,7 +104,7 @@ function IconText({ className, strokeWidth = 1.5 }: { className?: string; stroke
 }
 
 import { IdentityPanel } from "@/components/chat/identity-panel"
-import { ChatInput } from "@/components/chat/chat-input"
+import { ChatInput, type ChatInputHandle } from "@/components/chat/chat-input"
 import { MessageList } from "@/components/chat/message-list"
 import { StaticAvatar, HeaderAvatar } from "@/components/flip-avatar"
 import { SiteAdminPanel } from "@/components/admin/site-admin-panel"
@@ -138,6 +138,7 @@ export default function Home() {
   const [showVolumeControl, setShowVolumeControl] = useState(false)
   const backgroundInputRef = useRef<HTMLInputElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const chatInputRef = useRef<ChatInputHandle>(null)
 
   const [availabilityStatus] = useState<AvailabilityStatus>("online")
 
@@ -348,6 +349,7 @@ export default function Home() {
         onVideoClick={() => setShowVideo(true)}
         onExamplesClick={() => setShowShowcase(true)}
         onAboutClick={() => setShowExplainer(true)}
+        onStartChat={() => chatInputRef.current?.focus()}
         chatDisabled={status !== "ready"}
         style={{ width: `${panelWidth}%` }}
       />
@@ -516,14 +518,7 @@ export default function Home() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.22 }}
                         whileTap={{ scale: 0.97 }}
-                        onClick={() => {
-                          // Focus the input to start typing, or trigger voice
-                          const input = document.querySelector('textarea') as HTMLTextAreaElement
-                          if (input) {
-                            input.focus()
-                            input.scrollIntoView({ behavior: 'smooth', block: 'center' })
-                          }
-                        }}
+                        onClick={() => chatInputRef.current?.focus()}
                         className="mt-6 flex items-center gap-2.5 px-5 py-3 bg-foreground text-background rounded-full text-[14px] font-medium shadow-lg hover:opacity-90 transition-opacity"
                       >
                         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -603,12 +598,13 @@ export default function Home() {
           />
           {/* Mobile: Chat input */}
           <div className="flex-shrink-0 md:hidden pb-2 px-3 bg-white">
-            <ChatInput
-              input={input ?? ""}
-              setInput={setInput}
-              onSubmit={handleChatSubmit}
-              disabled={status !== "ready"}
-              showMicNudge={messages.length === 0 || (messages.length >= 2 && messages.length <= 6 && status === "ready")}
+                <ChatInput
+                  ref={chatInputRef}
+                  input={input ?? ""}
+                  setInput={setInput}
+                  onSubmit={handleChatSubmit}
+                  disabled={status !== "ready"}
+                  showMicNudge={messages.length === 0 || (messages.length >= 2 && messages.length <= 6 && status === "ready")}
               voiceFirst={true}
             />
             <div className="flex items-center justify-center gap-1.5 mt-1.5 text-[10px] text-muted-foreground/50">

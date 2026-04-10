@@ -17,6 +17,7 @@ interface IdentityPanelProps {
   onVideoClick?: () => void
   onExamplesClick?: () => void
   onAboutClick?: () => void
+  onStartChat?: () => void
   chatDisabled: boolean
   style?: React.CSSProperties
 }
@@ -30,6 +31,7 @@ export function IdentityPanel({
   onVideoClick, 
   onExamplesClick, 
   onAboutClick,
+  onStartChat,
   chatDisabled, 
   style 
 }: IdentityPanelProps) {
@@ -96,12 +98,7 @@ export function IdentityPanel({
 
         {/* CTA Button - Start Conversation */}
         <button
-          onClick={() => {
-            const input = document.querySelector('textarea') as HTMLTextAreaElement
-            if (input) {
-              input.focus()
-            }
-          }}
+          onClick={onStartChat}
           className="mt-5 flex items-center gap-2 px-5 py-2.5 bg-foreground text-background rounded-full text-[14px] font-medium hover:opacity-90 transition-opacity"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
