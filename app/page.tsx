@@ -535,11 +535,19 @@ export default function Home() {
                     <div className="px-4 py-2">
                       <div className="p-3 rounded-xl bg-[#fef2f2] border border-[#fecaca] text-sm">
                         <p className="text-[#b91c1c]">{chatError}</p>
-                        <SmsTrigger context="error-fallback">
-                          <button className="inline-block mt-2 text-[12px] text-[#b91c1c]/70 underline underline-offset-2 hover:text-[#b91c1c] cursor-pointer">
-                            Text me directly instead
+                        <div className="flex items-center gap-3 mt-2">
+                          <button 
+                            onClick={() => { setChatError(null); if (messages.length > 0) handleChatSubmit(messages[messages.length - 1]?.parts?.find((p): p is { type: "text"; text: string } => p.type === "text")?.text || "Hello"); }}
+                            className="text-[12px] text-[#b91c1c] font-medium underline underline-offset-2 hover:no-underline cursor-pointer"
+                          >
+                            Try again
                           </button>
-                        </SmsTrigger>
+                          <SmsTrigger context="error-fallback">
+                            <button className="text-[12px] text-[#b91c1c]/60 underline underline-offset-2 hover:text-[#b91c1c] cursor-pointer">
+                              or text me
+                            </button>
+                          </SmsTrigger>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -555,7 +563,7 @@ export default function Home() {
             style={{ background: "linear-gradient(to bottom, transparent, white)" }} 
           />
           {/* Mobile: Chat input */}
-          <div className="flex-shrink-0 md:hidden pb-3 px-3 bg-white">
+          <div className="flex-shrink-0 md:hidden pb-2 px-3 bg-white">
             <ChatInput
               input={input ?? ""}
               setInput={setInput}
@@ -564,6 +572,12 @@ export default function Home() {
               showMicNudge={messages.length === 0 || (messages.length >= 2 && messages.length <= 6 && status === "ready")}
               voiceFirst={true}
             />
+            <div className="flex items-center justify-center gap-1 mt-1.5 text-[10px] text-muted-foreground/40">
+              <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+              </svg>
+              <span>Powered by Claude Opus 4.6</span>
+            </div>
           </div>
         </div>
         </div>

@@ -10,7 +10,7 @@ const USE_CASES = [
 ]
 
 const BEFORE_AFTER = [
-  { before: "$5,000 landing page", after: "$0 + 2 minutes" },
+  { before: "$5,000 landing page", after: "Under $50 + an afternoon" },
   { before: "2 weeks for revisions", after: "Say 'make it darker'" },
   { before: "Hiring a Shopify dev", after: "Build it yourself" },
 ]
@@ -119,6 +119,21 @@ export function LiveShowcase() {
           <p className="text-[13px] text-muted-foreground/50 italic">
             "I would kill for your seed prompt structure" — Brooks
           </p>
+        </motion.div>
+
+        {/* Powered by badge */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.9, duration: 0.4 }}
+          className="mt-8 flex justify-center"
+        >
+          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground/40">
+            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+            </svg>
+            <span>Powered by Claude Opus 4.6</span>
+          </div>
         </motion.div>
       </div>
     </div>

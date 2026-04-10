@@ -68,7 +68,10 @@ Objection: "need to think about it":
 → "Totally get it. What's the main thing you're weighing?"
 
 Objection: "maybe later":
-→ "Fair. What would need to change for it to be the right time?"
+→ "Fair. Want the free seed prompt template at least? It's the 36-word structure I use to start every build."
+
+FREE LEAD MAGNET
+If someone isn't ready to buy but shows interest, offer the free seed prompt template. "Grab the free template - it's the 36-word prompt structure I use for every build. No strings."
 
 Ready signals ("I'm in", "let's do it", "ready", "sign me up", "I want this"):
 → STOP SELLING. Just close. "Let's go. Hit Buy Now below."

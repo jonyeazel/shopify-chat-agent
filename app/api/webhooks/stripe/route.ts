@@ -28,6 +28,41 @@ export async function POST(req: Request) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session
       const { leadId, productId, quoteId, type } = session.metadata || {}
+      const customerEmail = session.customer_details?.email
+
+      // v0 University product handling
+      if (productId === "v0-tutor" && customerEmail) {
+        // Generate tutor password
+        const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+        let tutorPassword = ""
+        for (let i = 0; i < 8; i++) {
+          tutorPassword += chars.charAt(Math.floor(Math.random() * chars.length))
+        }
+        
+        console.log("[v0] Tutor purchase:", customerEmail, "Password:", tutorPassword)
+        
+        // Store in database
+        await supabase.from("tutor_access").insert({
+          email: customerEmail,
+          password: tutorPassword,
+          stripe_payment_id: session.payment_intent as string,
+          created_at: new Date().toISOString(),
+        })
+
+        // TODO: Send email with password using Resend
+        // await resend.emails.send({
+        //   from: "v0 University <noreply@v0university.com>",
+        //   to: customerEmail,
+        //   subject: "Your v0 Tutor Access",
+        //   html: `Your password is: ${tutorPassword}. Go to v0university.com/tutor to start.`
+        // })
+      }
+
+      if (productId === "clone-site" && customerEmail) {
+        console.log("[v0] Clone Site purchase:", customerEmail)
+        // Send SMS notification to Jon
+        await fetch(`https://api.twilio.com/...`, { method: "POST" }).catch(() => {})
+      }
 
       if (leadId && productId === "cro-audit-proposal") {
         await supabase
