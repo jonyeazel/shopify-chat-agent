@@ -118,197 +118,120 @@ function getSmsCta(messages: UIMessage[]): { label: string; context: SmsContext;
   return { label: "Text Jon", context: "general", show: false }
 }
 
-// Quick reply suggestions — must sound like real texts, not bot prompts
-// Rule: If you wouldn't actually text this to someone, don't include it
+// Quick reply suggestions — QUESTION-FIRST approach
+// Step 1: Extract the question at the END of the message (that's what matters)
+// Step 2: Generate replies that ANSWER that question
 function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[]): string[] {
   const lower = lastAssistantMessage.toLowerCase()
-  const msgCount = allMessages.length
   
-  // First AI message - opener responses (casual, lowercase, match new short openers)
-  if (msgCount <= 2) {
-    // "what are you building?"
-    if (lower.includes("what are you building") || lower.includes("building?")) {
-      return ["landing page", "shopify store", "not sure yet"]
-    }
-    // "building something or just curious?"
-    if (lower.includes("building something") && lower.includes("curious")) {
-      return ["building", "curious", "both"]
-    }
-    // "what brings you here?"
-    if (lower.includes("what brings you")) {
-      return ["need a site", "heard about v0", "checking it out"]
-    }
-    // "got a project in mind?"
-    if (lower.includes("project in mind") || lower.includes("got a project")) {
-      return ["yeah", "few ideas", "just exploring"]
-    }
-    // Generic first response fallback
-    return ["building a site", "just looking", "how does this work"]
+  // Extract the last sentence (usually the question)
+  const sentences = lower.split(/[.!]/).filter(s => s.trim())
+  const lastSentence = sentences[sentences.length - 1]?.trim() || lower
+  
+  // === PRIORITY 1: Match the ending question ===
+  
+  // "want to try?" / "want to try with your business?"
+  if (lastSentence.includes("want to try")) {
+    return ["yeah", "show me first", "with what"]
   }
   
-  // Intent Seed generated - genuine surprise moment
-  if (lower.includes("your prompt") || lower.includes("your prompt:") || lower.includes("you'd say:") || lower.includes("your intent seed") || lower.includes("that's the whole thing")) {
-    return ["wait that's it?", "yeah show me", "try a different one"]
+  // "want to see it?" / "want to see it build?"
+  if (lastSentence.includes("want to see")) {
+    return ["yeah", "how long", "different one?"]
   }
   
-  // AI asked "want to see it build?" after showing prompt
-  if (lower.includes("want to see it") || lower.includes("see it build") || lower.includes("try it?")) {
-    return ["yeah", "different angle?", "how long"]
-  }
-
-  // Before/after or method explanation
-  if (lower.includes("150 words") || lower.includes("9 words") || lower.includes("outcome-focused")) {
-    return ["ok that makes sense", "show me one", "what's mine look like"]
-  }
-
-  // Ready to buy - minimal friction
-  if (lower.includes("tap buy now") || lower.includes("let's do it") || lower.includes("ready to learn")) {
-    return ["doing it now", "one more question", "which one should I get"]
+  // "what are you building?" / "building?"
+  if (lastSentence.includes("building") && lastSentence.includes("?")) {
+    return ["landing page", "store", "not sure yet"]
   }
   
-  // AI comparing to developers / showing value
-  if (lower.includes("compared to") || lower.includes("developer") || lower.includes("rounding error")) {
-    return ["fair point", "what's included again", "ok let's do it"]
-  }
-
-  // AI asked what they want to build
-  if (lower.endsWith("?") && (lower.includes("what are you") || lower.includes("trying to build") || lower.includes("working on"))) {
-    return ["ok so basically", "landing page", "a few things actually"]
-  }
-
-  // AI asked about learning vs done-for-you
-  if (lower.includes("learn it") || lower.includes("done for you") || lower.includes("yourself or")) {
-    return ["want to learn it", "just do it for me", "not sure yet"]
-  }
-
-  // AI encouraged a brain dump
-  if (lower.includes("dump") || lower.includes("full picture") || lower.includes("more context")) {
-    return ["ok here's the deal", "alright so", "it's a lot but"]
-  }
-
-  // AI mentioned v0 profile or credibility
-  if (lower.includes("v0.app/@yeazel") || lower.includes("25,000") || lower.includes("free templates")) {
-    return ["checking it out", "how do I start", "what's in it"]
-  }
-
-  // AI explained what v0 is
-  if (lower.includes("vercel") || lower.includes("learn button") || lower.includes("v0 is")) {
-    return ["got it", "how's it different from chatgpt", "what does v0 cost"]
-  }
-
-  // AI mentioned the Uber analogy / brain rewired
-  if (lower.includes("uber") || lower.includes("brain") || lower.includes("rewired") || lower.includes("don't go back")) {
-    return ["ha ok I'm curious", "show me what I'd build", "what's the catch"]
-  }
-
-  // AI mentioned credit costs / transparency
-  if (lower.includes("$20/month") || lower.includes("separate from") || lower.includes("subscription")) {
-    return ["that's fair", "total cost?", "worth it if it works"]
-  }
-
-  // AI showed product showcase / ecommerce examples
-  if (lower.includes("swipe through") || lower.includes("product cards") || lower.includes("30 seconds to build")) {
-    return ["these are clean", "can mine look like this", "how fast"]
-  }
-
-  // AI asks what it sells (after they mention a store)
-  if (lower.includes("what") && (lower.includes("sell") || lower.includes("selling"))) {
-    return ["clothes", "skincare", "digital products", "physical products"]
-  }
-
-  // AI asks about their business type
-  if (lower.includes("what kind") || lower.includes("what type") || lower.includes("tell me about")) {
-    return ["agency", "saas", "ecommerce", "coach/consultant"]
+  // "what brings you here?"
+  if (lastSentence.includes("brings you") || lastSentence.includes("bring you")) {
+    return ["need a site", "curious", "checking it out"]
   }
   
-  // AI asks who it's for
-  if (lower.includes("who's it for") || lower.includes("who is it for") || lower.includes("target")) {
-    return ["small businesses", "consumers", "enterprise", "creators"]
+  // "got a project?" / "project in mind?"
+  if (lastSentence.includes("project")) {
+    return ["yeah", "few ideas", "exploring"]
   }
   
-  // AI asks about their current situation
-  if (lower.includes("tried before") || lower.includes("have you built") || lower.includes("currently using")) {
-    return ["yeah didn't work", "no this is new", "using wordpress rn"]
+  // "building or curious?" / "building something or just curious?"
+  if (lastSentence.includes("or") && (lastSentence.includes("curious") || lastSentence.includes("building"))) {
+    return ["building", "curious", "both"]
   }
-
-  // AI offers to show/demo something
-  if (lower.includes("want to see") || lower.includes("want me to show") || lower.includes("see it build")) {
-    return ["yeah", "show me", "how long does it take"]
+  
+  // "what does it sell?" / "what's it sell?"
+  if (lastSentence.includes("sell")) {
+    return ["clothes", "digital stuff", "services"]
   }
-
-  // AI asks if they want to try
-  if (lower.includes("want to try") || lower.includes("give it a shot")) {
-    return ["yeah", "show me first", "what do I need"]
+  
+  // "who's it for?"
+  if (lastSentence.includes("who") && lastSentence.includes("for")) {
+    return ["small biz", "consumers", "b2b"]
   }
-
-  // AI asked yes/no or choice questions
-  if (lower.endsWith("?")) {
-    if (lower.includes("yourself") && lower.includes("client")) {
-      return ["both", "just me", "agency"]
-    }
-    if (lower.includes("ecommerce") || lower.includes("store") || lower.includes("products")) {
-      return ["shopify", "service business", "digital products"]
-    }
-    if (lower.includes("timeline") || lower.includes("when") || lower.includes("soon")) {
-      return ["asap", "few weeks", "no rush"]
-    }
-    if (lower.includes("make sense") || lower.includes("follow") || lower.includes("got it")) {
-      return ["yeah", "kinda", "wait what"]
-    }
-    if (lower.includes("ready") || lower.includes("want to")) {
-      return ["yeah", "not yet", "maybe"]
-    }
-    if (lower.includes("which") || lower.includes("camp")) {
-      return ["first one", "second", "both"]
-    }
-    if (lower.includes("building") || lower.includes("curious")) {
-      return ["building something", "just curious", "both"]
-    }
-    return ["yeah", "nah", "depends"]
+  
+  // "what kind?" / "what type?"
+  if (lastSentence.includes("what kind") || lastSentence.includes("what type")) {
+    return ["ecommerce", "saas", "agency"]
   }
-
-  // AI detected hesitation / asked what's holding them back
-  if (lower.includes("hesitation") || lower.includes("holding you back") || lower.includes("main thing you're weighing")) {
-    return ["price", "time", "not sure it's for me"]
+  
+  // "make sense?" / "got it?" / "follow?"
+  if (lastSentence.includes("make sense") || lastSentence.includes("got it") || lastSentence.includes("follow")) {
+    return ["yeah", "sorta", "wait what"]
   }
-
-  // AI asked what would help them decide
-  if (lower.includes("help you decide") || lower.includes("make it obvious")) {
-    return ["see more examples", "talk to someone", "just need a minute"]
+  
+  // "which one?" / "which camp?"
+  if (lastSentence.includes("which")) {
+    return ["first", "second", "not sure"]
   }
-
-  // Pricing mentioned
+  
+  // "ready?" / "ready to..."
+  if (lastSentence.includes("ready")) {
+    return ["yeah", "almost", "one sec"]
+  }
+  
+  // "what's the hesitation?" / "what's holding you back?"
+  if (lastSentence.includes("hesitation") || lastSentence.includes("holding")) {
+    return ["price", "timing", "not sure yet"]
+  }
+  
+  // "what would help?" / "help you decide?"
+  if (lastSentence.includes("help") && lastSentence.includes("?")) {
+    return ["examples", "more info", "thinking"]
+  }
+  
+  // Generic yes/no question ending in "?"
+  if (lastSentence.endsWith("?") && lastSentence.length < 50) {
+    return ["yeah", "nah", "maybe"]
+  }
+  
+  // === PRIORITY 2: Content-based (if no clear question) ===
+  
+  // Showed an Intent Seed / prompt
+  if (lower.includes("your prompt") || lower.includes("prompt:") || lower.includes("you'd say:")) {
+    return ["that's it?", "show me", "different one"]
+  }
+  
+  // Mentioned pricing
   if (lower.includes("$497") || lower.includes("$3,497")) {
-    return ["what's included", "other options?", "thinking"]
+    return ["what's in it", "other options", "ok"]
   }
-
-  // AI gave a recommendation
-  if (lower.includes("recommend") || lower.includes("based on what you") || lower.includes("sounds like")) {
-    return ["ok", "why that one", "still deciding"]
+  
+  // Mentioned credibility
+  if (lower.includes("25k") || lower.includes("25,000") || lower.includes("@yeazel")) {
+    return ["nice", "show me", "ok"]
   }
-
-  // AI mentioned specific features or deliverables
-  if (lower.includes("video") || lower.includes("template") || lower.includes("library")) {
-    return ["nice", "show me", "what else"]
+  
+  // === PRIORITY 3: Fallback based on length ===
+  
+  // Short statement (no question) - prompt them forward
+  if (lower.length < 80 && !lower.includes("?")) {
+    return ["ok", "and?", "go on"]
   }
-
-  // AI was encouraging or supportive
-  if (lower.includes("you got this") || lower.includes("totally doable") || lower.includes("easy")) {
-    return ["hope so", "we'll see", "let's do it"]
-  }
-
-  // AI acknowledged and moved forward
-  if (lower.includes("cool") || lower.includes("nice") || lower.includes("got it")) {
-    if (lower.endsWith("?")) {
-      return ["yeah", "nah", "kinda"]
-    }
-    return ["ok", "what's next", "wait"]
-  }
-
-  // AI gave any kind of explanation (longer response)
-  if (lower.length > 100) {
-    return ["ok", "and?", "show me"]
-  }
+  
+  // Longer explanation - acknowledge and move forward
+  return ["ok", "got it", "what's next"]
+}
   
   // AI asked a simple yes/no
   if (lower.length < 50 && lower.endsWith("?")) {
