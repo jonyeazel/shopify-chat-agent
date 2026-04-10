@@ -1,9 +1,9 @@
 export const siteConfig = {
   brand: {
     name: "v0 University",
-    headerSubtitle: "Download the skillset",
-    tagline: "Stop hiring. Start building.",
-    subtitle: "25,000 prompts distilled into one system.",
+    headerSubtitle: "By Jon Yeazel",
+    tagline: "Prompt Engineering",
+    subtitle: "For the people who build, buy & sell websites",
     avatarUrl: "/images/jon-profile.png",
     headerLogoUrl: "/images/v0-university-logo.png",
     logoUrl: "/images/v0-university-logo.png",
@@ -25,9 +25,9 @@ export const siteConfig = {
   },
 
   meta: {
-    title: "v0 University | Stop Hiring. Start Building.",
+    title: "v0 University | For anybody who's ever built, sold or bought a website",
     description:
-      "AI tutor trained on 25,000+ prompts. Learn the system that builds production sites in seconds. Pay once, keep forever.",
+      "For anybody who's ever built, sold or bought a website. Learn The Cook Method - the AI prompting system from 25,000+ generations.",
     keywords: [
       "v0",
       "v0 tutorial",
@@ -39,11 +39,11 @@ export const siteConfig = {
       "v0 university",
       "v0 tutor",
     ],
-    ogTitle: "Stop hiring. Start building.",
+    ogTitle: "For anybody who's ever built, sold or bought a website",
     ogDescription:
-      "The world's most experienced v0 builder (25,000+ prompts) shares the exact system. Websites in seconds.",
+      "Learn The Cook Method - the AI prompting system from 25,000+ generations. Build sites in hours, not weeks.",
     twitterDescription:
-      "Stop hiring designers. Download the skillset instead.",
+      "For anybody who's ever built, sold or bought a website.",
   },
 } as const
 

@@ -17,6 +17,12 @@ import {
   CoursePreview,
   SkillAssessment,
   renderMessageWithSmsLinks,
+  IntentSeedDisplay,
+  BeforeAfterComparison,
+  ProfileLinkCard,
+  PDFDownloadCard,
+  ProductCard,
+  ProductShowcase,
 } from "./content-displays"
 import { PaymentOptions } from "./payment-options"
 
@@ -75,73 +81,147 @@ function MessageAction({
   )
 }
 
-// Text Jon CTA: context-aware based on conversation phase
+// Text Jon CTA: ALWAYS shows with highly contextual pre-filled message
 function getSmsCta(messages: UIMessage[]): { label: string; context: SmsContext; show: boolean } {
   const phase = determineConversationPhase(messages)
-  const msgCount = messages.length
   const allText = messages
     .flatMap(m => m.parts?.filter((p): p is { type: "text"; text: string } => p.type === "text").map(p => p.text.toLowerCase()) || [])
     .join(" ")
   
-  // Show SMS CTA after meaningful engagement
-  const isEngaged = msgCount >= 8
-  const hasShownInterest = allText.includes("enroll") || allText.includes("$297")
-  
-  const shouldShow = isEngaged || hasShownInterest || phase === "ready_to_buy"
-
-  if (phase === "ready_to_buy") {
-    return { label: "I'm ready, text Jon", context: "ready-to-start", show: true }
+  // Always show - but with contextual label
+  if (phase === "ready_to_buy" || allText.includes("i'm in") || allText.includes("ready")) {
+    return { label: "Text Jon to start", context: "ready-to-start", show: true }
   }
 
-  if (hasShownInterest) {
-    return { label: "Questions? Text Jon", context: "post-pricing", show: shouldShow }
+  if (allText.includes("$497") || allText.includes("pricing") || allText.includes("cost")) {
+    return { label: "Questions? Text Jon", context: "post-pricing", show: true }
   }
 
-  if (phase === "interested") {
-    return { label: "Talk to Jon", context: "general", show: shouldShow }
+  if (allText.includes("shopify") || allText.includes("store") || allText.includes("ecommerce")) {
+    return { label: "Text Jon about Shopify", context: "shopify-interest", show: true }
   }
 
-  return { label: "Text Jon", context: "general", show: false }
+  if (allText.includes("example") || allText.includes("portfolio") || allText.includes("work")) {
+    return { label: "Text Jon", context: "post-examples", show: true }
+  }
+
+  // Default - always visible
+  return { label: "Text Jon", context: "general", show: true }
 }
 
-// Quick reply suggestions — simple, natural, conversion-focused
+// Quick reply suggestions — sound like actual texts a real person would send
 function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[]): string[] {
   const lower = lastAssistantMessage.toLowerCase()
   const msgCount = allMessages.length
   
-  // Buying signals in AI response - they're being directed to buy
-  if (lower.includes("buy now") || lower.includes("tap") || lower.includes("button")) {
-    return ["Done", "One question first"]
+  // First AI message - the 4th wall break opener responses
+  if (msgCount <= 2) {
+    // Self-aware opener responses
+    if (lower.includes("i'm an ai") || lower.includes("actually useful")) {
+      return ["Ok I'm curious", "I'm trying to build something", "Prove it"]
+    }
+    // Challenge opener responses
+    if (lower.includes("burned by developers") || lower.includes("diy and got stuck")) {
+      return ["Both honestly", "The DIY route failed", "Just want it done right"]
+    }
+    // Meta opener responses
+    if (lower.includes("meta") || lower.includes("ai that sells ai")) {
+      return ["Ha I noticed that", "Ok you got me curious", "Show me how this works"]
+    }
+    // Direct opener responses
+    if (lower.includes("chatbot pleasantries") || lower.includes("what are you working on")) {
+      return ["Building a landing page", "Have a whole situation to explain", "Something like this site"]
+    }
+    // Generic first response
+    return ["I want to build a site", "Just checking this out", "What is The Cook Method?"]
+  }
+  
+  // Intent Seed generated - the "holy crap" moment
+  if (lower.includes("you'd say:") || lower.includes("your intent seed") || lower.includes("that's the whole thing")) {
+    return ["Wait that's it?", "Show me what that builds", "Generate one for my business"]
   }
 
-  // AI asked a question - give natural answers
+  // Before/after or method explanation
+  if (lower.includes("150 words") || lower.includes("9 words") || lower.includes("outcome-focused")) {
+    return ["Makes sense", "Show me an example", "What's my seed prompt?"]
+  }
+
+  // Ready to buy - directed to checkout
+  if (lower.includes("tap buy now") || lower.includes("let's do it")) {
+    return ["Just did it", "One question first"]
+  }
+
+  // AI asked what they want to build
+  if (lower.endsWith("?") && (lower.includes("what are you") || lower.includes("trying to build") || lower.includes("working on"))) {
+    return ["Let me explain...", "Landing page for my business", "Multiple projects actually"]
+  }
+
+  // AI asked about learning vs done-for-you
+  if (lower.includes("learn it") || lower.includes("done for you") || lower.includes("yourself or")) {
+    return ["I want to learn", "Just do it for me", "Not sure yet"]
+  }
+
+  // AI encouraged a brain dump
+  if (lower.includes("dump") || lower.includes("full picture") || lower.includes("more context")) {
+    return ["Ok here's the deal...", "Alright so basically...", "Long story but..."]
+  }
+
+  // AI mentioned v0 profile or credibility
+  if (lower.includes("v0.app/@yeazel") || lower.includes("25,000") || lower.includes("free templates")) {
+    return ["Checking it out", "How do I get started?", "What's in the $497?"]
+  }
+
+  // AI explained what v0 is
+  if (lower.includes("vercel") || lower.includes("learn button") || lower.includes("v0 is")) {
+    return ["Got it, makes sense", "How is it different from ChatGPT?", "What's v0 cost me?"]
+  }
+
+  // AI mentioned the Uber analogy / brain rewired
+  if (lower.includes("uber") || lower.includes("brain") || lower.includes("rewired") || lower.includes("don't go back")) {
+    return ["Ha ok I'm intrigued", "Show me what I'd build", "What's the catch?"]
+  }
+
+  // AI mentioned credit costs / transparency
+  if (lower.includes("$20/month") || lower.includes("separate from") || lower.includes("subscription")) {
+    return ["That's fair", "So what's the total cost?", "Worth it if it works"]
+  }
+
+  // AI showed product showcase / ecommerce examples
+  if (lower.includes("swipe through") || lower.includes("product cards") || lower.includes("30 seconds to build")) {
+    return ["These are sick", "Can you build my store like this?", "How fast could I have this?"]
+  }
+
+  // AI asked yes/no or choice questions
   if (lower.endsWith("?")) {
-    if (lower.includes("what") && (lower.includes("build") || lower.includes("create") || lower.includes("make"))) {
-      return ["A landing page", "A store", "A portfolio"]
+    if (lower.includes("yourself") && lower.includes("client")) {
+      return ["Both", "Just for me", "I run an agency"]
     }
-    if (lower.includes("hesitation") || lower.includes("holding you back")) {
-      return ["Just making sure it works", "Budget", "Timing"]
+    if (lower.includes("ecommerce") || lower.includes("store") || lower.includes("products")) {
+      return ["Yeah Shopify store", "Service business", "Digital products"]
     }
-    return ["Yes", "Tell me more", "Not sure yet"]
+    if (lower.includes("timeline") || lower.includes("when do you need")) {
+      return ["Like yesterday", "Few weeks", "No rush"]
+    }
+    return ["Yeah", "Not exactly", "Tell me more"]
   }
 
   // Pricing mentioned
-  if (lower.includes("$197") || lower.includes("$1,497")) {
-    return ["I'm in", "What's the guarantee?"]
+  if (lower.includes("$497") || lower.includes("$3,497")) {
+    return ["Let's do it", "What do I get exactly?", "Can I text Jon first?"]
   }
 
-  // Examples/proof mentioned
-  if (lower.includes("example") || lower.includes("sites") || lower.includes("built")) {
-    return ["Impressive", "I want that", "How do I start?"]
+  // AI gave a recommendation
+  if (lower.includes("recommend") || lower.includes("based on what you") || lower.includes("sounds like")) {
+    return ["That works", "What's the next step?", "Text Jon first"]
   }
 
-  // Early conversation
-  if (msgCount <= 3) {
-    return ["How does this work?", "Show me examples"]
+  // Mid conversation
+  if (msgCount <= 6) {
+    return ["That's helpful", "What do you recommend?", "Show me the method"]
   }
 
-  // Default - keep it simple
-  return ["Tell me more", "I'm interested"]
+  // Later conversation
+  return ["Ok what's next?", "I'm in", "One more question"]
 }
 
 // Check if two messages are from the same sender and close in time (within 2min)
@@ -279,6 +359,31 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
         />
       )
     }
+    if (detected.type === "intentSeed" && detected.data?.prompt) {
+      return <IntentSeedDisplay prompt={detected.data.prompt} />
+    }
+    if (detected.type === "beforeAfter") {
+      return <BeforeAfterComparison />
+    }
+    if (detected.type === "profileLink") {
+      return <ProfileLinkCard />
+    }
+    if (detected.type === "pdfDownload") {
+      return <PDFDownloadCard />
+    }
+    if (detected.type === "productCard" && detected.data) {
+      return (
+        <ProductCard 
+          name={detected.data.name} 
+          price={detected.data.price} 
+          description={detected.data.description}
+          onCheckout={onCheckout}
+        />
+      )
+    }
+    if (detected.type === "productShowcase") {
+      return <ProductShowcase />
+    }
 
     return null
   }
@@ -360,10 +465,10 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
                   {!continuation && (
                     <div className="flex items-center justify-end gap-2 mb-1.5">
                       {message.createdAt && (
-                        <span className="text-[10px] text-muted-foreground opacity-60">{formatRelativeTime(message.createdAt)}</span>
+                        <span className="text-[10px] text-muted-foreground/60">{formatRelativeTime(message.createdAt)}</span>
                       )}
-                      <div className="w-5 h-5 rounded-full bg-foreground flex items-center justify-center">
-                        <span className="text-[8px] font-medium text-background">you</span>
+                      <div className="w-5 h-5 rounded-full bg-neutral-900 flex items-center justify-center">
+                        <span className="text-[8px] font-semibold text-white">you</span>
                       </div>
                     </div>
                   )}
@@ -415,10 +520,10 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
                             </p>
                             {!isCurrentlyStreaming && renderSmartContent(part.text, message.id)}
                             
-                            {/* Message actions - always rendered, opacity controlled by CSS */}
+                            {/* Message actions - desktop only, hidden on mobile */}
                             {!isCurrentlyStreaming && (
                               <div 
-                                className={`flex items-center gap-0.5 mt-2 transition-opacity duration-200 ${
+                                className={`hidden md:flex items-center gap-0.5 mt-2 transition-opacity duration-200 ${
                                   hoveredMessageId === message.id || copiedId === message.id || likedIds.has(message.id)
                                     ? "opacity-100" 
                                     : "opacity-0"

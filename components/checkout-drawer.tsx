@@ -106,19 +106,22 @@ export function CheckoutDrawer({ isOpen, onClose, productId = "v0-tutor" }: Chec
 
               {/* Scrollable content */}
               <div className="flex-1 overflow-y-auto px-5 min-h-[320px]">
-                {/* Tier selector - 3 tiers */}
-                <div className="flex gap-1 p-1 bg-neutral-100 rounded-2xl mb-5">
+                {/* Tier selector - 3 tiers with labels */}
+                <div className="flex gap-2 mb-5">
                   {[V0_TUTOR, CLONE_SITE, AI_CONSULTING].map((product) => (
                     <button
                       key={product.id}
                       onClick={() => setSelectedProduct(product)}
-                      className={`flex-1 py-2.5 px-2 rounded-xl text-center transition-all duration-200 ${
+                      className={`flex-1 py-3 px-2 rounded-xl text-center transition-all duration-200 border-2 ${
                         selectedProduct.id === product.id
-                          ? "bg-white text-neutral-900 shadow-sm"
-                          : "text-neutral-500 hover:text-neutral-700"
+                          ? "bg-neutral-900 text-white border-neutral-900"
+                          : "bg-white text-neutral-600 border-neutral-200 hover:border-neutral-300"
                       }`}
                     >
-                      <div className={`text-sm font-semibold transition-colors duration-200 ${selectedProduct.id === product.id ? "text-neutral-900" : "text-neutral-600"}`}>
+                      <div className={`text-[10px] uppercase tracking-wide mb-0.5 ${selectedProduct.id === product.id ? "text-neutral-400" : "text-neutral-400"}`}>
+                        {product.id === "v0-tutor" ? "Learn" : product.id === "clone-site" ? "Done for you" : "Custom"}
+                      </div>
+                      <div className="text-base font-bold">
                         {formatPrice(product.priceInCents)}
                       </div>
                     </button>
