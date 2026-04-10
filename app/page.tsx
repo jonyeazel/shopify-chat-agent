@@ -114,7 +114,7 @@ import { CheckoutDrawer } from "@/components/checkout-drawer"
 import { LiveShowcase } from "@/components/live-showcase"
 import { ShowcaseDrawer } from "@/components/showcase-drawer"
 
-import { V0ExplainerDrawer } from "@/components/v0-explainer-drawer"
+
 import { siteConfig } from "@/lib/site-config"
 import { SmsTrigger } from "@/components/sms-trigger"
 import { type AvailabilityStatus } from "@/lib/chat-config"
@@ -148,7 +148,7 @@ export default function Home() {
   const [showCheckout, setShowCheckout] = useState(false)
   const [showShowcase, setShowShowcase] = useState(false)
 
-  const [showExplainer, setShowExplainer] = useState(false)
+
   const [adminLongPressTimer, setAdminLongPressTimer] = useState<NodeJS.Timeout | null>(null)
 
   // Panel resize - 25/75 split default
@@ -348,7 +348,7 @@ export default function Home() {
         onBuyClick={() => setShowCheckout(true)}
         onVideoClick={() => setShowVideo(true)}
         onExamplesClick={() => setShowShowcase(true)}
-        onAboutClick={() => setShowExplainer(true)}
+        onAboutClick={() => handleChatSubmit("what is this?")}
         onStartChat={() => chatInputRef.current?.focus()}
         chatDisabled={status !== "ready"}
         style={{ width: `${panelWidth}%` }}
@@ -617,13 +617,13 @@ export default function Home() {
 
         {/* Mobile: Vertical icon rail - 4 strategic buttons in sales funnel order */}
         <div className="md:hidden flex flex-col items-center justify-end gap-2.5 flex-shrink-0 pr-[16px] pl-[6px] pb-3">
-          {/* About - Who this is for */}
+          {/* About - Triggers chat explanation */}
           <motion.button
             initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
             whileTap={{ scale: 0.92 }}
-            onClick={() => setShowExplainer(true)}
+            onClick={() => handleChatSubmit("what is this?")}
             className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
           >
             <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center ring-1 bg-foreground ring-white/[0.06] rubber-button">
@@ -717,12 +717,7 @@ export default function Home() {
 
 
 
-      {/* About drawer */}
-      <V0ExplainerDrawer
-        isOpen={showExplainer}
-        onClose={() => setShowExplainer(false)}
-        onBuyClick={() => setShowCheckout(true)}
-      />
+
     </main>
   )
 }
