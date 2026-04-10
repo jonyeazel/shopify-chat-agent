@@ -17,7 +17,6 @@ interface IdentityPanelProps {
   onVideoClick?: () => void
   onExamplesClick?: () => void
   onAboutClick?: () => void
-  onStartChat?: () => void
   chatDisabled: boolean
   style?: React.CSSProperties
 }
@@ -31,7 +30,6 @@ export function IdentityPanel({
   onVideoClick, 
   onExamplesClick, 
   onAboutClick,
-  onStartChat,
   chatDisabled, 
   style 
 }: IdentityPanelProps) {
@@ -95,17 +93,6 @@ export function IdentityPanel({
         <p className="text-[14px] text-muted-foreground mt-2 text-center max-w-[240px] leading-relaxed">
           {brand.subtitle}
         </p>
-
-        {/* CTA Button - Start Conversation */}
-        <button
-          onClick={onStartChat}
-          className="mt-5 flex items-center gap-2 px-5 py-2.5 bg-foreground text-background rounded-full text-[14px] font-medium hover:opacity-90 transition-opacity"
-        >
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-          </svg>
-          Start a conversation
-        </button>
 
         {/* Quick links row - matches mobile icon rail */}
         <div className="flex items-center gap-4 mt-6">
