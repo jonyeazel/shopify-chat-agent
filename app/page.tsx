@@ -509,6 +509,28 @@ export default function Home() {
                         {siteConfig.brand.subtitle}
                       </motion.p>
 
+                      {/* CTA Button - Start Conversation */}
+                      <motion.button
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.22 }}
+                        whileTap={{ scale: 0.97 }}
+                        onClick={() => {
+                          // Focus the input to start typing, or trigger voice
+                          const input = document.querySelector('textarea') as HTMLTextAreaElement
+                          if (input) {
+                            input.focus()
+                            input.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                          }
+                        }}
+                        className="mt-6 flex items-center gap-2.5 px-5 py-3 bg-foreground text-background rounded-full text-[14px] font-medium shadow-lg hover:opacity-90 transition-opacity"
+                      >
+                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                        </svg>
+                        Start a conversation
+                      </motion.button>
+
                       {chatError && (
                         <motion.div
                           initial={{ opacity: 0, y: 8 }}

@@ -3,7 +3,7 @@ export const siteConfig = {
     name: "v0 University",
     headerSubtitle: "Ai Consulting",
     tagline: "Prompt Engineering",
-    subtitle: "For anybody who's ever built, sold or bought a website",
+    subtitle: "For the people who build, buy & sell websites",
     avatarUrl: "/images/jon-profile.png",
     headerLogoUrl: "/images/v0-university-logo.png",
     logoUrl: "/images/v0-university-logo.png",
