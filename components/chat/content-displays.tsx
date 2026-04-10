@@ -1155,3 +1155,207 @@ export function ProductCard({
     </motion.div>
   )
 }
+
+// Sample DTC products for showcase
+const SHOWCASE_PRODUCTS = [
+  {
+    id: 1,
+    name: "BREZ Flow",
+    brand: "BREZ",
+    category: "Functional Beverage",
+    price: "$36.00",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/1-nHoi51tyaFKCEbqkALzbt1tISurVNg.png"
+  },
+  {
+    id: 2,
+    name: "Daily Synbiotic",
+    brand: "Seed",
+    category: "Probiotics",
+    price: "$49.99",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/2-sR5osBp8g9vT2FaMP3pMkmNNuW6CLb.png"
+  },
+  {
+    id: 3,
+    name: "Foaming Face Wash",
+    brand: "Kylie Skin",
+    category: "Skincare",
+    price: "$24.00",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/4-JgcMBkKZfcOSWKixM7wGZOdMgJV3pP.png"
+  },
+  {
+    id: 4,
+    name: "ACV Gummies",
+    brand: "Goli",
+    category: "Supplements",
+    price: "$19.00",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/5-Y5jHz0XHGvI5uuhFPDyH4u8Y3Khi4L.png"
+  },
+  {
+    id: 5,
+    name: "AG1",
+    brand: "Athletic Greens",
+    category: "Daily Nutrition",
+    price: "$99.00",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/8-emHwGqX9u42G6jvKzfXWpHgWAjUGSF.png"
+  },
+  {
+    id: 6,
+    name: "Coffee Alternative",
+    brand: "MUD\\WTR",
+    category: "Beverages",
+    price: "$40.00",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/9-20w7N1qAIanHlIo6easrZSGy9bGec5.png"
+  },
+  {
+    id: 7,
+    name: "Crunch Bar",
+    brand: "Feastables",
+    category: "Snacks",
+    price: "$4.99",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/12-sOHMw2k2WkYQWJVrYZoE12gAKtlLWm.png"
+  },
+  {
+    id: 8,
+    name: "Green Apple Cinnamon",
+    brand: "Oats Overnight",
+    category: "Breakfast",
+    price: "$3.49",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/26-vvNnEP2osINhZv1J88i5JwTr7a1X3L.png"
+  },
+  {
+    id: 9,
+    name: "Sparkling Water",
+    brand: "Saratoga",
+    category: "Beverages",
+    price: "$2.99",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/27-H0tIjAB182yMULCU5jFUXB9L3ui8Bi.png"
+  },
+  {
+    id: 10,
+    name: "Santal 33",
+    brand: "Le Labo",
+    category: "Fragrance",
+    price: "$312.00",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/39-d44CjAKUFLLkeMNskpiBjYhayzHeWg.png"
+  }
+]
+
+// Product Showcase - Swipeable carousel of DTC products
+export function ProductShowcase() {
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [downloadingId, setDownloadingId] = useState<number | null>(null)
+
+  const handleScroll = () => {
+    if (!scrollRef.current) return
+    const scrollLeft = scrollRef.current.scrollLeft
+    const cardWidth = 180
+    const newIndex = Math.round(scrollLeft / cardWidth)
+    setActiveIndex(Math.min(newIndex, SHOWCASE_PRODUCTS.length - 1))
+  }
+
+  const handleDownload = async (product: typeof SHOWCASE_PRODUCTS[0]) => {
+    setDownloadingId(product.id)
+    try {
+      const response = await fetch(product.image)
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${product.brand.toLowerCase().replace(/\\/g, '')}-${product.name.toLowerCase().replace(/\s+/g, '-')}.png`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+    } catch (err) {
+      console.error('Download failed:', err)
+    } finally {
+      setDownloadingId(null)
+    }
+  }
+
+  return (
+    <div className="my-4">
+      <div className="flex items-center justify-between mb-3 px-1">
+        <div>
+          <p className="text-[13px] font-medium text-foreground">Product Cards Example</p>
+          <p className="text-[11px] text-muted-foreground">Swipe to browse, tap to download</p>
+        </div>
+        <span className="text-[11px] text-muted-foreground bg-muted px-2 py-1 rounded-full">
+          {activeIndex + 1} / {SHOWCASE_PRODUCTS.length}
+        </span>
+      </div>
+      
+      <div 
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className="flex gap-3 overflow-x-auto pb-3 snap-x snap-mandatory scrollbar-hide"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        {SHOWCASE_PRODUCTS.map((product, index) => (
+          <motion.div
+            key={product.id}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: index * 0.05 }}
+            className="flex-shrink-0 w-[170px] snap-start"
+          >
+            <div className="bg-white rounded-2xl overflow-hidden border border-border/40 shadow-sm">
+              {/* Product Image */}
+              <div className="relative aspect-square bg-neutral-50 p-3">
+                <img 
+                  src={product.image} 
+                  alt={product.name}
+                  className="w-full h-full object-contain"
+                />
+                {/* Download button */}
+                <button
+                  onClick={() => handleDownload(product)}
+                  disabled={downloadingId === product.id}
+                  className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/70 hover:bg-black flex items-center justify-center transition-colors"
+                >
+                  {downloadingId === product.id ? (
+                    <Loader2 className="w-3.5 h-3.5 text-white animate-spin" />
+                  ) : (
+                    <svg className="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+              
+              {/* Product Info */}
+              <div className="p-3 pt-2">
+                <p className="text-[10px] uppercase tracking-wider text-neutral-400 mb-0.5">{product.brand}</p>
+                <p className="text-[13px] font-medium text-neutral-900 leading-tight mb-1 line-clamp-1">{product.name}</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-[12px] text-neutral-500">{product.category}</span>
+                  <span className="text-[13px] font-semibold text-neutral-900">{product.price}</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Scroll indicators */}
+      <div className="flex justify-center gap-1.5 mt-2">
+        {SHOWCASE_PRODUCTS.map((_, index) => (
+          <div 
+            key={index}
+            className={`h-1.5 rounded-full transition-all duration-200 ${
+              index === activeIndex ? 'w-4 bg-foreground' : 'w-1.5 bg-muted-foreground/30'
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* Caption */}
+      <p className="text-[11px] text-center text-muted-foreground mt-3">
+        Real product cards built with v0. Each one took ~30 seconds.
+      </p>
+    </div>
+  )
+}

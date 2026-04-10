@@ -22,6 +22,7 @@ import {
   ProfileLinkCard,
   PDFDownloadCard,
   ProductCard,
+  ProductShowcase,
 } from "./content-displays"
 import { PaymentOptions } from "./payment-options"
 
@@ -183,6 +184,11 @@ function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[])
   // AI mentioned credit costs / transparency
   if (lower.includes("$20/month") || lower.includes("separate from") || lower.includes("subscription")) {
     return ["That's fair", "So what's the total cost?", "Worth it if it works"]
+  }
+
+  // AI showed product showcase / ecommerce examples
+  if (lower.includes("swipe through") || lower.includes("product cards") || lower.includes("30 seconds to build")) {
+    return ["These are sick", "Can you build my store like this?", "How fast could I have this?"]
   }
 
   // AI asked yes/no or choice questions
@@ -374,6 +380,9 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
           onCheckout={onCheckout}
         />
       )
+    }
+    if (detected.type === "productShowcase") {
+      return <ProductShowcase />
     }
 
     return null

@@ -1,5 +1,5 @@
 export type DetectedContent = {
-  type: "videoPreview" | "liveSites" | "pricing" | "paymentOptions" | "v0Referral" | "faq" | "coursePreview" | "skillAssessment" | "intentSeed" | "beforeAfter" | "profileLink" | "pdfDownload" | "productCard"
+  type: "videoPreview" | "liveSites" | "pricing" | "paymentOptions" | "v0Referral" | "faq" | "coursePreview" | "skillAssessment" | "intentSeed" | "beforeAfter" | "profileLink" | "pdfDownload" | "productCard" | "productShowcase"
   data?: any
 }
 
@@ -125,6 +125,20 @@ export function detectContentToShow(text: string): DetectedContent | null {
     lower.includes("let's do it")
   ) {
     return { type: "paymentOptions", data: null }
+  }
+
+  // Product showcase - when showing ecommerce capabilities
+  if (
+    lower.includes("product cards") ||
+    lower.includes("ecommerce example") ||
+    lower.includes("here's what product pages") ||
+    lower.includes("swipe through") ||
+    lower.includes("check out these products") ||
+    lower.includes("product carousel") ||
+    lower.includes("dtc brands") ||
+    lower.includes("shopify capabilities")
+  ) {
+    return { type: "productShowcase", data: null }
   }
 
   return null
