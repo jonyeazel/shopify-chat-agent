@@ -129,9 +129,7 @@ export function LiveShowcase() {
           className="mt-8 flex justify-center"
         >
           <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground/40">
-            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-            </svg>
+            <img src="/images/claude-logo.png" alt="Claude" className="w-3.5 h-3.5 opacity-50" />
             <span>Powered by Claude Opus 4.6</span>
           </div>
         </motion.div>

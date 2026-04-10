@@ -573,39 +573,46 @@ export default function Home() {
               voiceFirst={true}
             />
             <div className="flex items-center justify-center gap-1 mt-1.5 text-[10px] text-muted-foreground/40">
-              <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-              </svg>
+              <img src="/images/claude-logo.png" alt="Claude" className="w-3 h-3 opacity-40" />
               <span>Powered by Claude Opus 4.6</span>
             </div>
           </div>
         </div>
         </div>
 
-        {/* Mobile: Vertical icon rail - aligns with chat input bottom */}
+        {/* Mobile: Vertical icon rail - 4 strategic buttons in sales funnel order */}
         <div className="md:hidden flex flex-col items-center justify-end gap-2.5 flex-shrink-0 pr-[16px] pl-[6px] pb-3">
-          {([
-            { icon: IconExamples, label: "See Work", action: () => setShowShowcase(true) },
-            { icon: IconInfo, label: "How", action: () => handleChatSubmit("How easy is this?") },
-          ] as const).map(({ icon: Icon, label, ...rest }, index) => (
-            <motion.button
-              key={label}
-              initial={{ opacity: 0, x: 16 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 + index * 0.03, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
-              whileTap={{ scale: 0.92 }}
-              onClick={"action" in rest ? rest.action : undefined}
-              className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
-            >
-              <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center ring-1 bg-foreground ring-white/[0.06] rubber-button">
-                <Icon className="w-6 h-6 text-background" strokeWidth={1.5} />
-              </div>
-              <span className="text-[10px] leading-tight font-medium text-muted-foreground">{label}</span>
-            </motion.button>
-          ))}
-          {/* Text Jon - iMessage blue */}
+          {/* See Work - Social proof */}
+          <motion.button
+            initial={{ opacity: 0, x: 16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+            whileTap={{ scale: 0.92 }}
+            onClick={() => setShowShowcase(true)}
+            className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+          >
+            <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center ring-1 bg-foreground ring-white/[0.06] rubber-button">
+              <IconExamples className="w-6 h-6 text-background" strokeWidth={1.5} />
+            </div>
+            <span className="text-[10px] leading-tight font-medium text-muted-foreground">See Work</span>
+          </motion.button>
+          {/* Pricing - Qualifies intent */}
+          <motion.button
+            initial={{ opacity: 0, x: 16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.13, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+            whileTap={{ scale: 0.92 }}
+            onClick={() => handleChatSubmit("What's the pricing?")}
+            className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+          >
+            <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center ring-1 bg-foreground ring-white/[0.06] rubber-button">
+              <IconFAQ className="w-6 h-6 text-background" strokeWidth={1.5} />
+            </div>
+            <span className="text-[10px] leading-tight font-medium text-muted-foreground">Pricing</span>
+          </motion.button>
+          {/* Text Jon - Human connection */}
           <motion.a
-            href={`sms:+14078677201?body=${encodeURIComponent("Hey Jon, I was on v0university.com. What's the best way to get started?")}`}
+            href={`sms:+14078677201?body=${encodeURIComponent("Hey Jon, I was on v0university.com and had a question")}`}
             initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.16, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
@@ -617,36 +624,17 @@ export default function Home() {
             </div>
             <span className="text-[10px] leading-tight font-medium text-[#007AFF]">Text Jon</span>
           </motion.a>
-          {/* Affiliate button - v0 signup with Jon's referral link */}
-          <motion.a
-            href="https://v0.link/jon"
-            target="_blank"
-            rel="noopener noreferrer"
-            initial={{ opacity: 0, x: 16 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.22, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
-            whileTap={{ scale: 0.92 }}
-            className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
-          >
-            <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center bg-[#00A86B] rubber-button">
-              <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="12" y1="1" x2="12" y2="23" />
-                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-              </svg>
-            </div>
-            <span className="text-[10px] leading-tight font-medium text-[#00A86B]">Get $10 Free</span>
-          </motion.a>
-          {/* Stripe checkout button with logo */}
+          {/* Buy Now - Primary CTA */}
           <motion.button
             initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.26, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+            transition={{ delay: 0.19, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
             whileTap={{ scale: 0.92 }}
             onClick={() => setShowCheckout(true)}
             className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
           >
             <div className="w-[52px] h-[52px] rounded-full overflow-hidden stripe-pulse">
-              <img src="/stripe-logo.png" alt="Checkout with Stripe" className="w-full h-full object-cover" />
+              <img src="/stripe-logo.png" alt="Checkout" className="w-full h-full object-cover" />
             </div>
             <span className="text-[10px] leading-tight font-medium text-[#635BFF]">Buy Now</span>
           </motion.button>
