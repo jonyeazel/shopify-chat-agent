@@ -212,7 +212,7 @@ export function InstantContentDrawer({ type, onClose, onAskAbout }: InstantConte
           {Object.values(PORTFOLIO_DATA.pricing).map((item: any, i) => (
             <motion.button 
               key={i} 
-              onClick={() => handleAskAbout(item.chatPrompt || `Tell me more about ${item.name}`)}
+              onClick={() => handleAskAbout(item.chatPrompt || `What's in the ${item.name}?`)}
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ type: "spring", stiffness: 400, damping: 30, delay: i * 0.025 }}

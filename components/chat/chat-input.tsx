@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useRef, useCallback, useState, useEffect } from "react"
+import { useRef, useCallback, useState, useEffect, forwardRef, useImperativeHandle } from "react"
 import { ArrowUp, Plus, Mic, MicOff, X, FileText } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -43,6 +43,10 @@ interface ChatInputProps {
   voiceFirst?: boolean // Hides + button, makes mic prominent
 }
 
+export interface ChatInputHandle {
+  focus: () => void
+}
+
 function getSupportedMimeType(): string {
   if (typeof MediaRecorder === "undefined") return ""
   if (MediaRecorder.isTypeSupported("audio/webm")) return "audio/webm"
@@ -58,7 +62,7 @@ function getFileExtension(mime: string): string {
   return "webm"
 }
 
-export function ChatInput({
+export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(function ChatInput({
   input,
   setInput,
   onSubmit,
@@ -69,7 +73,7 @@ export function ChatInput({
   onToggleExpand,
   showMicNudge = false,
   voiceFirst = false,
-}: ChatInputProps) {
+}, ref) {
   const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([])
   const [isDragging, setIsDragging] = useState(false)
   const [micState, setMicState] = useState<MicState>("idle")
@@ -80,6 +84,13 @@ export function ChatInput({
   const [micRingVisible, setMicRingVisible] = useState(false)
 
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      textareaRef.current?.focus()
+      textareaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }))
   const fileInputRef = useRef<HTMLInputElement>(null)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
@@ -637,7 +648,7 @@ export function ChatInput({
       />
     </form>
   )
-}
+})
 
 function ProcessingDots() {
   return (

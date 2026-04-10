@@ -5,9 +5,7 @@ import type { UIMessage } from "ai"
 import { ChevronDown, ExternalLink, Copy, Check, ThumbsUp } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { detectContentToShow } from "@/lib/content-detection"
-import { SmsTrigger } from "@/components/sms-trigger"
-import type { SmsContext } from "@/lib/sms"
-import { determineConversationPhase } from "@/lib/chat-config"
+
 import {
   PricingCard,
   LiveSitesDisplay,
@@ -30,7 +28,6 @@ interface MessageListProps {
   messages: UIMessage[]
   status: string
   avatarUrl: string
-  onQuickReply?: (text: string) => void
   onCheckout?: () => void
 }
 
@@ -81,149 +78,6 @@ function MessageAction({
   )
 }
 
-// Text Jon CTA: ALWAYS shows with highly contextual pre-filled message
-function getSmsCta(messages: UIMessage[]): { label: string; context: SmsContext; show: boolean } {
-  const phase = determineConversationPhase(messages)
-  const allText = messages
-    .flatMap(m => m.parts?.filter((p): p is { type: "text"; text: string } => p.type === "text").map(p => p.text.toLowerCase()) || [])
-    .join(" ")
-  
-  // Always show - but with contextual label
-  if (phase === "ready_to_buy" || allText.includes("i'm in") || allText.includes("ready")) {
-    return { label: "Text Jon to start", context: "ready-to-start", show: true }
-  }
-
-  if (allText.includes("$497") || allText.includes("pricing") || allText.includes("cost")) {
-    return { label: "Questions? Text Jon", context: "post-pricing", show: true }
-  }
-
-  if (allText.includes("shopify") || allText.includes("store") || allText.includes("ecommerce")) {
-    return { label: "Text Jon about Shopify", context: "shopify-interest", show: true }
-  }
-
-  if (allText.includes("example") || allText.includes("portfolio") || allText.includes("work")) {
-    return { label: "Text Jon", context: "post-examples", show: true }
-  }
-
-  // Default - always visible
-  return { label: "Text Jon", context: "general", show: true }
-}
-
-// Quick reply suggestions — sound like actual texts a real person would send
-function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[]): string[] {
-  const lower = lastAssistantMessage.toLowerCase()
-  const msgCount = allMessages.length
-  
-  // First AI message - the 4th wall break opener responses
-  if (msgCount <= 2) {
-    // Self-aware opener responses
-    if (lower.includes("i'm an ai") || lower.includes("actually useful")) {
-      return ["Ok I'm curious", "I'm trying to build something", "Prove it"]
-    }
-    // Challenge opener responses
-    if (lower.includes("burned by developers") || lower.includes("diy and got stuck")) {
-      return ["Both honestly", "The DIY route failed", "Just want it done right"]
-    }
-    // Meta opener responses
-    if (lower.includes("meta") || lower.includes("ai that sells ai")) {
-      return ["Ha I noticed that", "Ok you got me curious", "Show me how this works"]
-    }
-    // Direct opener responses
-    if (lower.includes("chatbot pleasantries") || lower.includes("what are you working on")) {
-      return ["Building a landing page", "Have a whole situation to explain", "Something like this site"]
-    }
-    // Generic first response
-    return ["I want to build a site", "Just checking this out", "What is The Cook Method?"]
-  }
-  
-  // Intent Seed generated - the "holy crap" moment
-  if (lower.includes("you'd say:") || lower.includes("your intent seed") || lower.includes("that's the whole thing")) {
-    return ["Wait that's it?", "Show me what that builds", "Generate one for my business"]
-  }
-
-  // Before/after or method explanation
-  if (lower.includes("150 words") || lower.includes("9 words") || lower.includes("outcome-focused")) {
-    return ["Makes sense", "Show me an example", "What's my seed prompt?"]
-  }
-
-  // Ready to buy - directed to checkout
-  if (lower.includes("tap buy now") || lower.includes("let's do it")) {
-    return ["Just did it", "One question first"]
-  }
-
-  // AI asked what they want to build
-  if (lower.endsWith("?") && (lower.includes("what are you") || lower.includes("trying to build") || lower.includes("working on"))) {
-    return ["Let me explain...", "Landing page for my business", "Multiple projects actually"]
-  }
-
-  // AI asked about learning vs done-for-you
-  if (lower.includes("learn it") || lower.includes("done for you") || lower.includes("yourself or")) {
-    return ["I want to learn", "Just do it for me", "Not sure yet"]
-  }
-
-  // AI encouraged a brain dump
-  if (lower.includes("dump") || lower.includes("full picture") || lower.includes("more context")) {
-    return ["Ok here's the deal...", "Alright so basically...", "Long story but..."]
-  }
-
-  // AI mentioned v0 profile or credibility
-  if (lower.includes("v0.app/@yeazel") || lower.includes("25,000") || lower.includes("free templates")) {
-    return ["Checking it out", "How do I get started?", "What's in the $497?"]
-  }
-
-  // AI explained what v0 is
-  if (lower.includes("vercel") || lower.includes("learn button") || lower.includes("v0 is")) {
-    return ["Got it, makes sense", "How is it different from ChatGPT?", "What's v0 cost me?"]
-  }
-
-  // AI mentioned the Uber analogy / brain rewired
-  if (lower.includes("uber") || lower.includes("brain") || lower.includes("rewired") || lower.includes("don't go back")) {
-    return ["Ha ok I'm intrigued", "Show me what I'd build", "What's the catch?"]
-  }
-
-  // AI mentioned credit costs / transparency
-  if (lower.includes("$20/month") || lower.includes("separate from") || lower.includes("subscription")) {
-    return ["That's fair", "So what's the total cost?", "Worth it if it works"]
-  }
-
-  // AI showed product showcase / ecommerce examples
-  if (lower.includes("swipe through") || lower.includes("product cards") || lower.includes("30 seconds to build")) {
-    return ["These are sick", "Can you build my store like this?", "How fast could I have this?"]
-  }
-
-  // AI asked yes/no or choice questions
-  if (lower.endsWith("?")) {
-    if (lower.includes("yourself") && lower.includes("client")) {
-      return ["Both", "Just for me", "I run an agency"]
-    }
-    if (lower.includes("ecommerce") || lower.includes("store") || lower.includes("products")) {
-      return ["Yeah Shopify store", "Service business", "Digital products"]
-    }
-    if (lower.includes("timeline") || lower.includes("when do you need")) {
-      return ["Like yesterday", "Few weeks", "No rush"]
-    }
-    return ["Yeah", "Not exactly", "Tell me more"]
-  }
-
-  // Pricing mentioned
-  if (lower.includes("$497") || lower.includes("$3,497")) {
-    return ["Let's do it", "What do I get exactly?", "Can I text Jon first?"]
-  }
-
-  // AI gave a recommendation
-  if (lower.includes("recommend") || lower.includes("based on what you") || lower.includes("sounds like")) {
-    return ["That works", "What's the next step?", "Text Jon first"]
-  }
-
-  // Mid conversation
-  if (msgCount <= 6) {
-    return ["That's helpful", "What do you recommend?", "Show me the method"]
-  }
-
-  // Later conversation
-  return ["Ok what's next?", "I'm in", "One more question"]
-}
-
 // Check if two messages are from the same sender and close in time (within 2min)
 function isContinuation(current: UIMessage, previous: UIMessage | undefined): boolean {
   if (!previous) return false
@@ -233,7 +87,7 @@ function isContinuation(current: UIMessage, previous: UIMessage | undefined): bo
   return gap < 120_000
 }
 
-export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheckout }: MessageListProps) {
+export function MessageList({ messages, status, avatarUrl, onCheckout }: MessageListProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [isNearBottom, setIsNearBottom] = useState(true)
@@ -603,52 +457,6 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
               </motion.div>
             )}
           </AnimatePresence>
-
-          {/* Quick Reply Chips - smooth fade, no jitter */}
-          <div 
-            className={`pt-4 transition-opacity duration-300 ${
-              status === "ready" && messages.length > 0 && messages[messages.length - 1]?.role === "assistant" && onQuickReply
-                ? "opacity-100"
-                : "opacity-0 pointer-events-none"
-            }`}
-          >
-            <div className="relative">
-              <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 scroll-smooth">
-                {(() => {
-                  const cta = getSmsCta(messages)
-                  if (!cta.show) return null
-                  return (
-                    <SmsTrigger key="sms-cta" context={cta.context}>
-                      <button
-                        className="flex-shrink-0 py-2.5 px-4 rounded-full text-[13px] font-medium bg-neutral-900 text-white hover:bg-neutral-800 active:bg-neutral-700 transition-colors duration-150 cursor-pointer active:scale-[0.98]"
-                      >
-                        {cta.label}
-                      </button>
-                    </SmsTrigger>
-                  )
-                })()}
-                {getQuickReplies(
-                  messages[messages.length - 1]?.parts
-                    ?.filter((p): p is { type: "text"; text: string } => p.type === "text")
-                    .map(p => p.text)
-                    .join(" ") || "",
-                  messages
-                ).map((reply) => (
-                  <button
-                    key={reply}
-                    onClick={() => onQuickReply?.(reply)}
-                    className="flex-shrink-0 py-2.5 px-4 rounded-full text-[13px] font-medium border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50 active:bg-neutral-100 active:scale-[0.98] transition-all duration-150"
-                  >
-                    {reply}
-                  </button>
-                ))}
-              </div>
-              <div
-                className="absolute right-0 top-0 bottom-1 w-12 pointer-events-none"
-                style={{ background: "linear-gradient(to right, transparent, var(--card))" }}
-              />
-            </div>
-          </div>
 
           <div className="h-4 flex-shrink-0" aria-hidden="true" />
           <div ref={messagesEndRef} />

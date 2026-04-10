@@ -104,7 +104,7 @@ function IconText({ className, strokeWidth = 1.5 }: { className?: string; stroke
 }
 
 import { IdentityPanel } from "@/components/chat/identity-panel"
-import { ChatInput } from "@/components/chat/chat-input"
+import { ChatInput, type ChatInputHandle } from "@/components/chat/chat-input"
 import { MessageList } from "@/components/chat/message-list"
 import { StaticAvatar, HeaderAvatar } from "@/components/flip-avatar"
 import { SiteAdminPanel } from "@/components/admin/site-admin-panel"
@@ -113,8 +113,8 @@ import { InstantSiteCreator } from "@/components/admin/instant-site-creator"
 import { CheckoutDrawer } from "@/components/checkout-drawer"
 import { LiveShowcase } from "@/components/live-showcase"
 import { ShowcaseDrawer } from "@/components/showcase-drawer"
-import { TextJonDrawer } from "@/components/text-jon-drawer"
-import { V0ExplainerDrawer } from "@/components/v0-explainer-drawer"
+
+
 import { siteConfig } from "@/lib/site-config"
 import { SmsTrigger } from "@/components/sms-trigger"
 import { type AvailabilityStatus } from "@/lib/chat-config"
@@ -138,6 +138,7 @@ export default function Home() {
   const [showVolumeControl, setShowVolumeControl] = useState(false)
   const backgroundInputRef = useRef<HTMLInputElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const chatInputRef = useRef<ChatInputHandle>(null)
 
   const [availabilityStatus] = useState<AvailabilityStatus>("online")
 
@@ -146,8 +147,8 @@ export default function Home() {
   const [showSiteCreator, setShowSiteCreator] = useState(false)
   const [showCheckout, setShowCheckout] = useState(false)
   const [showShowcase, setShowShowcase] = useState(false)
-  const [showTextJon, setShowTextJon] = useState(false)
-  const [showExplainer, setShowExplainer] = useState(false)
+
+
   const [adminLongPressTimer, setAdminLongPressTimer] = useState<NodeJS.Timeout | null>(null)
 
   // Panel resize - 25/75 split default
@@ -347,7 +348,8 @@ export default function Home() {
         onBuyClick={() => setShowCheckout(true)}
         onVideoClick={() => setShowVideo(true)}
         onExamplesClick={() => setShowShowcase(true)}
-        onAboutClick={() => setShowExplainer(true)}
+        onAboutClick={() => handleChatSubmit("what is this?")}
+        onStartChat={() => chatInputRef.current?.focus()}
         chatDisabled={status !== "ready"}
         style={{ width: `${panelWidth}%` }}
       />
@@ -516,14 +518,7 @@ export default function Home() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.22 }}
                         whileTap={{ scale: 0.97 }}
-                        onClick={() => {
-                          // Focus the input to start typing, or trigger voice
-                          const input = document.querySelector('textarea') as HTMLTextAreaElement
-                          if (input) {
-                            input.focus()
-                            input.scrollIntoView({ behavior: 'smooth', block: 'center' })
-                          }
-                        }}
+                        onClick={() => chatInputRef.current?.focus()}
                         className="mt-6 flex items-center gap-2.5 px-5 py-3 bg-foreground text-background rounded-full text-[14px] font-medium shadow-lg hover:opacity-90 transition-opacity"
                       >
                         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -569,7 +564,7 @@ export default function Home() {
                   transition={{ duration: 0.15 }}
                   className="w-full md:max-w-2xl md:mx-auto"
                 >
-                  <MessageList messages={messages} status={status} avatarUrl={siteConfig.brand.avatarUrl} onQuickReply={handleChatSubmit} onCheckout={() => setShowCheckout(true)} />
+                  <MessageList messages={messages} status={status} avatarUrl={siteConfig.brand.avatarUrl} onCheckout={() => setShowCheckout(true)} />
                   {chatError && (
                     <div className="px-4 py-2">
                       <div className="p-3 rounded-xl bg-[#fef2f2] border border-[#fecaca] text-sm">
@@ -603,12 +598,13 @@ export default function Home() {
           />
           {/* Mobile: Chat input */}
           <div className="flex-shrink-0 md:hidden pb-2 px-3 bg-white">
-            <ChatInput
-              input={input ?? ""}
-              setInput={setInput}
-              onSubmit={handleChatSubmit}
-              disabled={status !== "ready"}
-              showMicNudge={messages.length === 0 || (messages.length >= 2 && messages.length <= 6 && status === "ready")}
+                <ChatInput
+                  ref={chatInputRef}
+                  input={input ?? ""}
+                  setInput={setInput}
+                  onSubmit={handleChatSubmit}
+                  disabled={status !== "ready"}
+                  showMicNudge={messages.length === 0 || (messages.length >= 2 && messages.length <= 6 && status === "ready")}
               voiceFirst={true}
             />
             <div className="flex items-center justify-center gap-1.5 mt-1.5 text-[10px] text-muted-foreground/50">
@@ -621,13 +617,13 @@ export default function Home() {
 
         {/* Mobile: Vertical icon rail - 4 strategic buttons in sales funnel order */}
         <div className="md:hidden flex flex-col items-center justify-end gap-2.5 flex-shrink-0 pr-[16px] pl-[6px] pb-3">
-          {/* About - Who this is for */}
+          {/* About - Triggers chat explanation */}
           <motion.button
             initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
             whileTap={{ scale: 0.92 }}
-            onClick={() => setShowExplainer(true)}
+            onClick={() => handleChatSubmit("what is this?")}
             className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
           >
             <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center ring-1 bg-foreground ring-white/[0.06] rubber-button">
@@ -672,20 +668,21 @@ export default function Home() {
             </div>
             <span className="text-[10px] leading-tight font-medium text-muted-foreground">Pricing</span>
           </motion.button>
-          {/* Text Jon - Opens custom drawer first */}
-          <motion.button
-            initial={{ opacity: 0, x: 16 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.16, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
-            whileTap={{ scale: 0.92 }}
-            onClick={() => setShowTextJon(true)}
-            className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
-          >
-            <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center bg-[#007AFF] rubber-button">
-              <IconText className="w-6 h-6 text-white" strokeWidth={1.5} />
-            </div>
-            <span className="text-[10px] leading-tight font-medium text-[#007AFF]">Text Jon</span>
-          </motion.button>
+          {/* Text Jon - Opens SMS directly */}
+          <SmsTrigger context="general">
+            <motion.button
+              initial={{ opacity: 0, x: 16 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.16, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+              whileTap={{ scale: 0.92 }}
+              className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+            >
+              <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center bg-[#007AFF] rubber-button">
+                <IconText className="w-6 h-6 text-white" strokeWidth={1.5} />
+              </div>
+              <span className="text-[10px] leading-tight font-medium text-[#007AFF]">Text Jon</span>
+            </motion.button>
+          </SmsTrigger>
           {/* Buy Now - Primary CTA */}
           <motion.button
             initial={{ opacity: 0, x: 16 }}
@@ -718,21 +715,9 @@ export default function Home() {
         onClose={() => setShowShowcase(false)}
       />
 
-      {/* Text Jon drawer */}
-      <TextJonDrawer
-        isOpen={showTextJon}
-        onClose={() => setShowTextJon(false)}
-        conversationContext={messages.length > 2 
-          ? messages.slice(-2).flatMap(m => m.parts?.filter((p): p is { type: "text"; text: string } => p.type === "text").map(p => p.text.slice(0, 100)) || []).join(" ").slice(0, 150) + "..."
-          : undefined
-        }
-      />
 
-      {/* v0 Explainer / FAQ drawer */}
-      <V0ExplainerDrawer
-        isOpen={showExplainer}
-        onClose={() => setShowExplainer(false)}
-      />
+
+
     </main>
   )
 }

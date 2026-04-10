@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { motion, AnimatePresence, type PanInfo } from "framer-motion"
 import { X, ChevronLeft, ChevronRight } from "lucide-react"
 import { PORTFOLIO_DATA } from "@/lib/portfolio-data"
+import { Button } from "@/components/ui/button"
 
 const portfolioSites = PORTFOLIO_DATA.liveSites
 
@@ -30,7 +31,6 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
     }
   }, [isOpen, currentIndex])
 
-  // Keyboard navigation
   useEffect(() => {
     if (!isOpen) return
     
@@ -78,42 +78,51 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
             className="fixed inset-0 z-50 bg-black/60"
             onClick={onClose}
           />
-          {/* Drawer - simple slide up/down */}
+          {/* Drawer */}
           <motion.div
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
-            className="fixed bottom-0 left-0 right-0 z-50 h-[90vh] bg-background rounded-t-2xl shadow-2xl flex flex-col overflow-hidden"
+            className="fixed bottom-0 left-0 right-0 z-50 h-[90vh] bg-background rounded-t-[20px] shadow-2xl flex flex-col overflow-hidden"
           >
-            {/* Header with nav buttons */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
-              <div className="flex items-center gap-2">
-                <button
+            {/* Handle */}
+            <div className="flex justify-center pt-3 pb-2">
+              <div className="w-10 h-1 rounded-full bg-muted-foreground/20" />
+            </div>
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-2 border-b border-border">
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={goPrev}
                   disabled={currentIndex === 0}
-                  className="p-1.5 rounded-full hover:bg-muted transition-colors disabled:opacity-30"
+                  className="h-8 w-8 rounded-full"
                 >
-                  <ChevronLeft className="w-5 h-5 text-foreground" />
-                </button>
-                <button
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={goNext}
                   disabled={currentIndex === portfolioSites.length - 1}
-                  className="p-1.5 rounded-full hover:bg-muted transition-colors disabled:opacity-30"
+                  className="h-8 w-8 rounded-full"
                 >
-                  <ChevronRight className="w-5 h-5 text-foreground" />
-                </button>
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
               </div>
               <span className="text-sm font-medium text-foreground">{currentSite.name}</span>
               <button
                 onClick={onClose}
-                className="p-2 -mr-2 rounded-full hover:bg-muted transition-colors"
+                className="p-2 rounded-full hover:bg-muted transition-colors"
               >
                 <X className="w-5 h-5 text-muted-foreground" />
               </button>
             </div>
 
-            {/* Swipeable iframe area */}
+            {/* Swipeable iframe */}
             <motion.div 
               className="flex-1 p-3 overflow-hidden"
               drag="x"
@@ -121,7 +130,7 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
               dragElastic={0.15}
               onDragEnd={handleDragEnd}
             >
-              <div className="w-full h-full rounded-xl overflow-hidden border border-border/30 bg-white relative">
+              <div className="w-full h-full rounded-xl overflow-hidden border border-border bg-background relative">
                 {!isLoaded && (
                   <div className="absolute inset-0 flex items-center justify-center bg-muted/50 pointer-events-none z-10">
                     <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
@@ -136,17 +145,17 @@ export function ShowcaseDrawer({ isOpen, onClose }: ShowcaseDrawerProps) {
               </div>
             </motion.div>
 
-            {/* Pagination dots + counter */}
+            {/* Pagination */}
             <div className="flex flex-col items-center gap-2 pb-8 pt-2">
               <div className="flex justify-center gap-2">
                 {portfolioSites.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentIndex(index)}
-                    className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                    className={`h-2 rounded-full transition-all duration-200 ${
                       index === currentIndex
                         ? "bg-foreground w-4"
-                        : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                        : "bg-muted-foreground/30 w-2 hover:bg-muted-foreground/50"
                     }`}
                   />
                 ))}
