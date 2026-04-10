@@ -108,59 +108,96 @@ function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[])
   const lower = lastAssistantMessage.toLowerCase()
   const msgCount = allMessages.length
   
+  // First AI message - the 4th wall break opener responses
+  if (msgCount <= 2) {
+    // Self-aware opener responses
+    if (lower.includes("i'm an ai") || lower.includes("i'm actually pretty useful")) {
+      return ["Ok you've got my attention", "Alright let's see what you got", "I'm building a landing page"]
+    }
+    // Challenge opener responses
+    if (lower.includes("burned by developers") || lower.includes("diy and got stuck")) {
+      return ["Both honestly", "The DIY route failed me", "I just want it done right this time"]
+    }
+    // Meta opener responses
+    if (lower.includes("meta") || lower.includes("ai that sells")) {
+      return ["Ha fair point", "Yeah I noticed that", "Ok I'm intrigued"]
+    }
+    // Direct opener responses
+    if (lower.includes("skip the small talk") || lower.includes("what are you trying to build")) {
+      return ["I need a landing page ASAP", "Honestly I have a whole situation to explain", "Something like this site actually"]
+    }
+    // Casual confident responses
+    if (lower.includes("wondering if this") || lower.includes("ask me something real")) {
+      return ["Can this really build a full site?", "How fast can I get something live?", "What makes this different from other AI tools?"]
+    }
+    // Generic first response
+    return ["I've got a project in mind", "Just checking this out", "Show me what's possible"]
+  }
+  
   // Ready to buy - they've been directed to checkout
-  if (lower.includes("buy now") || lower.includes("tap") || lower.includes("hit the button")) {
-    return ["Just did it", "Wait quick question"]
+  if (lower.includes("buy now") || lower.includes("hit the button") || lower.includes("hit buy")) {
+    return ["Just did it", "One more question first"]
   }
 
   // AI asked what they want to build
-  if (lower.endsWith("?") && lower.includes("what") && (lower.includes("build") || lower.includes("trying") || lower.includes("create"))) {
-    return ["Honestly I have a few ideas", "Can I explain my whole situation?", "A landing page for my business"]
+  if (lower.endsWith("?") && (lower.includes("what are you") || lower.includes("what do you") || lower.includes("trying to build") || lower.includes("working on"))) {
+    return ["Ok let me explain the whole thing", "A landing page for my business", "I have multiple projects actually"]
   }
 
   // AI asked about hesitation or what's holding them back
-  if (lower.includes("weighing") || lower.includes("holding you back") || lower.includes("hesitation")) {
-    return ["I just wanna make sure this actually works", "Honestly the price", "I need to think it through"]
+  if (lower.includes("weighing") || lower.includes("holding you back") || lower.includes("main thing")) {
+    return ["Just making sure it actually works", "Honestly the price", "I need to see it work first"]
   }
 
-  // AI asked a yes/no or simple question
+  // AI encouraged a brain dump
+  if (lower.includes("dump") || lower.includes("full picture") || lower.includes("over-explain") || lower.includes("walk me through")) {
+    return ["Ok here's the deal...", "Alright so basically...", "It's kind of a long story but..."]
+  }
+
+  // AI asked yes/no or choice questions
   if (lower.endsWith("?")) {
     if (lower.includes("yourself") && lower.includes("client")) {
       return ["Both actually", "Just for me", "I run an agency"]
     }
     if (lower.includes("selling") || lower.includes("product")) {
-      return ["Physical products", "Digital stuff", "It's a service business"]
+      return ["Physical products", "It's a service", "Digital products"]
     }
-    return ["Yeah", "Can you elaborate?", "Not exactly"]
+    if (lower.includes("timeline") || lower.includes("when do you need")) {
+      return ["Like yesterday", "Next few weeks", "No real rush"]
+    }
+    if (lower.includes("budget") || lower.includes("spend")) {
+      return ["Whatever it takes to do it right", "Trying to keep it lean", "Depends on what I get"]
+    }
+    return ["Yeah", "Not exactly", "Can you explain more?"]
   }
 
-  // Pricing mentioned
-  if (lower.includes("$497") || lower.includes("$3,497") || lower.includes("pricing")) {
-    return ["Ok I'm in", "What if I need more help later?", "Can I see what I'd get first?"]
+  // Pricing/quote mentioned
+  if (lower.includes("$497") || lower.includes("$3,497") || lower.includes("$10k") || lower.includes("quote")) {
+    return ["Ok let's do it", "What exactly do I get?", "Is there a guarantee?"]
   }
 
   // Examples/proof mentioned
-  if (lower.includes("see work") || lower.includes("portfolio") || lower.includes("example")) {
-    return ["Those are sick", "I want something like that", "Ok how do I actually start?"]
+  if (lower.includes("see work") || lower.includes("portfolio") || lower.includes("example") || lower.includes("built")) {
+    return ["Those are really good", "I want something like that", "How do I get started?"]
   }
 
-  // Shopify mentioned
-  if (lower.includes("shopify") || lower.includes("store") || lower.includes("ecommerce")) {
-    return ["Yeah I have a Shopify store", "I'm starting from scratch", "Can you help me figure out what I need?"]
+  // Shopify/ecommerce mentioned
+  if (lower.includes("shopify") || lower.includes("store") || lower.includes("ecommerce") || lower.includes("products")) {
+    return ["Yeah I have a Shopify store", "Starting from scratch", "Can you help figure out what I need?"]
   }
 
-  // Early conversation - encourage brain dump
-  if (msgCount <= 2) {
-    return ["Can I explain what I'm trying to do?", "Show me what you've built", "How much is this?"]
+  // AI gave a recommendation
+  if (lower.includes("i'd recommend") || lower.includes("based on what you") || lower.includes("sounds like you need")) {
+    return ["That makes sense", "What's the next step?", "Can I talk to Jon directly?"]
   }
 
-  // Mid conversation
-  if (msgCount <= 5) {
-    return ["That makes sense", "What would you recommend for me?", "Can I get a quote for my specific situation?"]
+  // Mid conversation - keep momentum
+  if (msgCount <= 6) {
+    return ["That's helpful", "What would you recommend?", "Can you quote me?"]
   }
 
-  // Default - keep momentum
-  return ["Ok that's helpful", "What's the next step?"]
+  // Later conversation
+  return ["Ok what's next?", "Let's do it", "I have one more question"]
 }
 
 // Check if two messages are from the same sender and close in time (within 2min)

@@ -229,6 +229,19 @@ export default function Home() {
     },
   })
 
+  // Auto-start the conversation when the page loads
+  const [hasAutoStarted, setHasAutoStarted] = useState(false)
+  useEffect(() => {
+    if (!hasAutoStarted && messages.length === 0 && status === "ready") {
+      setHasAutoStarted(true)
+      // Small delay to let the UI settle
+      const timer = setTimeout(() => {
+        sendMessage({ text: "hey" })
+      }, 800)
+      return () => clearTimeout(timer)
+    }
+  }, [hasAutoStarted, messages.length, status, sendMessage])
+
   // Context-aware SMS link generator - must be after useChat
   const getContextAwareSmsLink = useCallback(() => {
     const userMessages = messages
