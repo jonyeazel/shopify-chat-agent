@@ -114,6 +114,7 @@ import { CheckoutDrawer } from "@/components/checkout-drawer"
 import { LiveShowcase } from "@/components/live-showcase"
 import { ShowcaseDrawer } from "@/components/showcase-drawer"
 import { TextJonDrawer } from "@/components/text-jon-drawer"
+import { V0ExplainerDrawer } from "@/components/v0-explainer-drawer"
 import { siteConfig } from "@/lib/site-config"
 import { SmsTrigger } from "@/components/sms-trigger"
 import { type AvailabilityStatus } from "@/lib/chat-config"
@@ -146,6 +147,7 @@ export default function Home() {
   const [showCheckout, setShowCheckout] = useState(false)
   const [showShowcase, setShowShowcase] = useState(false)
   const [showTextJon, setShowTextJon] = useState(false)
+  const [showExplainer, setShowExplainer] = useState(false)
   const [adminLongPressTimer, setAdminLongPressTimer] = useState<NodeJS.Timeout | null>(null)
 
   // Panel resize - 25/75 split default
@@ -610,11 +612,29 @@ export default function Home() {
             </div>
             <span className="text-[10px] leading-tight font-medium text-muted-foreground">See Work</span>
           </motion.button>
+          {/* Learn / What is v0? - Education */}
+          <motion.button
+            initial={{ opacity: 0, x: 16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.12, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+            whileTap={{ scale: 0.92 }}
+            onClick={() => setShowExplainer(true)}
+            className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+          >
+            <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center ring-1 bg-foreground ring-white/[0.06] rubber-button">
+              <svg className="w-6 h-6 text-background" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+            </div>
+            <span className="text-[10px] leading-tight font-medium text-muted-foreground">Learn</span>
+          </motion.button>
           {/* Pricing - Qualifies intent */}
           <motion.button
             initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.13, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+            transition={{ delay: 0.14, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
             whileTap={{ scale: 0.92 }}
             onClick={() => handleChatSubmit("What's the pricing?")}
             className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
@@ -678,6 +698,12 @@ export default function Home() {
           ? messages.slice(-2).flatMap(m => m.parts?.filter((p): p is { type: "text"; text: string } => p.type === "text").map(p => p.text.slice(0, 100)) || []).join(" ").slice(0, 150) + "..."
           : undefined
         }
+      />
+
+      {/* v0 Explainer / FAQ drawer */}
+      <V0ExplainerDrawer
+        isOpen={showExplainer}
+        onClose={() => setShowExplainer(false)}
       />
     </main>
   )

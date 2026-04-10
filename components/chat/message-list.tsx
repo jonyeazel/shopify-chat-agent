@@ -170,6 +170,21 @@ function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[])
     return ["Checking it out", "How do I get started?", "What's in the $497?"]
   }
 
+  // AI explained what v0 is
+  if (lower.includes("vercel") || lower.includes("learn button") || lower.includes("v0 is")) {
+    return ["Got it, makes sense", "How is it different from ChatGPT?", "What's v0 cost me?"]
+  }
+
+  // AI mentioned the Uber analogy / brain rewired
+  if (lower.includes("uber") || lower.includes("brain") || lower.includes("rewired") || lower.includes("don't go back")) {
+    return ["Ha ok I'm intrigued", "Show me what I'd build", "What's the catch?"]
+  }
+
+  // AI mentioned credit costs / transparency
+  if (lower.includes("$20/month") || lower.includes("separate from") || lower.includes("subscription")) {
+    return ["That's fair", "So what's the total cost?", "Worth it if it works"]
+  }
+
   // AI asked yes/no or choice questions
   if (lower.endsWith("?")) {
     if (lower.includes("yourself") && lower.includes("client")) {
