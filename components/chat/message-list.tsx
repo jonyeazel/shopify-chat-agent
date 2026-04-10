@@ -17,6 +17,11 @@ import {
   CoursePreview,
   SkillAssessment,
   renderMessageWithSmsLinks,
+  IntentSeedDisplay,
+  BeforeAfterComparison,
+  ProfileLinkCard,
+  PDFDownloadCard,
+  ProductCard,
 } from "./content-displays"
 import { PaymentOptions } from "./payment-options"
 
@@ -111,93 +116,91 @@ function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[])
   // First AI message - the 4th wall break opener responses
   if (msgCount <= 2) {
     // Self-aware opener responses
-    if (lower.includes("i'm an ai") || lower.includes("i'm actually pretty useful")) {
-      return ["Ok you've got my attention", "Alright let's see what you got", "I'm building a landing page"]
+    if (lower.includes("i'm an ai") || lower.includes("actually useful")) {
+      return ["Ok I'm curious", "I'm trying to build something", "Prove it"]
     }
     // Challenge opener responses
     if (lower.includes("burned by developers") || lower.includes("diy and got stuck")) {
-      return ["Both honestly", "The DIY route failed me", "I just want it done right this time"]
+      return ["Both honestly", "The DIY route failed", "Just want it done right"]
     }
     // Meta opener responses
-    if (lower.includes("meta") || lower.includes("ai that sells")) {
-      return ["Ha fair point", "Yeah I noticed that", "Ok I'm intrigued"]
+    if (lower.includes("meta") || lower.includes("ai that sells ai")) {
+      return ["Ha I noticed that", "Ok you got me curious", "Show me how this works"]
     }
     // Direct opener responses
-    if (lower.includes("skip the small talk") || lower.includes("what are you trying to build")) {
-      return ["I need a landing page ASAP", "Honestly I have a whole situation to explain", "Something like this site actually"]
-    }
-    // Casual confident responses
-    if (lower.includes("wondering if this") || lower.includes("ask me something real")) {
-      return ["Can this really build a full site?", "How fast can I get something live?", "What makes this different from other AI tools?"]
+    if (lower.includes("chatbot pleasantries") || lower.includes("what are you working on")) {
+      return ["Building a landing page", "Have a whole situation to explain", "Something like this site"]
     }
     // Generic first response
-    return ["I've got a project in mind", "Just checking this out", "Show me what's possible"]
+    return ["I want to build a site", "Just checking this out", "What is The Cook Method?"]
   }
   
-  // Ready to buy - they've been directed to checkout
-  if (lower.includes("buy now") || lower.includes("hit the button") || lower.includes("hit buy")) {
-    return ["Just did it", "One more question first"]
+  // Intent Seed generated - the "holy crap" moment
+  if (lower.includes("you'd say:") || lower.includes("your intent seed") || lower.includes("that's the whole thing")) {
+    return ["Wait that's it?", "Show me what that builds", "Generate one for my business"]
+  }
+
+  // Before/after or method explanation
+  if (lower.includes("150 words") || lower.includes("9 words") || lower.includes("outcome-focused")) {
+    return ["Makes sense", "Show me an example", "What's my seed prompt?"]
+  }
+
+  // Ready to buy - directed to checkout
+  if (lower.includes("tap buy now") || lower.includes("let's do it")) {
+    return ["Just did it", "One question first"]
   }
 
   // AI asked what they want to build
-  if (lower.endsWith("?") && (lower.includes("what are you") || lower.includes("what do you") || lower.includes("trying to build") || lower.includes("working on"))) {
-    return ["Ok let me explain the whole thing", "A landing page for my business", "I have multiple projects actually"]
+  if (lower.endsWith("?") && (lower.includes("what are you") || lower.includes("trying to build") || lower.includes("working on"))) {
+    return ["Let me explain...", "Landing page for my business", "Multiple projects actually"]
   }
 
-  // AI asked about hesitation or what's holding them back
-  if (lower.includes("weighing") || lower.includes("holding you back") || lower.includes("main thing")) {
-    return ["Just making sure it actually works", "Honestly the price", "I need to see it work first"]
+  // AI asked about learning vs done-for-you
+  if (lower.includes("learn it") || lower.includes("done for you") || lower.includes("yourself or")) {
+    return ["I want to learn", "Just do it for me", "Not sure yet"]
   }
 
   // AI encouraged a brain dump
-  if (lower.includes("dump") || lower.includes("full picture") || lower.includes("over-explain") || lower.includes("walk me through")) {
-    return ["Ok here's the deal...", "Alright so basically...", "It's kind of a long story but..."]
+  if (lower.includes("dump") || lower.includes("full picture") || lower.includes("more context")) {
+    return ["Ok here's the deal...", "Alright so basically...", "Long story but..."]
+  }
+
+  // AI mentioned v0 profile or credibility
+  if (lower.includes("v0.app/@yeazel") || lower.includes("25,000") || lower.includes("free templates")) {
+    return ["Checking it out", "How do I get started?", "What's in the $497?"]
   }
 
   // AI asked yes/no or choice questions
   if (lower.endsWith("?")) {
     if (lower.includes("yourself") && lower.includes("client")) {
-      return ["Both actually", "Just for me", "I run an agency"]
+      return ["Both", "Just for me", "I run an agency"]
     }
-    if (lower.includes("selling") || lower.includes("product")) {
-      return ["Physical products", "It's a service", "Digital products"]
+    if (lower.includes("ecommerce") || lower.includes("store") || lower.includes("products")) {
+      return ["Yeah Shopify store", "Service business", "Digital products"]
     }
     if (lower.includes("timeline") || lower.includes("when do you need")) {
-      return ["Like yesterday", "Next few weeks", "No real rush"]
+      return ["Like yesterday", "Few weeks", "No rush"]
     }
-    if (lower.includes("budget") || lower.includes("spend")) {
-      return ["Whatever it takes to do it right", "Trying to keep it lean", "Depends on what I get"]
-    }
-    return ["Yeah", "Not exactly", "Can you explain more?"]
+    return ["Yeah", "Not exactly", "Tell me more"]
   }
 
-  // Pricing/quote mentioned
-  if (lower.includes("$497") || lower.includes("$3,497") || lower.includes("$10k") || lower.includes("quote")) {
-    return ["Ok let's do it", "What exactly do I get?", "Is there a guarantee?"]
-  }
-
-  // Examples/proof mentioned
-  if (lower.includes("see work") || lower.includes("portfolio") || lower.includes("example") || lower.includes("built")) {
-    return ["Those are really good", "I want something like that", "How do I get started?"]
-  }
-
-  // Shopify/ecommerce mentioned
-  if (lower.includes("shopify") || lower.includes("store") || lower.includes("ecommerce") || lower.includes("products")) {
-    return ["Yeah I have a Shopify store", "Starting from scratch", "Can you help figure out what I need?"]
+  // Pricing mentioned
+  if (lower.includes("$497") || lower.includes("$3,497")) {
+    return ["Let's do it", "What do I get exactly?", "Can I text Jon first?"]
   }
 
   // AI gave a recommendation
-  if (lower.includes("i'd recommend") || lower.includes("based on what you") || lower.includes("sounds like you need")) {
-    return ["That makes sense", "What's the next step?", "Can I talk to Jon directly?"]
+  if (lower.includes("recommend") || lower.includes("based on what you") || lower.includes("sounds like")) {
+    return ["That works", "What's the next step?", "Text Jon first"]
   }
 
-  // Mid conversation - keep momentum
+  // Mid conversation
   if (msgCount <= 6) {
-    return ["That's helpful", "What would you recommend?", "Can you quote me?"]
+    return ["That's helpful", "What do you recommend?", "Show me the method"]
   }
 
   // Later conversation
-  return ["Ok what's next?", "Let's do it", "I have one more question"]
+  return ["Ok what's next?", "I'm in", "One more question"]
 }
 
 // Check if two messages are from the same sender and close in time (within 2min)
@@ -331,6 +334,28 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
     if (detected.type === "paymentOptions") {
       return (
         <PaymentOptions
+          onCheckout={onCheckout}
+        />
+      )
+    }
+    if (detected.type === "intentSeed" && detected.data?.prompt) {
+      return <IntentSeedDisplay prompt={detected.data.prompt} />
+    }
+    if (detected.type === "beforeAfter") {
+      return <BeforeAfterComparison />
+    }
+    if (detected.type === "profileLink") {
+      return <ProfileLinkCard />
+    }
+    if (detected.type === "pdfDownload") {
+      return <PDFDownloadCard />
+    }
+    if (detected.type === "productCard" && detected.data) {
+      return (
+        <ProductCard 
+          name={detected.data.name} 
+          price={detected.data.price} 
+          description={detected.data.description}
           onCheckout={onCheckout}
         />
       )

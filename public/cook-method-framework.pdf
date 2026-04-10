@@ -1,0 +1,103 @@
+%PDF-1.4
+1 0 obj
+<<
+/Type /Catalog
+/Pages 2 0 R
+>>
+endobj
+2 0 obj
+<<
+/Type /Pages
+/Kids [3 0 R]
+/Count 1
+>>
+endobj
+3 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [0 0 612 792]
+/Contents 4 0 R
+/Resources <<
+/Font <<
+/F1 5 0 R
+>>
+>>
+>>
+endobj
+4 0 obj
+<<
+/Length 800
+>>
+stream
+BT
+/F1 24 Tf
+50 720 Td
+(THE COOK METHOD) Tj
+/F1 12 Tf
+0 -40 Td
+(The 3-Part System for Building with AI) Tj
+0 -60 Td
+/F1 16 Tf
+(1. THE INTENT SEED) Tj
+/F1 11 Tf
+0 -25 Td
+(A prompt under 36 words focused on the OUTCOME, not specifications.) Tj
+0 -18 Td
+(Example: "Fitness coach landing page that makes transformation feel inevitable") Tj
+0 -18 Td
+(The AI is smarter than you. Tell it what you want, not how to build it.) Tj
+0 -40 Td
+/F1 16 Tf
+(2. THE COOK PROTOCOL) Tj
+/F1 11 Tf
+0 -25 Td
+(System instruction: "When I say Cook, take full creative and technical control.") Tj
+0 -18 Td
+(This hands the reins to the AI. You describe outcomes, it handles execution.) Tj
+0 -40 Td
+/F1 16 Tf
+(3. COOK CYCLES) Tj
+/F1 11 Tf
+0 -25 Td
+(After the seed prompt, iterate with just "Cook" instead of re-explaining.) Tj
+0 -18 Td
+(Each cycle refines the output. The AI remembers context.) Tj
+0 -60 Td
+/F1 14 Tf
+(S-TIER PROMPT EXAMPLES) Tj
+/F1 11 Tf
+0 -25 Td
+(- "An ecommerce template that makes customers reach for their wallet") Tj
+0 -18 Td
+(- "A pricing page that makes the expensive option feel obvious") Tj
+0 -18 Td
+(- "A portfolio that makes visitors want to hire you before scrolling") Tj
+0 -18 Td
+(- "An email capture that people actually want to fill out") Tj
+ET
+endstream
+endobj
+5 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/BaseFont /Helvetica
+>>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000266 00000 n 
+0000001118 00000 n 
+trailer
+<<
+/Size 6
+/Root 1 0 R
+>>
+startxref
+1195
+%%EOF
