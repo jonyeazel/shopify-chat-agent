@@ -6,6 +6,7 @@ import { siteConfig } from "@/lib/site-config"
 import { ChatInput } from "@/components/chat/chat-input"
 import { MediaGallery } from "@/components/media-gallery"
 import { SmsTrigger } from "@/components/sms-trigger"
+import { HeaderAvatar } from "@/components/flip-avatar"
 
 interface IdentityPanelProps {
   availabilityStatus: "online" | "away" | "offline"
@@ -44,20 +45,16 @@ export function IdentityPanel({
     >
       <MediaGallery isOpen={showGallery} onClose={closeGallery} onAskAbout={onSubmit} />
 
-      {/* Header - matches mobile */}
-      <div className="flex items-center gap-3 px-5 pt-5 pb-3">
-        <img
-          src="/v0-logo-light.png"
-          alt="v0"
-          className="w-10 h-10 rounded-xl object-contain bg-black p-1.5"
-        />
-        <div className="flex-1 min-w-0">
-          <h1 className="text-[17px] font-semibold text-foreground leading-tight">
+      {/* Header - matches mobile exactly */}
+      <div className="flex items-center gap-1.5 px-4 pt-4 pb-2">
+        <HeaderAvatar avatarUrl={brand.headerLogoUrl} />
+        <div className="flex flex-col">
+          <span className="font-semibold text-foreground text-[16px] leading-none tracking-[-0.01em]">
             {brand.name}
-          </h1>
-          <p className="text-[13px] text-muted-foreground">
+          </span>
+          <span className="text-[12px] text-muted-foreground leading-none mt-1.5">
             {brand.headerSubtitle}
-          </p>
+          </span>
         </div>
       </div>
 
