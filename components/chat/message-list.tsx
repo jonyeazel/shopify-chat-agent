@@ -81,7 +81,7 @@ function MessageAction({
   )
 }
 
-// Text Jon CTA: Only shows when contextually appropriate, not as a default fallback
+// Text Jon CTA: Only shows in specific high-intent moments, never as default
 function getSmsCta(messages: UIMessage[]): { label: string; context: SmsContext; show: boolean } {
   const phase = determineConversationPhase(messages)
   const msgCount = messages.length
@@ -89,37 +89,32 @@ function getSmsCta(messages: UIMessage[]): { label: string; context: SmsContext;
     .flatMap(m => m.parts?.filter((p): p is { type: "text"; text: string } => p.type === "text").map(p => p.text.toLowerCase()) || [])
     .join(" ")
   
-  // Don't show Text Jon in first 2 messages - let them engage with AI first
-  if (msgCount <= 2) {
+  // Don't show in first 4 messages - let them engage with AI first
+  if (msgCount <= 4) {
     return { label: "Text Jon", context: "general", show: false }
   }
 
-  // Show when ready to buy - this is a high-intent moment
-  if (phase === "ready_to_buy" || allText.includes("i'm in") || allText.includes("ready") || allText.includes("let's do it")) {
-    return { label: "Text Jon to start", context: "ready-to-start", show: true }
+  // Show when ready to buy - high-intent moment
+  if (phase === "ready_to_buy" || allText.includes("i'm in") || allText.includes("let's do it")) {
+    return { label: "Text Jon", context: "ready-to-start", show: true }
   }
 
-  // Show after pricing discussion - they might have questions
-  if (allText.includes("$497") || allText.includes("$3,497") || allText.includes("pricing")) {
-    return { label: "Questions? Text Jon", context: "post-pricing", show: true }
+  // Show after explicit pricing questions
+  if (allText.includes("$497") || allText.includes("$3,497")) {
+    return { label: "Text Jon", context: "post-pricing", show: true }
   }
 
-  // Show for complex projects - Shopify needs human touch
-  if (allText.includes("shopify") || allText.includes("store") || allText.includes("ecommerce")) {
-    return { label: "Text Jon about your store", context: "shopify-interest", show: true }
+  // Show for done-for-you interest
+  if (allText.includes("do it for me") || allText.includes("build it for me") || allText.includes("hire you")) {
+    return { label: "Text Jon", context: "dfy-interest", show: true }
   }
 
-  // Show if they seem stuck or confused
-  if (allText.includes("confused") || allText.includes("don't understand") || allText.includes("not sure")) {
-    return { label: "Text Jon", context: "needs-help", show: true }
-  }
-
-  // Show after 6+ messages - they're engaged, might want human
-  if (msgCount >= 6) {
+  // Show after 8+ messages if they seem engaged but not converting
+  if (msgCount >= 8 && (allText.includes("?") || allText.includes("how") || allText.includes("what"))) {
     return { label: "Text Jon", context: "engaged", show: true }
   }
 
-  // Default - don't show, let the conversation flow
+  // Default - don't show
   return { label: "Text Jon", context: "general", show: false }
 }
 
@@ -630,7 +625,7 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
             )}
           </AnimatePresence>
 
-          {/* Quick Reply Chips - smooth fade, no jitter */}
+          {/* Quick Reply Chips - left-aligned, no cutoff */}
           <div 
             className={`pt-4 transition-opacity duration-300 ${
               status === "ready" && messages.length > 0 && messages[messages.length - 1]?.role === "assistant" && onQuickReply
@@ -638,41 +633,35 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
                 : "opacity-0 pointer-events-none"
             }`}
           >
-            <div className="relative">
-              <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 scroll-smooth">
-                {(() => {
-                  const cta = getSmsCta(messages)
-                  if (!cta.show) return null
-                  return (
-                    <SmsTrigger key="sms-cta" context={cta.context}>
-                      <button
-                        className="flex-shrink-0 py-2.5 px-4 rounded-full text-[13px] font-medium bg-neutral-900 text-white hover:bg-neutral-800 active:bg-neutral-700 transition-colors duration-150 cursor-pointer active:scale-[0.98]"
-                      >
-                        {cta.label}
-                      </button>
-                    </SmsTrigger>
-                  )
-                })()}
-                {getQuickReplies(
-                  messages[messages.length - 1]?.parts
-                    ?.filter((p): p is { type: "text"; text: string } => p.type === "text")
-                    .map(p => p.text)
-                    .join(" ") || "",
-                  messages
-                ).map((reply) => (
-                  <button
-                    key={reply}
-                    onClick={() => onQuickReply?.(reply)}
-                    className="flex-shrink-0 py-2.5 px-4 rounded-full text-[13px] font-medium border border-neutral-200 bg-white text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50 active:bg-neutral-100 active:scale-[0.98] transition-all duration-150"
-                  >
-                    {reply}
-                  </button>
-                ))}
-              </div>
-              <div
-                className="absolute right-0 top-0 bottom-1 w-12 pointer-events-none"
-                style={{ background: "linear-gradient(to right, transparent, var(--card))" }}
-              />
+            <div className="flex flex-wrap gap-2">
+              {getQuickReplies(
+                messages[messages.length - 1]?.parts
+                  ?.filter((p): p is { type: "text"; text: string } => p.type === "text")
+                  .map(p => p.text)
+                  .join(" ") || "",
+                messages
+              ).map((reply) => (
+                <button
+                  key={reply}
+                  onClick={() => onQuickReply?.(reply)}
+                  className="py-2.5 px-4 rounded-full text-[13px] font-medium border border-border bg-background text-foreground hover:bg-muted active:bg-muted/80 active:scale-[0.98] transition-all duration-150"
+                >
+                  {reply}
+                </button>
+              ))}
+              {(() => {
+                const cta = getSmsCta(messages)
+                if (!cta.show) return null
+                return (
+                  <SmsTrigger key="sms-cta" context={cta.context}>
+                    <button
+                      className="py-2.5 px-4 rounded-full text-[13px] font-medium border border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 active:scale-[0.98] transition-colors duration-150 cursor-pointer"
+                    >
+                      {cta.label}
+                    </button>
+                  </SmsTrigger>
+                )
+              })()}
             </div>
           </div>
 
