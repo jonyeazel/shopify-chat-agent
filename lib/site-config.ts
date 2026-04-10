@@ -1,7 +1,7 @@
 export const siteConfig = {
   brand: {
     name: "v0 University",
-    headerSubtitle: "Ai Consulting",
+    headerSubtitle: "By Jon Yeazel",
     tagline: "Prompt Engineering",
     subtitle: "For the people who build, buy & sell websites",
     avatarUrl: "/images/jon-profile.png",

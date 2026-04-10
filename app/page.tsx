@@ -620,39 +620,41 @@ export default function Home() {
 
         {/* Mobile: Vertical icon rail - 4 strategic buttons in sales funnel order */}
         <div className="md:hidden flex flex-col items-center justify-end gap-2.5 flex-shrink-0 pr-[16px] pl-[6px] pb-3">
-          {/* See Work - Social proof */}
+          {/* About - Who this is for */}
           <motion.button
             initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
-            whileTap={{ scale: 0.92 }}
-            onClick={() => setShowShowcase(true)}
-            className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
-          >
-            <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center ring-1 bg-foreground ring-white/[0.06] rubber-button">
-              <IconExamples className="w-6 h-6 text-background" strokeWidth={1.5} />
-            </div>
-            <span className="text-[10px] leading-tight font-medium text-muted-foreground">See Work</span>
-          </motion.button>
-          {/* Learn / What is v0? - Education */}
-          <motion.button
-            initial={{ opacity: 0, x: 16 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.12, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
             whileTap={{ scale: 0.92 }}
             onClick={() => setShowExplainer(true)}
             className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
           >
             <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center ring-1 bg-foreground ring-white/[0.06] rubber-button">
               <svg className="w-6 h-6 text-background" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-                <line x1="12" y1="17" x2="12.01" y2="17" />
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
               </svg>
             </div>
-            <span className="text-[10px] leading-tight font-medium text-muted-foreground">Learn</span>
+            <span className="text-[10px] leading-tight font-medium text-muted-foreground">About</span>
           </motion.button>
-          {/* Pricing - Qualifies intent */}
+          {/* Learn - Education / What is v0 */}
+          <motion.button
+            initial={{ opacity: 0, x: 16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.12, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+            whileTap={{ scale: 0.92 }}
+            onClick={() => setShowShowcase(true)}
+            className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+          >
+            <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center ring-1 bg-foreground ring-white/[0.06] rubber-button">
+              <svg className="w-6 h-6 text-background" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+              </svg>
+            </div>
+            <span className="text-[10px] leading-tight font-medium text-muted-foreground">Work</span>
+          </motion.button>
+          {/* Pricing - Dollar sign icon */}
           <motion.button
             initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
@@ -662,7 +664,10 @@ export default function Home() {
             className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
           >
             <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center ring-1 bg-foreground ring-white/[0.06] rubber-button">
-              <IconFAQ className="w-6 h-6 text-background" strokeWidth={1.5} />
+              <svg className="w-6 h-6 text-background" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="1" x2="12" y2="23" />
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+              </svg>
             </div>
             <span className="text-[10px] leading-tight font-medium text-muted-foreground">Pricing</span>
           </motion.button>
