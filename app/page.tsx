@@ -587,7 +587,6 @@ export default function Home() {
           {([
             { icon: IconExamples, label: "See Work", action: () => setShowShowcase(true) },
             { icon: IconInfo, label: "How", action: () => handleChatSubmit("How easy is this?") },
-            { icon: IconFAQ, label: "Offer", action: () => handleChatSubmit("What's the deal?") },
           ] as const).map(({ icon: Icon, label, ...rest }, index) => (
             <motion.button
               key={label}
@@ -604,6 +603,20 @@ export default function Home() {
               <span className="text-[10px] leading-tight font-medium text-muted-foreground">{label}</span>
             </motion.button>
           ))}
+          {/* Text Jon - iMessage blue */}
+          <motion.a
+            href={`sms:+14078677201?body=${encodeURIComponent("Hey Jon, I was on v0university.com. What's the best way to get started?")}`}
+            initial={{ opacity: 0, x: 16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.16, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+            whileTap={{ scale: 0.92 }}
+            className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+          >
+            <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center bg-[#007AFF] rubber-button">
+              <IconText className="w-6 h-6 text-white" strokeWidth={1.5} />
+            </div>
+            <span className="text-[10px] leading-tight font-medium text-[#007AFF]">Text Jon</span>
+          </motion.a>
           {/* Affiliate button - v0 signup with Jon's referral link */}
           <motion.a
             href="https://v0.link/jon"

@@ -75,33 +75,32 @@ function MessageAction({
   )
 }
 
-// Text Jon CTA: context-aware based on conversation phase
+// Text Jon CTA: ALWAYS shows with highly contextual pre-filled message
 function getSmsCta(messages: UIMessage[]): { label: string; context: SmsContext; show: boolean } {
   const phase = determineConversationPhase(messages)
-  const msgCount = messages.length
   const allText = messages
     .flatMap(m => m.parts?.filter((p): p is { type: "text"; text: string } => p.type === "text").map(p => p.text.toLowerCase()) || [])
     .join(" ")
   
-  // Show SMS CTA after meaningful engagement
-  const isEngaged = msgCount >= 8
-  const hasShownInterest = allText.includes("enroll") || allText.includes("$297")
-  
-  const shouldShow = isEngaged || hasShownInterest || phase === "ready_to_buy"
-
-  if (phase === "ready_to_buy") {
-    return { label: "I'm ready, text Jon", context: "ready-to-start", show: true }
+  // Always show - but with contextual label
+  if (phase === "ready_to_buy" || allText.includes("i'm in") || allText.includes("ready")) {
+    return { label: "Text Jon to start", context: "ready-to-start", show: true }
   }
 
-  if (hasShownInterest) {
-    return { label: "Questions? Text Jon", context: "post-pricing", show: shouldShow }
+  if (allText.includes("$497") || allText.includes("pricing") || allText.includes("cost")) {
+    return { label: "Questions? Text Jon", context: "post-pricing", show: true }
   }
 
-  if (phase === "interested") {
-    return { label: "Talk to Jon", context: "general", show: shouldShow }
+  if (allText.includes("shopify") || allText.includes("store") || allText.includes("ecommerce")) {
+    return { label: "Text Jon about Shopify", context: "shopify-interest", show: true }
   }
 
-  return { label: "Text Jon", context: "general", show: false }
+  if (allText.includes("example") || allText.includes("portfolio") || allText.includes("work")) {
+    return { label: "Text Jon", context: "post-examples", show: true }
+  }
+
+  // Default - always visible
+  return { label: "Text Jon", context: "general", show: true }
 }
 
 // Quick reply suggestions — simple, natural, conversion-focused
@@ -360,10 +359,10 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
                   {!continuation && (
                     <div className="flex items-center justify-end gap-2 mb-1.5">
                       {message.createdAt && (
-                        <span className="text-[10px] text-muted-foreground opacity-60">{formatRelativeTime(message.createdAt)}</span>
+                        <span className="text-[10px] text-muted-foreground/60">{formatRelativeTime(message.createdAt)}</span>
                       )}
-                      <div className="w-5 h-5 rounded-full bg-foreground flex items-center justify-center">
-                        <span className="text-[8px] font-medium text-background">you</span>
+                      <div className="w-5 h-5 rounded-full bg-neutral-900 flex items-center justify-center">
+                        <span className="text-[8px] font-semibold text-white">you</span>
                       </div>
                     </div>
                   )}
@@ -415,10 +414,10 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
                             </p>
                             {!isCurrentlyStreaming && renderSmartContent(part.text, message.id)}
                             
-                            {/* Message actions - always rendered, opacity controlled by CSS */}
+                            {/* Message actions - desktop only, hidden on mobile */}
                             {!isCurrentlyStreaming && (
                               <div 
-                                className={`flex items-center gap-0.5 mt-2 transition-opacity duration-200 ${
+                                className={`hidden md:flex items-center gap-0.5 mt-2 transition-opacity duration-200 ${
                                   hoveredMessageId === message.id || copiedId === message.id || likedIds.has(message.id)
                                     ? "opacity-100" 
                                     : "opacity-0"

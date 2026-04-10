@@ -5,6 +5,12 @@ export type SmsContext =
   | "interested"
   | "question"
   | "ready-to-buy"
+  | "ready-to-start"
+  | "post-pricing"
+  | "post-examples"
+  | "shopify-interest"
+  | "error-fallback"
+  | "icon-rail"
 
 export interface SmsOptions {
   context?: SmsContext
@@ -13,10 +19,16 @@ export interface SmsOptions {
 }
 
 const BODY_TEMPLATES: Record<SmsContext, (opts: SmsOptions) => string> = {
-  general: () => `Hey Jon, I'm interested in v0 University`,
-  interested: () => `Hey Jon, I saw your AI website builder course. Quick question:`,
-  question: () => `Hey Jon, I have a question about v0 University`,
-  "ready-to-buy": () => `Hey Jon, I'm ready to get started with v0 University`,
+  general: () => `Hey Jon, I was just on v0university.com and had a question`,
+  interested: () => `Hey Jon, I saw v0 University. Quick question:`,
+  question: () => `Hey Jon, question about v0 University:`,
+  "ready-to-buy": () => `Hey Jon, I'm ready to get started`,
+  "ready-to-start": () => `Hey Jon, I want to get started with v0 University. What's the first step?`,
+  "post-pricing": () => `Hey Jon, I saw the $497 v0 Tutor. Quick question before I buy:`,
+  "post-examples": () => `Hey Jon, I looked at your portfolio on v0university.com. Impressive. I want to build something similar`,
+  "shopify-interest": () => `Hey Jon, I'm interested in building a Shopify store with v0. Can you help?`,
+  "error-fallback": () => `Hey Jon, the chat on v0university.com had an issue. Can we talk directly?`,
+  "icon-rail": () => `Hey Jon, I was on v0university.com. What's the best way to get started?`,
 }
 
 export function getSmsBody(options: SmsOptions = {}): string {
