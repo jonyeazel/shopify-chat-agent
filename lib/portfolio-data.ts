@@ -3,7 +3,6 @@
 
 export const PORTFOLIO_DATA = {
   liveSites: [
-    { name: "Stadics", url: "https://www.stadics.com" },
     { name: "Ilya Volgin", url: "https://www.ilyavolgin.com" },
     { name: "Vibe Code", url: "https://vibecode-black.vercel.app" },
     { name: "Neon Templates", url: "https://v0-neon-v0-templates.vercel.app" },
