@@ -196,24 +196,50 @@ function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[])
     return ["these are clean", "can mine look like this", "how fast"]
   }
 
+  // AI asks what it sells (after they mention a store)
+  if (lower.includes("what") && (lower.includes("sell") || lower.includes("selling"))) {
+    return ["clothes", "skincare", "digital products", "physical products"]
+  }
+
+  // AI asks about their business type
+  if (lower.includes("what kind") || lower.includes("what type") || lower.includes("tell me about")) {
+    return ["agency", "saas", "ecommerce", "service business"]
+  }
+
+  // AI offers to show/demo something
+  if (lower.includes("want to see") || lower.includes("want me to show") || lower.includes("see it build")) {
+    return ["yeah", "show me", "how long does it take"]
+  }
+
+  // AI asks if they want to try
+  if (lower.includes("want to try") || lower.includes("give it a shot")) {
+    return ["yeah", "show me first", "what do I need"]
+  }
+
   // AI asked yes/no or choice questions
   if (lower.endsWith("?")) {
     if (lower.includes("yourself") && lower.includes("client")) {
-      return ["both", "just me", "I run an agency"]
+      return ["both", "just me", "agency"]
     }
     if (lower.includes("ecommerce") || lower.includes("store") || lower.includes("products")) {
-      return ["yeah shopify", "service business", "digital products"]
+      return ["shopify", "service business", "digital products"]
     }
-    if (lower.includes("timeline") || lower.includes("when do you need")) {
+    if (lower.includes("timeline") || lower.includes("when") || lower.includes("soon")) {
       return ["asap", "few weeks", "no rush"]
     }
-    if (lower.includes("make sense") || lower.includes("follow")) {
+    if (lower.includes("make sense") || lower.includes("follow") || lower.includes("got it")) {
       return ["yeah", "kinda", "wait what"]
     }
     if (lower.includes("ready") || lower.includes("want to")) {
-      return ["yeah", "not yet", "thinking"]
+      return ["yeah", "not yet", "maybe"]
     }
-    return ["yeah", "sorta", "say more"]
+    if (lower.includes("which") || lower.includes("camp")) {
+      return ["first one", "second", "both"]
+    }
+    if (lower.includes("building") || lower.includes("curious")) {
+      return ["building something", "just curious", "both"]
+    }
+    return ["yeah", "nah", "depends"]
   }
 
   // Pricing mentioned
@@ -236,13 +262,18 @@ function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[])
     return ["hope so", "we'll see", "let's do it"]
   }
 
+  // AI gave any kind of explanation
+  if (lower.length > 100) {
+    return ["ok", "and?", "show me"]
+  }
+
   // Mid conversation fallback (messages 3-6)
   if (msgCount <= 6) {
-    return ["ok", "keep going", "wait go back"]
+    return ["ok", "go on", "wait"]
   }
 
   // Late conversation fallback (7+)
-  return ["ok", "and then", "wait actually"]
+  return ["ok", "next", "actually"]
 }
 
 // Check if two messages are from the same sender and close in time (within 2min)
