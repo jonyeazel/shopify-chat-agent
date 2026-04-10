@@ -113,7 +113,7 @@ import { InstantSiteCreator } from "@/components/admin/instant-site-creator"
 import { CheckoutDrawer } from "@/components/checkout-drawer"
 import { LiveShowcase } from "@/components/live-showcase"
 import { ShowcaseDrawer } from "@/components/showcase-drawer"
-import { TextJonDrawer } from "@/components/text-jon-drawer"
+
 import { V0ExplainerDrawer } from "@/components/v0-explainer-drawer"
 import { siteConfig } from "@/lib/site-config"
 import { SmsTrigger } from "@/components/sms-trigger"
@@ -146,7 +146,7 @@ export default function Home() {
   const [showSiteCreator, setShowSiteCreator] = useState(false)
   const [showCheckout, setShowCheckout] = useState(false)
   const [showShowcase, setShowShowcase] = useState(false)
-  const [showTextJon, setShowTextJon] = useState(false)
+
   const [showExplainer, setShowExplainer] = useState(false)
   const [adminLongPressTimer, setAdminLongPressTimer] = useState<NodeJS.Timeout | null>(null)
 
@@ -672,20 +672,21 @@ export default function Home() {
             </div>
             <span className="text-[10px] leading-tight font-medium text-muted-foreground">Pricing</span>
           </motion.button>
-          {/* Text Jon - Opens custom drawer first */}
-          <motion.button
-            initial={{ opacity: 0, x: 16 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.16, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
-            whileTap={{ scale: 0.92 }}
-            onClick={() => setShowTextJon(true)}
-            className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
-          >
-            <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center bg-[#007AFF] rubber-button">
-              <IconText className="w-6 h-6 text-white" strokeWidth={1.5} />
-            </div>
-            <span className="text-[10px] leading-tight font-medium text-[#007AFF]">Text Jon</span>
-          </motion.button>
+          {/* Text Jon - Opens SMS directly */}
+          <SmsTrigger context="general">
+            <motion.button
+              initial={{ opacity: 0, x: 16 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.16, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+              whileTap={{ scale: 0.92 }}
+              className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+            >
+              <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center bg-[#007AFF] rubber-button">
+                <IconText className="w-6 h-6 text-white" strokeWidth={1.5} />
+              </div>
+              <span className="text-[10px] leading-tight font-medium text-[#007AFF]">Text Jon</span>
+            </motion.button>
+          </SmsTrigger>
           {/* Buy Now - Primary CTA */}
           <motion.button
             initial={{ opacity: 0, x: 16 }}
@@ -718,15 +719,7 @@ export default function Home() {
         onClose={() => setShowShowcase(false)}
       />
 
-      {/* Text Jon drawer */}
-      <TextJonDrawer
-        isOpen={showTextJon}
-        onClose={() => setShowTextJon(false)}
-        conversationContext={messages.length > 2 
-          ? messages.slice(-2).flatMap(m => m.parts?.filter((p): p is { type: "text"; text: string } => p.type === "text").map(p => p.text.slice(0, 100)) || []).join(" ").slice(0, 150) + "..."
-          : undefined
-        }
-      />
+
 
       {/* v0 Explainer / FAQ drawer */}
       <V0ExplainerDrawer
