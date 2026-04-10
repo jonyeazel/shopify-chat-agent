@@ -347,6 +347,7 @@ export default function Home() {
         onBuyClick={() => setShowCheckout(true)}
         onVideoClick={() => setShowVideo(true)}
         onExamplesClick={() => setShowShowcase(true)}
+        onAboutClick={() => setShowExplainer(true)}
         chatDisabled={status !== "ready"}
         style={{ width: `${panelWidth}%` }}
       />
