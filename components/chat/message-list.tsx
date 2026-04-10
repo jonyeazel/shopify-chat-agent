@@ -124,26 +124,36 @@ function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[])
   const lower = lastAssistantMessage.toLowerCase()
   const msgCount = allMessages.length
   
-  // First AI message - opener responses (keep casual, lowercase energy)
+  // First AI message - opener responses (casual, lowercase, match new short openers)
   if (msgCount <= 2) {
-    if (lower.includes("i'm an ai") || lower.includes("actually useful")) {
-      return ["alright go on", "trying to build something", "prove it"]
+    // "what are you building?"
+    if (lower.includes("what are you building") || lower.includes("building?")) {
+      return ["landing page", "shopify store", "not sure yet"]
     }
-    if (lower.includes("burned by developers") || lower.includes("diy and got stuck")) {
-      return ["both honestly", "diy didn't work", "just want it done"]
+    // "building something or just curious?"
+    if (lower.includes("building something") && lower.includes("curious")) {
+      return ["building", "curious", "both"]
     }
-    if (lower.includes("meta") || lower.includes("ai that sells ai")) {
-      return ["ha yeah I noticed", "ok you got me", "how does it work"]
+    // "what brings you here?"
+    if (lower.includes("what brings you")) {
+      return ["need a site", "heard about v0", "checking it out"]
     }
-    if (lower.includes("chatbot pleasantries") || lower.includes("what are you working on")) {
-      return ["landing page", "got a situation to explain", "something like this site"]
+    // "got a project in mind?"
+    if (lower.includes("project in mind") || lower.includes("got a project")) {
+      return ["yeah", "few ideas", "just exploring"]
     }
-    return ["want to build a site", "just looking around", "what's the cook method"]
+    // Generic first response fallback
+    return ["building a site", "just looking", "how does this work"]
   }
   
   // Intent Seed generated - genuine surprise moment
-  if (lower.includes("you'd say:") || lower.includes("your intent seed") || lower.includes("that's the whole thing")) {
-    return ["wait that's it?", "show me what that builds", "do one for my business"]
+  if (lower.includes("your prompt") || lower.includes("your prompt:") || lower.includes("you'd say:") || lower.includes("your intent seed") || lower.includes("that's the whole thing")) {
+    return ["wait that's it?", "yeah show me", "try a different one"]
+  }
+  
+  // AI asked "want to see it build?" after showing prompt
+  if (lower.includes("want to see it") || lower.includes("see it build") || lower.includes("try it?")) {
+    return ["yeah", "different angle?", "how long"]
   }
 
   // Before/after or method explanation
@@ -152,8 +162,13 @@ function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[])
   }
 
   // Ready to buy - minimal friction
-  if (lower.includes("tap buy now") || lower.includes("let's do it")) {
-    return ["just did", "one sec"]
+  if (lower.includes("tap buy now") || lower.includes("let's do it") || lower.includes("ready to learn")) {
+    return ["doing it now", "one more question", "which one should I get"]
+  }
+  
+  // AI comparing to developers / showing value
+  if (lower.includes("compared to") || lower.includes("developer") || lower.includes("rounding error")) {
+    return ["fair point", "what's included again", "ok let's do it"]
   }
 
   // AI asked what they want to build
@@ -203,7 +218,17 @@ function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[])
 
   // AI asks about their business type
   if (lower.includes("what kind") || lower.includes("what type") || lower.includes("tell me about")) {
-    return ["agency", "saas", "ecommerce", "service business"]
+    return ["agency", "saas", "ecommerce", "coach/consultant"]
+  }
+  
+  // AI asks who it's for
+  if (lower.includes("who's it for") || lower.includes("who is it for") || lower.includes("target")) {
+    return ["small businesses", "consumers", "enterprise", "creators"]
+  }
+  
+  // AI asks about their current situation
+  if (lower.includes("tried before") || lower.includes("have you built") || lower.includes("currently using")) {
+    return ["yeah didn't work", "no this is new", "using wordpress rn"]
   }
 
   // AI offers to show/demo something
@@ -242,9 +267,19 @@ function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[])
     return ["yeah", "nah", "depends"]
   }
 
+  // AI detected hesitation / asked what's holding them back
+  if (lower.includes("hesitation") || lower.includes("holding you back") || lower.includes("main thing you're weighing")) {
+    return ["price", "time", "not sure it's for me"]
+  }
+
+  // AI asked what would help them decide
+  if (lower.includes("help you decide") || lower.includes("make it obvious")) {
+    return ["see more examples", "talk to someone", "just need a minute"]
+  }
+
   // Pricing mentioned
   if (lower.includes("$497") || lower.includes("$3,497")) {
-    return ["what's included", "and the other tier?", "thinking"]
+    return ["what's included", "other options?", "thinking"]
   }
 
   // AI gave a recommendation
@@ -262,9 +297,22 @@ function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[])
     return ["hope so", "we'll see", "let's do it"]
   }
 
-  // AI gave any kind of explanation
+  // AI acknowledged and moved forward
+  if (lower.includes("cool") || lower.includes("nice") || lower.includes("got it")) {
+    if (lower.endsWith("?")) {
+      return ["yeah", "nah", "kinda"]
+    }
+    return ["ok", "what's next", "wait"]
+  }
+
+  // AI gave any kind of explanation (longer response)
   if (lower.length > 100) {
     return ["ok", "and?", "show me"]
+  }
+  
+  // AI asked a simple yes/no
+  if (lower.length < 50 && lower.endsWith("?")) {
+    return ["yeah", "nah", "depends"]
   }
 
   // Mid conversation fallback (messages 3-6)
