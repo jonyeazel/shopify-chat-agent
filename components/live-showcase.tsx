@@ -128,8 +128,8 @@ export function LiveShowcase() {
           transition={{ delay: 0.9, duration: 0.4 }}
           className="mt-8 flex justify-center"
         >
-          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground/40">
-            <img src="/images/claude-logo.png" alt="Claude" className="w-3.5 h-3.5 opacity-50" />
+          <div className="flex items-center gap-2 text-[11px] text-muted-foreground/60">
+            <img src="/images/claude-logo.png" alt="Claude" className="w-4 h-4" />
             <span>Powered by Claude Opus 4.6</span>
           </div>
         </motion.div>

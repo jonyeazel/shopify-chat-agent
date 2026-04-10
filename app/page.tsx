@@ -113,6 +113,7 @@ import { InstantSiteCreator } from "@/components/admin/instant-site-creator"
 import { CheckoutDrawer } from "@/components/checkout-drawer"
 import { LiveShowcase } from "@/components/live-showcase"
 import { ShowcaseDrawer } from "@/components/showcase-drawer"
+import { TextJonDrawer } from "@/components/text-jon-drawer"
 import { siteConfig } from "@/lib/site-config"
 import { SmsTrigger } from "@/components/sms-trigger"
 import { type AvailabilityStatus } from "@/lib/chat-config"
@@ -145,6 +146,7 @@ export default function Home() {
   const [showSiteCreator, setShowSiteCreator] = useState(false)
   const [showCheckout, setShowCheckout] = useState(false)
   const [showShowcase, setShowShowcase] = useState(false)
+  const [showTextJon, setShowTextJon] = useState(false)
   const [adminLongPressTimer, setAdminLongPressTimer] = useState<NodeJS.Timeout | null>(null)
 
   // Panel resize - 25/75 split default
@@ -572,8 +574,8 @@ export default function Home() {
               showMicNudge={messages.length === 0 || (messages.length >= 2 && messages.length <= 6 && status === "ready")}
               voiceFirst={true}
             />
-            <div className="flex items-center justify-center gap-1 mt-1.5 text-[10px] text-muted-foreground/40">
-              <img src="/images/claude-logo.png" alt="Claude" className="w-3 h-3 opacity-40" />
+            <div className="flex items-center justify-center gap-1.5 mt-1.5 text-[10px] text-muted-foreground/50">
+              <img src="/images/claude-logo.png" alt="Claude" className="w-3.5 h-3.5" />
               <span>Powered by Claude Opus 4.6</span>
             </div>
           </div>
@@ -610,20 +612,20 @@ export default function Home() {
             </div>
             <span className="text-[10px] leading-tight font-medium text-muted-foreground">Pricing</span>
           </motion.button>
-          {/* Text Jon - Human connection */}
-          <motion.a
-            href={`sms:+14078677201?body=${encodeURIComponent("Hey Jon, I was on v0university.com and had a question")}`}
+          {/* Text Jon - Opens custom drawer first */}
+          <motion.button
             initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.16, duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
             whileTap={{ scale: 0.92 }}
+            onClick={() => setShowTextJon(true)}
             className="flex flex-col items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
           >
             <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center bg-[#007AFF] rubber-button">
               <IconText className="w-6 h-6 text-white" strokeWidth={1.5} />
             </div>
             <span className="text-[10px] leading-tight font-medium text-[#007AFF]">Text Jon</span>
-          </motion.a>
+          </motion.button>
           {/* Buy Now - Primary CTA */}
           <motion.button
             initial={{ opacity: 0, x: 16 }}
@@ -654,6 +656,16 @@ export default function Home() {
       <ShowcaseDrawer
         isOpen={showShowcase}
         onClose={() => setShowShowcase(false)}
+      />
+
+      {/* Text Jon drawer */}
+      <TextJonDrawer
+        isOpen={showTextJon}
+        onClose={() => setShowTextJon(false)}
+        conversationContext={messages.length > 2 
+          ? messages.slice(-2).flatMap(m => m.parts?.filter((p): p is { type: "text"; text: string } => p.type === "text").map(p => p.text.slice(0, 100)) || []).join(" ").slice(0, 150) + "..."
+          : undefined
+        }
       />
     </main>
   )
