@@ -103,44 +103,64 @@ function getSmsCta(messages: UIMessage[]): { label: string; context: SmsContext;
   return { label: "Text Jon", context: "general", show: true }
 }
 
-// Quick reply suggestions — simple, natural, conversion-focused
+// Quick reply suggestions — sound like actual texts a real person would send
 function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[]): string[] {
   const lower = lastAssistantMessage.toLowerCase()
   const msgCount = allMessages.length
   
-  // Buying signals in AI response - they're being directed to buy
-  if (lower.includes("buy now") || lower.includes("tap") || lower.includes("button")) {
-    return ["Done", "One question first"]
+  // Ready to buy - they've been directed to checkout
+  if (lower.includes("buy now") || lower.includes("tap") || lower.includes("hit the button")) {
+    return ["Just did it", "Wait quick question"]
   }
 
-  // AI asked a question - give natural answers
+  // AI asked what they want to build
+  if (lower.endsWith("?") && lower.includes("what") && (lower.includes("build") || lower.includes("trying") || lower.includes("create"))) {
+    return ["Honestly I have a few ideas", "Can I explain my whole situation?", "A landing page for my business"]
+  }
+
+  // AI asked about hesitation or what's holding them back
+  if (lower.includes("weighing") || lower.includes("holding you back") || lower.includes("hesitation")) {
+    return ["I just wanna make sure this actually works", "Honestly the price", "I need to think it through"]
+  }
+
+  // AI asked a yes/no or simple question
   if (lower.endsWith("?")) {
-    if (lower.includes("what") && (lower.includes("build") || lower.includes("create") || lower.includes("make"))) {
-      return ["A landing page", "A store", "A portfolio"]
+    if (lower.includes("yourself") && lower.includes("client")) {
+      return ["Both actually", "Just for me", "I run an agency"]
     }
-    if (lower.includes("hesitation") || lower.includes("holding you back")) {
-      return ["Just making sure it works", "Budget", "Timing"]
+    if (lower.includes("selling") || lower.includes("product")) {
+      return ["Physical products", "Digital stuff", "It's a service business"]
     }
-    return ["Yes", "Tell me more", "Not sure yet"]
+    return ["Yeah", "Can you elaborate?", "Not exactly"]
   }
 
   // Pricing mentioned
-  if (lower.includes("$197") || lower.includes("$1,497")) {
-    return ["I'm in", "What's the guarantee?"]
+  if (lower.includes("$497") || lower.includes("$3,497") || lower.includes("pricing")) {
+    return ["Ok I'm in", "What if I need more help later?", "Can I see what I'd get first?"]
   }
 
   // Examples/proof mentioned
-  if (lower.includes("example") || lower.includes("sites") || lower.includes("built")) {
-    return ["Impressive", "I want that", "How do I start?"]
+  if (lower.includes("see work") || lower.includes("portfolio") || lower.includes("example")) {
+    return ["Those are sick", "I want something like that", "Ok how do I actually start?"]
   }
 
-  // Early conversation
-  if (msgCount <= 3) {
-    return ["How does this work?", "Show me examples"]
+  // Shopify mentioned
+  if (lower.includes("shopify") || lower.includes("store") || lower.includes("ecommerce")) {
+    return ["Yeah I have a Shopify store", "I'm starting from scratch", "Can you help me figure out what I need?"]
   }
 
-  // Default - keep it simple
-  return ["Tell me more", "I'm interested"]
+  // Early conversation - encourage brain dump
+  if (msgCount <= 2) {
+    return ["Can I explain what I'm trying to do?", "Show me what you've built", "How much is this?"]
+  }
+
+  // Mid conversation
+  if (msgCount <= 5) {
+    return ["That makes sense", "What would you recommend for me?", "Can I get a quote for my specific situation?"]
+  }
+
+  // Default - keep momentum
+  return ["Ok that's helpful", "What's the next step?"]
 }
 
 // Check if two messages are from the same sender and close in time (within 2min)

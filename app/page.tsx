@@ -122,10 +122,9 @@ const SITE_ID = 1
 const TEMP_ADMIN_BYPASS = true
 
 const QUICK_ACTIONS = [
-  { label: "See the work", message: "Show me examples" },
-  { label: "How it works", message: "How does this work?" },
-  { label: "Pricing", message: "What's the pricing?" },
-  { label: "Get started", message: "I want to get started" },
+  { label: "Show me what you've built", message: "Can I see some examples of what you've built?" },
+  { label: "How much is it?", message: "How much does this cost?" },
+  { label: "I have a specific project in mind", message: "I have a specific project I'm trying to figure out. Can I explain my situation?" },
 ]
 
 export default function Home() {
