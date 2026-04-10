@@ -3,16 +3,16 @@
 import { motion } from "framer-motion"
 
 const USE_CASES = [
-  { label: "Landing Pages", time: "2 min" },
-  { label: "Shopify Stores", time: "10 min" },
-  { label: "SaaS Dashboards", time: "15 min" },
-  { label: "Portfolios", time: "5 min" },
+  { label: "Landing Pages", description: "In an afternoon" },
+  { label: "Shopify Stores", description: "Complete" },
+  { label: "SaaS Dashboards", description: "Production-ready" },
+  { label: "Portfolios", description: "Live today" },
 ]
 
 const BEFORE_AFTER = [
-  { before: "$5,000 landing page", after: "Under $50 + an afternoon" },
-  { before: "2 weeks for revisions", after: "Say 'make it darker'" },
-  { before: "Hiring a Shopify dev", after: "Build it yourself" },
+  { before: "Hired someone", after: "Built it yourself" },
+  { before: "Waited 4 weeks", after: "Done by Friday" },
+  { before: "Paid $5-50k", after: "Paid $497 total" },
 ]
 
 export function LiveShowcase() {
@@ -50,7 +50,7 @@ export function LiveShowcase() {
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-foreground/[0.03] border border-foreground/[0.06]">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             <span className="text-[11px] font-medium text-muted-foreground tracking-wide">
-              25,000+ prompts refined
+              Prompt Engineering
             </span>
           </div>
         </motion.div>
@@ -63,12 +63,12 @@ export function LiveShowcase() {
           className="text-center mb-10"
         >
           <h2 className="text-[32px] font-semibold text-foreground leading-[1.15] tracking-[-0.02em] mb-3">
-            The skill that replaces
+            For the people who
             <br />
-            <span className="text-muted-foreground">designers and developers.</span>
+            <span className="text-muted-foreground">build, buy & sell websites.</span>
           </h2>
           <p className="text-[15px] text-muted-foreground/80">
-            One prompt method. Any website. Forever yours.
+            Learn the method that changes everything.
           </p>
         </motion.div>
 
@@ -82,10 +82,10 @@ export function LiveShowcase() {
           {USE_CASES.map((item, i) => (
             <div 
               key={i}
-              className="flex items-center justify-between px-4 py-3 rounded-xl bg-foreground/[0.02] border border-foreground/[0.04]"
+              className="flex flex-col items-start px-4 py-3 rounded-xl bg-foreground/[0.02] border border-foreground/[0.04]"
             >
               <span className="text-[13px] text-foreground/90 font-medium">{item.label}</span>
-              <span className="text-[12px] text-muted-foreground/60">{item.time}</span>
+              <span className="text-[12px] text-muted-foreground/60 mt-0.5">{item.description}</span>
             </div>
           ))}
         </motion.div>
@@ -117,7 +117,7 @@ export function LiveShowcase() {
           className="mt-12 text-center"
         >
           <p className="text-[13px] text-muted-foreground/50 italic">
-            "I would kill for your seed prompt structure" — Brooks
+            "I built my entire store in an afternoon" — Jon, DTC founder
           </p>
         </motion.div>
 
