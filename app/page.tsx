@@ -564,7 +564,7 @@ export default function Home() {
                   transition={{ duration: 0.15 }}
                   className="w-full md:max-w-2xl md:mx-auto"
                 >
-                  <MessageList messages={messages} status={status} avatarUrl={siteConfig.brand.avatarUrl} onQuickReply={handleChatSubmit} onCheckout={() => setShowCheckout(true)} />
+                  <MessageList messages={messages} status={status} avatarUrl={siteConfig.brand.avatarUrl} onCheckout={() => setShowCheckout(true)} />
                   {chatError && (
                     <div className="px-4 py-2">
                       <div className="p-3 rounded-xl bg-[#fef2f2] border border-[#fecaca] text-sm">

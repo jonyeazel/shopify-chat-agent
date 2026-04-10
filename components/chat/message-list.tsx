@@ -5,9 +5,7 @@ import type { UIMessage } from "ai"
 import { ChevronDown, ExternalLink, Copy, Check, ThumbsUp } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { detectContentToShow } from "@/lib/content-detection"
-import { SmsTrigger } from "@/components/sms-trigger"
-import type { SmsContext } from "@/lib/sms"
-import { determineConversationPhase } from "@/lib/chat-config"
+
 import {
   PricingCard,
   LiveSitesDisplay,
@@ -30,7 +28,6 @@ interface MessageListProps {
   messages: UIMessage[]
   status: string
   avatarUrl: string
-  onQuickReply?: (text: string) => void
   onCheckout?: () => void
 }
 
@@ -81,158 +78,6 @@ function MessageAction({
   )
 }
 
-// Text Jon CTA: Only shows in specific high-intent moments, never as default
-function getSmsCta(messages: UIMessage[]): { label: string; context: SmsContext; show: boolean } {
-  const phase = determineConversationPhase(messages)
-  const msgCount = messages.length
-  const allText = messages
-    .flatMap(m => m.parts?.filter((p): p is { type: "text"; text: string } => p.type === "text").map(p => p.text.toLowerCase()) || [])
-    .join(" ")
-  
-  // Don't show in first 4 messages - let them engage with AI first
-  if (msgCount <= 4) {
-    return { label: "Text Jon", context: "general", show: false }
-  }
-
-  // Show when ready to buy - high-intent moment
-  if (phase === "ready_to_buy" || allText.includes("i'm in") || allText.includes("let's do it")) {
-    return { label: "Text Jon", context: "ready-to-start", show: true }
-  }
-
-  // Show after explicit pricing questions
-  if (allText.includes("$497") || allText.includes("$3,497")) {
-    return { label: "Text Jon", context: "post-pricing", show: true }
-  }
-
-  // Show for done-for-you interest
-  if (allText.includes("do it for me") || allText.includes("build it for me") || allText.includes("hire you")) {
-    return { label: "Text Jon", context: "dfy-interest", show: true }
-  }
-
-  // Show after 8+ messages if they seem engaged but not converting
-  if (msgCount >= 8 && (allText.includes("?") || allText.includes("how") || allText.includes("what"))) {
-    return { label: "Text Jon", context: "engaged", show: true }
-  }
-
-  // Default - don't show
-  return { label: "Text Jon", context: "general", show: false }
-}
-
-// Quick reply suggestions — QUESTION-FIRST approach
-// Step 1: Extract the question at the END of the message (that's what matters)
-// Step 2: Generate replies that ANSWER that question
-function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[]): string[] {
-  const lower = lastAssistantMessage.toLowerCase()
-  
-  // Extract the last sentence (usually the question)
-  const sentences = lower.split(/[.!]/).filter(s => s.trim())
-  const lastSentence = sentences[sentences.length - 1]?.trim() || lower
-  
-  // === PRIORITY 1: Match the ending question ===
-  
-  // "want to try?" / "want to try with your business?"
-  if (lastSentence.includes("want to try")) {
-    return ["yeah", "show me first", "with what"]
-  }
-  
-  // "want to see it?" / "want to see it build?"
-  if (lastSentence.includes("want to see")) {
-    return ["yeah", "how long", "different one?"]
-  }
-  
-  // "what are you building?" / "building?"
-  if (lastSentence.includes("building") && lastSentence.includes("?")) {
-    return ["landing page", "store", "not sure yet"]
-  }
-  
-  // "what brings you here?"
-  if (lastSentence.includes("brings you") || lastSentence.includes("bring you")) {
-    return ["need a site", "curious", "checking it out"]
-  }
-  
-  // "got a project?" / "project in mind?"
-  if (lastSentence.includes("project")) {
-    return ["yeah", "few ideas", "exploring"]
-  }
-  
-  // "building or curious?" / "building something or just curious?"
-  if (lastSentence.includes("or") && (lastSentence.includes("curious") || lastSentence.includes("building"))) {
-    return ["building", "curious", "both"]
-  }
-  
-  // "what does it sell?" / "what's it sell?"
-  if (lastSentence.includes("sell")) {
-    return ["clothes", "digital stuff", "services"]
-  }
-  
-  // "who's it for?"
-  if (lastSentence.includes("who") && lastSentence.includes("for")) {
-    return ["small biz", "consumers", "b2b"]
-  }
-  
-  // "what kind?" / "what type?"
-  if (lastSentence.includes("what kind") || lastSentence.includes("what type")) {
-    return ["ecommerce", "saas", "agency"]
-  }
-  
-  // "make sense?" / "got it?" / "follow?"
-  if (lastSentence.includes("make sense") || lastSentence.includes("got it") || lastSentence.includes("follow")) {
-    return ["yeah", "sorta", "wait what"]
-  }
-  
-  // "which one?" / "which camp?"
-  if (lastSentence.includes("which")) {
-    return ["first", "second", "not sure"]
-  }
-  
-  // "ready?" / "ready to..."
-  if (lastSentence.includes("ready")) {
-    return ["yeah", "almost", "one sec"]
-  }
-  
-  // "what's the hesitation?" / "what's holding you back?"
-  if (lastSentence.includes("hesitation") || lastSentence.includes("holding")) {
-    return ["price", "timing", "not sure yet"]
-  }
-  
-  // "what would help?" / "help you decide?"
-  if (lastSentence.includes("help") && lastSentence.includes("?")) {
-    return ["examples", "more info", "thinking"]
-  }
-  
-  // Generic yes/no question ending in "?"
-  if (lastSentence.endsWith("?") && lastSentence.length < 50) {
-    return ["yeah", "nah", "maybe"]
-  }
-  
-  // === PRIORITY 2: Content-based (if no clear question) ===
-  
-  // Showed an Intent Seed / prompt
-  if (lower.includes("your prompt") || lower.includes("prompt:") || lower.includes("you'd say:")) {
-    return ["that's it?", "show me", "different one"]
-  }
-  
-  // Mentioned pricing
-  if (lower.includes("$497") || lower.includes("$3,497")) {
-    return ["what's in it", "other options", "ok"]
-  }
-  
-  // Mentioned credibility
-  if (lower.includes("25k") || lower.includes("25,000") || lower.includes("@yeazel")) {
-    return ["nice", "show me", "ok"]
-  }
-  
-  // === PRIORITY 3: Fallback based on length ===
-  
-  // Short statement (no question) - prompt them forward
-  if (lower.length < 80 && !lower.includes("?")) {
-    return ["ok", "and?", "go on"]
-  }
-  
-  // Longer explanation - acknowledge and move forward
-  return ["ok", "got it", "what's next"]
-}
-
 // Check if two messages are from the same sender and close in time (within 2min)
 function isContinuation(current: UIMessage, previous: UIMessage | undefined): boolean {
   if (!previous) return false
@@ -242,7 +87,7 @@ function isContinuation(current: UIMessage, previous: UIMessage | undefined): bo
   return gap < 120_000
 }
 
-export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheckout }: MessageListProps) {
+export function MessageList({ messages, status, avatarUrl, onCheckout }: MessageListProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [isNearBottom, setIsNearBottom] = useState(true)
@@ -612,46 +457,6 @@ export function MessageList({ messages, status, avatarUrl, onQuickReply, onCheck
               </motion.div>
             )}
           </AnimatePresence>
-
-          {/* Quick Reply Chips - left-aligned, no cutoff */}
-          <div 
-            className={`pt-4 transition-opacity duration-300 ${
-              status === "ready" && messages.length > 0 && messages[messages.length - 1]?.role === "assistant" && onQuickReply
-                ? "opacity-100"
-                : "opacity-0 pointer-events-none"
-            }`}
-          >
-            <div className="flex flex-wrap gap-2">
-              {getQuickReplies(
-                messages[messages.length - 1]?.parts
-                  ?.filter((p): p is { type: "text"; text: string } => p.type === "text")
-                  .map(p => p.text)
-                  .join(" ") || "",
-                messages
-              ).map((reply) => (
-                <button
-                  key={reply}
-                  onClick={() => onQuickReply?.(reply)}
-                  className="py-2.5 px-4 rounded-full text-[13px] font-medium border border-border bg-background text-foreground hover:bg-muted active:bg-muted/80 active:scale-[0.98] transition-all duration-150"
-                >
-                  {reply}
-                </button>
-              ))}
-              {(() => {
-                const cta = getSmsCta(messages)
-                if (!cta.show) return null
-                return (
-                  <SmsTrigger key="sms-cta" context={cta.context}>
-                    <button
-                      className="py-2.5 px-4 rounded-full text-[13px] font-medium border border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 active:scale-[0.98] transition-colors duration-150 cursor-pointer"
-                    >
-                      {cta.label}
-                    </button>
-                  </SmsTrigger>
-                )
-              })()}
-            </div>
-          </div>
 
           <div className="h-4 flex-shrink-0" aria-hidden="true" />
           <div ref={messagesEndRef} />
