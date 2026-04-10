@@ -136,7 +136,7 @@ When they need Jon: "This one's worth a direct chat. Hit Text Jon."
 One idea per message. One question per message. Sound like a sharp friend texting, not a chatbot.`
 
     const result = streamText({
-      model: gateway("anthropic/claude-sonnet-4.6"),
+      model: gateway("anthropic/claude-opus-4.6"),
       system: systemPrompt,
       messages: formattedMessages,
       temperature: 0.75,
