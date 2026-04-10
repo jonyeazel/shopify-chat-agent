@@ -502,6 +502,12 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(function Ch
               onBlur={() => onFocusChange?.(false)}
               placeholder={getPlaceholder()}
               rows={1}
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="sentences"
+              spellCheck="false"
+              data-form-type="other"
+              name="chat-message"
               style={{ fontSize: "16px", outline: "none" }}
               className="w-full bg-transparent text-base text-neutral-900 placeholder:text-neutral-400 resize-none max-h-[200px] leading-relaxed scrollbar-hide"
               disabled={disabled || isBusy}
