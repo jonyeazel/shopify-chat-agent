@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, ChevronDown, ExternalLink, Zap, Globe, CreditCard, Rocket, Code2, Sparkles } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 interface V0ExplainerDrawerProps {
   isOpen: boolean
@@ -102,17 +103,22 @@ export function V0ExplainerDrawer({ isOpen, onClose }: V0ExplainerDrawerProps) {
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
-            className="fixed bottom-0 left-0 right-0 z-50 h-[92vh] bg-background rounded-t-2xl shadow-2xl flex flex-col overflow-hidden"
+            className="fixed bottom-0 left-0 right-0 z-50 h-[92vh] bg-background rounded-t-[20px] shadow-2xl flex flex-col overflow-hidden"
           >
+            {/* Handle */}
+            <div className="flex justify-center pt-3 pb-2">
+              <div className="w-10 h-1 rounded-full bg-muted-foreground/20" />
+            </div>
+
             {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border/50 flex-shrink-0">
+            <div className="flex items-center justify-between px-5 py-3 border-b border-border flex-shrink-0">
               <div>
                 <h2 className="text-lg font-semibold text-foreground">About v0 University</h2>
                 <p className="text-sm text-muted-foreground">For the people who build, buy & sell websites</p>
               </div>
               <button
                 onClick={onClose}
-                className="p-2 -mr-2 rounded-full hover:bg-muted transition-colors"
+                className="p-2 rounded-full hover:bg-muted transition-colors"
               >
                 <X className="w-5 h-5 text-muted-foreground" />
               </button>
@@ -120,25 +126,25 @@ export function V0ExplainerDrawer({ isOpen, onClose }: V0ExplainerDrawerProps) {
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto">
-              {/* Hero Section */}
-              <div className="px-5 py-6 bg-gradient-to-br from-neutral-900 to-neutral-800 text-white">
+              {/* Hero */}
+              <div className="px-5 py-6 bg-foreground text-background">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-xl bg-background/10 flex items-center justify-center">
                     <img src="/v0-logo-light.png" alt="v0" className="w-7 h-7" />
                   </div>
                   <div>
                     <p className="font-semibold">v0 by Vercel</p>
-                    <p className="text-sm text-white/60">AI-Powered Development</p>
+                    <p className="text-sm text-background/60">AI-Powered Development</p>
                   </div>
                 </div>
-                <p className="text-[15px] leading-relaxed text-white/80">
+                <p className="text-[15px] leading-relaxed text-background/80">
                   Describe what you want. Watch it build. Iterate in plain English. Deploy in one click. 
                   It&apos;s the first time building websites actually feels like the future.
                 </p>
               </div>
 
-              {/* Pain Is The Pitch */}
-              <div className="px-5 py-6 border-b border-border/30">
+              {/* Comparison */}
+              <div className="px-5 py-6 border-b border-border">
                 <h3 className="text-[13px] font-semibold text-muted-foreground uppercase tracking-wide mb-4">
                   The Old Way vs. The New Way
                 </h3>
@@ -148,38 +154,32 @@ export function V0ExplainerDrawer({ isOpen, onClose }: V0ExplainerDrawerProps) {
                       key={i} 
                       className={`p-4 rounded-xl border ${
                         item.highlight 
-                          ? 'bg-green-50 border-green-200' 
-                          : 'bg-muted/30 border-border/50'
+                          ? 'bg-primary/5 border-primary/20' 
+                          : 'bg-muted/30 border-border'
                       }`}
                     >
                       <div className="flex items-start justify-between gap-3 mb-2">
-                        <p className={`font-medium ${item.highlight ? 'text-green-900' : 'text-foreground'}`}>
+                        <p className={`font-medium ${item.highlight ? 'text-primary' : 'text-foreground'}`}>
                           {item.name}
                         </p>
                         {item.highlight && (
-                          <span className="px-2 py-0.5 bg-green-500 text-white text-[10px] font-semibold rounded-full uppercase">
+                          <span className="px-2 py-0.5 bg-primary text-primary-foreground text-[10px] font-semibold rounded-full uppercase">
                             This
                           </span>
                         )}
                       </div>
                       <div className="flex gap-4 text-[12px] mb-2">
-                        <span className={item.highlight ? 'text-green-700' : 'text-muted-foreground'}>
-                          {item.timeline}
-                        </span>
-                        <span className={item.highlight ? 'text-green-700' : 'text-muted-foreground'}>
-                          {item.cost}
-                        </span>
+                        <span className="text-muted-foreground">{item.timeline}</span>
+                        <span className="text-muted-foreground">{item.cost}</span>
                       </div>
-                      <p className={`text-[13px] ${item.highlight ? 'text-green-800' : 'text-muted-foreground'}`}>
-                        {item.pain}
-                      </p>
+                      <p className="text-[13px] text-muted-foreground">{item.pain}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* The Stack */}
-              <div className="px-5 py-6 border-b border-border/30">
+              {/* Features */}
+              <div className="px-5 py-6 border-b border-border">
                 <h3 className="text-[13px] font-semibold text-muted-foreground uppercase tracking-wide mb-4">
                   What You Get Access To
                 </h3>
@@ -192,7 +192,7 @@ export function V0ExplainerDrawer({ isOpen, onClose }: V0ExplainerDrawerProps) {
                     { icon: Zap, label: "Edge Network", desc: "Fast everywhere" },
                     { icon: CreditCard, label: "Shopify Ready", desc: "E-commerce built in" },
                   ].map((item, i) => (
-                    <div key={i} className="p-3 rounded-xl bg-muted/30 border border-border/50">
+                    <div key={i} className="p-3 rounded-xl bg-muted/30 border border-border">
                       <item.icon className="w-5 h-5 text-foreground mb-2" />
                       <p className="text-[13px] font-medium text-foreground">{item.label}</p>
                       <p className="text-[11px] text-muted-foreground">{item.desc}</p>
@@ -201,15 +201,15 @@ export function V0ExplainerDrawer({ isOpen, onClose }: V0ExplainerDrawerProps) {
                 </div>
               </div>
 
-              {/* Credit Transparency */}
-              <div className="px-5 py-6 border-b border-border/30 bg-amber-50/50">
+              {/* Cost Transparency */}
+              <div className="px-5 py-6 border-b border-border bg-muted/30">
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center flex-shrink-0">
-                    <CreditCard className="w-4 h-4 text-white" />
+                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                    <CreditCard className="w-4 h-4 text-primary-foreground" />
                   </div>
                   <div>
-                    <p className="font-medium text-amber-900 mb-1">Transparency on Costs</p>
-                    <p className="text-[13px] text-amber-800 leading-relaxed">
+                    <p className="font-medium text-foreground mb-1">Transparency on Costs</p>
+                    <p className="text-[13px] text-muted-foreground leading-relaxed">
                       My course is $497 one-time. You&apos;ll also need a v0 subscription ($20/month, free tier available). 
                       I teach you the skill. v0 is the tool you use that skill with. 
                       The method I teach helps you build more with fewer credits.
@@ -218,8 +218,8 @@ export function V0ExplainerDrawer({ isOpen, onClose }: V0ExplainerDrawerProps) {
                 </div>
               </div>
 
-              {/* The Uber Moment */}
-              <div className="px-5 py-6 border-b border-border/30">
+              {/* Uber Moment */}
+              <div className="px-5 py-6 border-b border-border">
                 <p className="text-[15px] text-foreground leading-relaxed">
                   <span className="font-semibold">Fair warning:</span> Once you build your first site with v0, 
                   your brain gets rewired. It&apos;s like the first time you took an Uber - you don&apos;t go back 
@@ -227,7 +227,7 @@ export function V0ExplainerDrawer({ isOpen, onClose }: V0ExplainerDrawerProps) {
                 </p>
               </div>
 
-              {/* FAQ Section */}
+              {/* FAQ */}
               <div className="px-5 py-6">
                 <h3 className="text-[13px] font-semibold text-muted-foreground uppercase tracking-wide mb-4">
                   Frequently Asked Questions
@@ -236,7 +236,7 @@ export function V0ExplainerDrawer({ isOpen, onClose }: V0ExplainerDrawerProps) {
                   {FAQ_ITEMS.map((item, i) => (
                     <div 
                       key={i}
-                      className="border border-border/50 rounded-xl overflow-hidden bg-white"
+                      className="border border-border rounded-xl overflow-hidden bg-card"
                     >
                       <button
                         onClick={() => setOpenFaq(openFaq === i ? null : i)}
@@ -270,25 +270,31 @@ export function V0ExplainerDrawer({ isOpen, onClose }: V0ExplainerDrawerProps) {
               </div>
 
               {/* CTA */}
-              <div className="px-5 py-6 bg-neutral-900 text-white">
-                <p className="text-[15px] text-white/80 mb-4 text-center">
+              <div className="px-5 py-6 bg-foreground text-background">
+                <p className="text-[15px] text-background/80 mb-4 text-center">
                   Ready to see what&apos;s possible?
                 </p>
-                <a
-                  href="https://v0.app/@yeazel"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white text-neutral-900 font-semibold text-[14px] hover:bg-neutral-100 transition-colors"
+                <Button
+                  variant="secondary"
+                  className="w-full"
+                  asChild
                 >
-                  See Jon&apos;s v0 Profile
-                  <ExternalLink className="w-4 h-4" />
-                </a>
-                <button
+                  <a
+                    href="https://v0.app/@yeazel"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    See Jon&apos;s v0 Profile
+                    <ExternalLink className="w-4 h-4 ml-2" />
+                  </a>
+                </Button>
+                <Button
+                  variant="ghost"
                   onClick={onClose}
-                  className="w-full mt-3 py-3 rounded-xl border border-white/20 text-white font-medium text-[14px] hover:bg-white/10 transition-colors"
+                  className="w-full mt-3 text-background hover:text-background hover:bg-background/10"
                 >
                   Back to Chat
-                </button>
+                </Button>
               </div>
             </div>
           </motion.div>
