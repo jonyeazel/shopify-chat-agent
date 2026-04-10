@@ -58,11 +58,11 @@ export function getMenuItems(
     },
     {
       icon: HelpCircle,
-      label: "More Info",
-      description: "How it works",
+      label: "How It Works",
+      description: "The Cook Method",
       action: () => {
         setShowMenu(false)
-        sendMessage({ text: "Tell me more about v0 University" })
+        sendMessage({ text: "How does The Cook Method work?" })
       },
     },
     {

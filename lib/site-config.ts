@@ -25,25 +25,25 @@ export const siteConfig = {
   },
 
   meta: {
-    title: "v0 University | For anybody who's ever built, sold or bought a website",
+    title: "v0 University | Prompt Engineering",
     description:
-      "For anybody who's ever built, sold or bought a website. Learn The Cook Method - the AI prompting system from 25,000+ generations.",
+      "For the people who build, buy & sell websites. The Cook Method - build sites in hours, not weeks.",
     keywords: [
       "v0",
-      "v0 tutorial",
+      "prompt engineering",
       "AI website builder",
-      "no-code",
+      "the cook method",
       "build websites with AI",
       "AI prompting",
       "Vercel v0",
       "v0 university",
-      "v0 tutor",
+      "Jon Yeazel",
     ],
-    ogTitle: "For anybody who's ever built, sold or bought a website",
+    ogTitle: "Prompt Engineering for Website Builders",
     ogDescription:
-      "Learn The Cook Method - the AI prompting system from 25,000+ generations. Build sites in hours, not weeks.",
+      "For the people who build, buy & sell websites. The Cook Method - build sites in hours, not weeks.",
     twitterDescription:
-      "For anybody who's ever built, sold or bought a website.",
+      "Prompt engineering for the people who build, buy & sell websites.",
   },
 } as const
 

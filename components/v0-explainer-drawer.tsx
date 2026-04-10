@@ -107,8 +107,8 @@ export function V0ExplainerDrawer({ isOpen, onClose }: V0ExplainerDrawerProps) {
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-border/50 flex-shrink-0">
               <div>
-                <h2 className="text-lg font-semibold text-foreground">What is v0?</h2>
-                <p className="text-sm text-muted-foreground">And why you&apos;ll never go back</p>
+                <h2 className="text-lg font-semibold text-foreground">About v0 University</h2>
+                <p className="text-sm text-muted-foreground">For the people who build, buy & sell websites</p>
               </div>
               <button
                 onClick={onClose}

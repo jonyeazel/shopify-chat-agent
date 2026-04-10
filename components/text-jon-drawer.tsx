@@ -11,10 +11,10 @@ interface TextJonDrawerProps {
 }
 
 const QUICK_CONTEXTS = [
-  { label: "Quick question before I buy", message: "Hey Jon - was just on your site. Quick question before I pull the trigger:" },
-  { label: "I want you to build it for me", message: "Hey Jon - I'd rather just pay you to build it. Can we talk about what that would look like?" },
-  { label: "Not sure which option is right", message: "Hey Jon - I'm interested but not sure if I need the $497 or something more custom. Can you help me figure it out?" },
-  { label: "I have a bigger project", message: "Hey Jon - I've got a more complex project. Might be consulting territory. Got a few min to chat?" },
+  { label: "Quick question", message: "Hey Jon - on your site rn. Quick q:" },
+  { label: "Build it for me", message: "Hey - would rather just pay you to build it. What would that look like?" },
+  { label: "Which option?", message: "Hey - not sure if I need the $497 or something more custom. Help?" },
+  { label: "Bigger project", message: "Hey Jon - got a complex one. Might be consulting territory." },
 ]
 
 export function TextJonDrawer({ isOpen, onClose, conversationContext }: TextJonDrawerProps) {
