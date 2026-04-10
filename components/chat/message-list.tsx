@@ -232,20 +232,6 @@ function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[])
   // Longer explanation - acknowledge and move forward
   return ["ok", "got it", "what's next"]
 }
-  
-  // AI asked a simple yes/no
-  if (lower.length < 50 && lower.endsWith("?")) {
-    return ["yeah", "nah", "depends"]
-  }
-
-  // Mid conversation fallback (messages 3-6)
-  if (msgCount <= 6) {
-    return ["ok", "go on", "wait"]
-  }
-
-  // Late conversation fallback (7+)
-  return ["ok", "next", "actually"]
-}
 
 // Check if two messages are from the same sender and close in time (within 2min)
 function isContinuation(current: UIMessage, previous: UIMessage | undefined): boolean {
