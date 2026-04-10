@@ -81,147 +81,173 @@ function MessageAction({
   )
 }
 
-// Text Jon CTA: ALWAYS shows with highly contextual pre-filled message
+// Text Jon CTA: Only shows when contextually appropriate, not as a default fallback
 function getSmsCta(messages: UIMessage[]): { label: string; context: SmsContext; show: boolean } {
   const phase = determineConversationPhase(messages)
+  const msgCount = messages.length
   const allText = messages
     .flatMap(m => m.parts?.filter((p): p is { type: "text"; text: string } => p.type === "text").map(p => p.text.toLowerCase()) || [])
     .join(" ")
   
-  // Always show - but with contextual label
-  if (phase === "ready_to_buy" || allText.includes("i'm in") || allText.includes("ready")) {
+  // Don't show Text Jon in first 2 messages - let them engage with AI first
+  if (msgCount <= 2) {
+    return { label: "Text Jon", context: "general", show: false }
+  }
+
+  // Show when ready to buy - this is a high-intent moment
+  if (phase === "ready_to_buy" || allText.includes("i'm in") || allText.includes("ready") || allText.includes("let's do it")) {
     return { label: "Text Jon to start", context: "ready-to-start", show: true }
   }
 
-  if (allText.includes("$497") || allText.includes("pricing") || allText.includes("cost")) {
+  // Show after pricing discussion - they might have questions
+  if (allText.includes("$497") || allText.includes("$3,497") || allText.includes("pricing")) {
     return { label: "Questions? Text Jon", context: "post-pricing", show: true }
   }
 
+  // Show for complex projects - Shopify needs human touch
   if (allText.includes("shopify") || allText.includes("store") || allText.includes("ecommerce")) {
-    return { label: "Text Jon about Shopify", context: "shopify-interest", show: true }
+    return { label: "Text Jon about your store", context: "shopify-interest", show: true }
   }
 
-  if (allText.includes("example") || allText.includes("portfolio") || allText.includes("work")) {
-    return { label: "Text Jon", context: "post-examples", show: true }
+  // Show if they seem stuck or confused
+  if (allText.includes("confused") || allText.includes("don't understand") || allText.includes("not sure")) {
+    return { label: "Text Jon", context: "needs-help", show: true }
   }
 
-  // Default - always visible
-  return { label: "Text Jon", context: "general", show: true }
+  // Show after 6+ messages - they're engaged, might want human
+  if (msgCount >= 6) {
+    return { label: "Text Jon", context: "engaged", show: true }
+  }
+
+  // Default - don't show, let the conversation flow
+  return { label: "Text Jon", context: "general", show: false }
 }
 
-// Quick reply suggestions — sound like actual texts a real person would send
+// Quick reply suggestions — must sound like real texts, not bot prompts
+// Rule: If you wouldn't actually text this to someone, don't include it
 function getQuickReplies(lastAssistantMessage: string, allMessages: UIMessage[]): string[] {
   const lower = lastAssistantMessage.toLowerCase()
   const msgCount = allMessages.length
   
-  // First AI message - the 4th wall break opener responses
+  // First AI message - opener responses (keep casual, lowercase energy)
   if (msgCount <= 2) {
-    // Self-aware opener responses
     if (lower.includes("i'm an ai") || lower.includes("actually useful")) {
-      return ["Ok I'm curious", "I'm trying to build something", "Prove it"]
+      return ["alright go on", "trying to build something", "prove it"]
     }
-    // Challenge opener responses
     if (lower.includes("burned by developers") || lower.includes("diy and got stuck")) {
-      return ["Both honestly", "The DIY route failed", "Just want it done right"]
+      return ["both honestly", "diy didn't work", "just want it done"]
     }
-    // Meta opener responses
     if (lower.includes("meta") || lower.includes("ai that sells ai")) {
-      return ["Ha I noticed that", "Ok you got me curious", "Show me how this works"]
+      return ["ha yeah I noticed", "ok you got me", "how does it work"]
     }
-    // Direct opener responses
     if (lower.includes("chatbot pleasantries") || lower.includes("what are you working on")) {
-      return ["Building a landing page", "Have a whole situation to explain", "Something like this site"]
+      return ["landing page", "got a situation to explain", "something like this site"]
     }
-    // Generic first response
-    return ["I want to build a site", "Just checking this out", "What is The Cook Method?"]
+    return ["want to build a site", "just looking around", "what's the cook method"]
   }
   
-  // Intent Seed generated - the "holy crap" moment
+  // Intent Seed generated - genuine surprise moment
   if (lower.includes("you'd say:") || lower.includes("your intent seed") || lower.includes("that's the whole thing")) {
-    return ["Wait that's it?", "Show me what that builds", "Generate one for my business"]
+    return ["wait that's it?", "show me what that builds", "do one for my business"]
   }
 
   // Before/after or method explanation
   if (lower.includes("150 words") || lower.includes("9 words") || lower.includes("outcome-focused")) {
-    return ["Makes sense", "Show me an example", "What's my seed prompt?"]
+    return ["ok that makes sense", "show me one", "what's mine look like"]
   }
 
-  // Ready to buy - directed to checkout
+  // Ready to buy - minimal friction
   if (lower.includes("tap buy now") || lower.includes("let's do it")) {
-    return ["Just did it", "One question first"]
+    return ["just did", "one sec"]
   }
 
   // AI asked what they want to build
   if (lower.endsWith("?") && (lower.includes("what are you") || lower.includes("trying to build") || lower.includes("working on"))) {
-    return ["Let me explain...", "Landing page for my business", "Multiple projects actually"]
+    return ["ok so basically", "landing page", "a few things actually"]
   }
 
   // AI asked about learning vs done-for-you
   if (lower.includes("learn it") || lower.includes("done for you") || lower.includes("yourself or")) {
-    return ["I want to learn", "Just do it for me", "Not sure yet"]
+    return ["want to learn it", "just do it for me", "not sure yet"]
   }
 
   // AI encouraged a brain dump
   if (lower.includes("dump") || lower.includes("full picture") || lower.includes("more context")) {
-    return ["Ok here's the deal...", "Alright so basically...", "Long story but..."]
+    return ["ok here's the deal", "alright so", "it's a lot but"]
   }
 
   // AI mentioned v0 profile or credibility
   if (lower.includes("v0.app/@yeazel") || lower.includes("25,000") || lower.includes("free templates")) {
-    return ["Checking it out", "How do I get started?", "What's in the $497?"]
+    return ["checking it out", "how do I start", "what's in it"]
   }
 
   // AI explained what v0 is
   if (lower.includes("vercel") || lower.includes("learn button") || lower.includes("v0 is")) {
-    return ["Got it, makes sense", "How is it different from ChatGPT?", "What's v0 cost me?"]
+    return ["got it", "how's it different from chatgpt", "what does v0 cost"]
   }
 
   // AI mentioned the Uber analogy / brain rewired
   if (lower.includes("uber") || lower.includes("brain") || lower.includes("rewired") || lower.includes("don't go back")) {
-    return ["Ha ok I'm intrigued", "Show me what I'd build", "What's the catch?"]
+    return ["ha ok I'm curious", "show me what I'd build", "what's the catch"]
   }
 
   // AI mentioned credit costs / transparency
   if (lower.includes("$20/month") || lower.includes("separate from") || lower.includes("subscription")) {
-    return ["That's fair", "So what's the total cost?", "Worth it if it works"]
+    return ["that's fair", "total cost?", "worth it if it works"]
   }
 
   // AI showed product showcase / ecommerce examples
   if (lower.includes("swipe through") || lower.includes("product cards") || lower.includes("30 seconds to build")) {
-    return ["These are sick", "Can you build my store like this?", "How fast could I have this?"]
+    return ["these are clean", "can mine look like this", "how fast"]
   }
 
   // AI asked yes/no or choice questions
   if (lower.endsWith("?")) {
     if (lower.includes("yourself") && lower.includes("client")) {
-      return ["Both", "Just for me", "I run an agency"]
+      return ["both", "just me", "I run an agency"]
     }
     if (lower.includes("ecommerce") || lower.includes("store") || lower.includes("products")) {
-      return ["Yeah Shopify store", "Service business", "Digital products"]
+      return ["yeah shopify", "service business", "digital products"]
     }
     if (lower.includes("timeline") || lower.includes("when do you need")) {
-      return ["Like yesterday", "Few weeks", "No rush"]
+      return ["asap", "few weeks", "no rush"]
     }
-    return ["Yeah", "Not exactly", "Tell me more"]
+    if (lower.includes("make sense") || lower.includes("follow")) {
+      return ["yeah", "kinda", "wait what"]
+    }
+    if (lower.includes("ready") || lower.includes("want to")) {
+      return ["yeah", "not yet", "thinking"]
+    }
+    return ["yeah", "sorta", "say more"]
   }
 
   // Pricing mentioned
   if (lower.includes("$497") || lower.includes("$3,497")) {
-    return ["Let's do it", "What do I get exactly?", "Can I text Jon first?"]
+    return ["what's included", "and the other tier?", "thinking"]
   }
 
   // AI gave a recommendation
   if (lower.includes("recommend") || lower.includes("based on what you") || lower.includes("sounds like")) {
-    return ["That works", "What's the next step?", "Text Jon first"]
+    return ["ok", "why that one", "still deciding"]
   }
 
-  // Mid conversation
+  // AI mentioned specific features or deliverables
+  if (lower.includes("video") || lower.includes("template") || lower.includes("library")) {
+    return ["nice", "show me", "what else"]
+  }
+
+  // AI was encouraging or supportive
+  if (lower.includes("you got this") || lower.includes("totally doable") || lower.includes("easy")) {
+    return ["hope so", "we'll see", "let's do it"]
+  }
+
+  // Mid conversation fallback (messages 3-6)
   if (msgCount <= 6) {
-    return ["That's helpful", "What do you recommend?", "Show me the method"]
+    return ["ok", "keep going", "wait go back"]
   }
 
-  // Later conversation
-  return ["Ok what's next?", "I'm in", "One more question"]
+  // Late conversation fallback (7+)
+  return ["ok", "and then", "wait actually"]
 }
 
 // Check if two messages are from the same sender and close in time (within 2min)
